@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reels AI 內容助理 - 診斷版</title>
+  <style>
+    :root{--navy:#10253f;--teal:#007f7a;--mint:#dff5ec;--cream:#f7f4ee;--ink:#17202a;--line:#dce1e4;--soft:#eef7f6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--cream);color:var(--ink);font:15px/1.5 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
+    .app{max-width:1200px;margin:auto;padding:24px}
+    h1{font-size:24px;color:var(--navy);margin-bottom:8px}
+    p{font-size:13px;color:#666;margin-bottom:20px}
+    .layout{display:grid;grid-template-columns:300px 1fr;gap:20px}
+    .panel,.main{background:#fff;border-radius:12px;padding:20px;border:1px solid var(--line)}
+    .panel{height:fit-content;position:sticky;top:20px}
+    label{display:block;font-size:12px;font-weight:700;margin:12px 0 4px;color:#555;text-transform:uppercase}
+    input,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;margin-bottom:8px}
+    textarea{resize:vertical;min-height:60px}
+    button{width:100%;padding:10px;border:0;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;margin-bottom:8px;transition:0.2s}
+    button.primary{background:var(--teal);color:#fff}
+    button.primary:hover{background:#006460}
+    button.primary:disabled{opacity:0.5;cursor:not-allowed}
+    button.secondary{background:#f0f0f0;color:var(--navy)}
+    .alert{padding:12px;border-radius:8px;margin-bottom:12px;font-size:13px;line-height:1.6}
+    .alert-err{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+    .alert-ok{background:#d4efeb;color:#05635e;border:1px solid #80d4cc}
+    .alert-warn{background:#fff3cd;color:#7a4800;border:1px solid #ffc107}
+    .debug-box{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:12px;font-family:monospace;font-size:12px;max-height:300px;overflow-y:auto;margin-bottom:12px;white-space:pre-wrap;word-break:break-all;line-height:1.4}
+    .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:20px}
+    .day{border:1px solid var(--line);padding:12px;border-radius:8px;background:#f9f9f9;min-height:120px;font-size:12px}
+    .day-num{font-weight:700;color:var(--teal)}
+    .day-title{font-weight:600;margin:6px 0 3px;line-height:1.3;color:var(--navy)}
+    .day-cat{font-size:11px;color:#888}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.panel{position:static}.grid-5{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:600px){.grid-5{grid-template-columns:repeat(2,1fr)}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>🎬 Reels AI 內容助理 - 診斷版</h1>
+  <p>人與地球優選市集｜透明診斷，找出問題所在</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>⚙️ 設定</h2>
+      
+      <label>帳號名稱</label>
+      <input id="account" value="人與地球優選市集">
+      
+      <label>首發日期</label>
+      <input id="startDate" type="date">
+      
+      <label>Gemini API Key</label>
+      <input id="apiKey" type="password" placeholder="AQ... 或 AIza...">
+      
+      <button class="secondary" id="testBtn" style="padding:8px;font-size:13px">🔍 1. 測試連線</button>
+      <button class="secondary" id="testSimpleBtn" style="padding:8px;font-size:13px">✍️ 2. 測試簡單提示</button>
+      <button class="primary" id="generateBtn" style="padding:8px;font-size:13px">⚡ 3. 生成 5 天</button>
+      
+      <div id="status" style="font-size:12px;margin-top:12px;padding:8px;border-radius:6px;display:none"></div>
+    </div>
+
+    <div class="main">
+      <h2>📊 診斷輸出</h2>
+      <div id="debugOutput" class="debug-box">等待操作...</div>
+      
+      <div id="calendarSection" style="display:none">
+        <h2 style="margin-top:20px">📅 生成結果</h2>
+        <div class="grid-5" id="calendarGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const logs = [];
+
+function log(msg) {
+  const time = new Date().toLocaleTimeString('zh-Hant');
+  const line = `[${time}] ${msg}`;
+  logs.push(line);
+  document.getElementById('debugOutput').textContent = logs.join('\n');
+  document.getElementById('debugOutput').scrollTop = document.getElementById('debugOutput').scrollHeight;
+  console.log(line);
+}
+
+function showStatus(msg, type = 'ok') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = type === 'ok' ? 'alert alert-ok' : type === 'warn' ? 'alert alert-warn' : 'alert alert-err';
+  el.style.display = 'block';
+}
+
+// 1. 測試連線
+async function testConnection() {
+  logs.length = 0;
+  log('=== 步驟 1: 測試連線 ===');
+  
+  const apiKey = document.getElementById('apiKey').value.trim();
+  
+  if (!apiKey) {
+    log('❌ 錯誤: API Key 為空');
+    showStatus('請輸入 API Key', 'err');
+    return;
+  }
+  
+  log(`✓ API Key 已輸入: ${apiKey.substring(0, 20)}...`);
+  
+  try {
+    log('正在向 Google API 發送請求...');
+    
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: 'Say hello' }] }],
+          generationConfig: { maxOutputTokens: 50 }
+        })
+      }
+    );
+    
+    log(`✓ 收到回應，HTTP 狀態碼: ${response.status}`);
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      log('✅ 連線成功！API 可用');
+      log(`回應內容: ${JSON.stringify(data).substring(0, 200)}`);
+      showStatus('✅ 連線成功', 'ok');
+    } else {
+      log(`❌ API 返回錯誤`);
+      log(`錯誤訊息: ${data.error?.message || JSON.stringify(data)}`);
+      showStatus(`連線失敗: ${data.error?.message}`, 'err');
+    }
+    
+  } catch (e) {
+    log(`❌ 網路錯誤: ${e.message}`);
+    showStatus(`網路錯誤: ${e.message}`, 'err');
+  }
+}
+
+// 2. 測試簡單提示
+async function testSimplePrompt() {
+  logs.length = 0;
+  log('=== 步驟 2: 測試簡單提示 ===');
+  
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) {
+    log('❌ API Key 為空');
+    return;
+  }
+  
+  try {
+    log('測試提示: "寫一個 15 字的標題"');
+    log('正在發送...');
+    
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: '寫一個 15 字的 Instagram 貼文標題，關於永續購物。'
+            }]
+          }],
+          generationConfig: { 
+            maxOutputTokens: 100,
+            temperature: 0.7
+          }
+        })
+      }
+    );
+    
+    log(`HTTP 狀態碼: ${response.status}`);
+    const data = await response.json();
+    
+    if (response.ok) {
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (text) {
+        log(`✅ 收到回應: "${text}"`);
+        showStatus('✅ 提示成功', 'ok');
+      } else {
+        log('❌ 回應格式異常，無文本內容');
+        log(`完整回應: ${JSON.stringify(data)}`);
+        showStatus('回應格式異常', 'err');
+      }
+    } else {
+      log(`❌ API 錯誤: ${data.error?.message}`);
+      showStatus(`API 錯誤: ${data.error?.message}`, 'err');
+    }
+    
+  } catch (e) {
+    log(`❌ 錯誤: ${e.message}`);
+    showStatus(`錯誤: ${e.message}`, 'err');
+  }
+}
+
+// 3. 生成 5 天
+async function generateShort() {
+  logs.length = 0;
+  log('=== 步驟 3: 生成 5 天內容 ===');
+  
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const account = document.getElementById('account').value || '人與地球優選市集';
+  const startDate = document.getElementById('startDate').value;
+  
+  if (!apiKey) {
+    log('❌ API Key 為空');
+    return;
+  }
+  if (!startDate) {
+    log('❌ 首發日期為空');
+    return;
+  }
+  
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('calendarSection').style.display = 'none';
+  
+  const posts = [];
+  const start = new Date(startDate + 'T00:00:00');
+  
+  for (let i = 0; i < 5; i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    const dateStr = date.toISOString().slice(0, 10);
+    
+    log(`\n--- Day ${i + 1} (${dateStr}) ---`);
+    
+    const prompt = `寫一個 Instagram 標題（15-20字），品牌是「${account}」。`;
+    
+    try {
+      log('發送提示...');
+      
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 100, temperature: 0.7 }
+          })
+        }
+      );
+      
+      if (!response.ok) {
+        const err = await response.json();
+        log(`❌ HTTP ${response.status}: ${err.error?.message}`);
+        continue;
+      }
+      
+      const data = await response.json();
+      const title = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (title) {
+        log(`✓ 收到: "${title}"`);
+        posts.push({ date: dateStr, title: title.substring(0, 60) });
+      } else {
+        log('❌ 無文本回應');
+      }
+      
+    } catch (e) {
+      log(`❌ 錯誤: ${e.message}`);
+    }
+  }
+  
+  log(`\n=== 完成 ===`);
+  log(`成功生成: ${posts.length} 天`);
+  
+  if (posts.length > 0) {
+    document.getElementById('calendarSection').style.display = 'block';
+    document.getElementById('calendarGrid').innerHTML = posts.map((p, i) => `
+      <div class="day">
+        <div class="day-num">Day ${i + 1}</div>
+        <div style="font-size:11px;color:#666">${p.date}</div>
+        <div class="day-title">${p.title}</div>
+      </div>
+    `).join('');
+    showStatus(`✅ 生成成功: ${posts.length} 天`, 'ok');
+  } else {
+    showStatus('❌ 未能生成任何內容', 'err');
+  }
+  
+  document.getElementById('generateBtn').disabled = false;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('startDate').value = today;
+  
+  document.getElementById('testBtn').addEventListener('click', testConnection);
+  document.getElementById('testSimpleBtn').addEventListener('click', testSimplePrompt);
+  document.getElementById('generateBtn').addEventListener('click', generateShort);
+});
+</script>
+</body>
+</html>
