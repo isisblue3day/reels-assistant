@@ -1,0 +1,985 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>人與地球優選市集｜Reels AI 內容助理 v3</title>
+  <style>
+    :root{--navy:#10253f;--teal:#007f7a;--mint:#dff5ec;--cream:#f7f4ee;--ink:#17202a;--line:#dce1e4;--soft:#eef7f6;--warn:#fff3cd;--danger:#f8d7da;--gold:#e8a020}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
+    /* Layout */
+    .app{max-width:1400px;margin:auto;padding:24px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{width:44px;height:44px;border-radius:13px;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0}
+    .brand h1{font-size:20px;margin:0;color:var(--navy)}.brand p{margin:0;color:#61707c;font-size:12px}
+    .top-right{display:flex;gap:8px;align-items:center}
+    .badge{padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700}
+    .badge-green{color:#05635e;background:var(--mint)}.badge-orange{color:#7a4800;background:#ffecd1}.badge-blue{color:#003a80;background:#d4e6ff}
+    .layout{display:grid;grid-template-columns:340px 1fr;gap:18px}
+    .panel,.workspace{background:#fff;border:1px solid var(--line);border-radius:18px}
+    .panel{padding:18px;height:max-content;position:sticky;top:14px}
+    .workspace{padding:22px;min-width:0}
+    /* Form */
+    .panel h2,.workspace h2{font-size:15px;margin:0 0 12px;color:var(--navy)}
+    label{display:block;font-size:11px;font-weight:700;margin:12px 0 4px;color:#46545e;text-transform:uppercase;letter-spacing:.04em}
+    input,textarea,select{font:inherit;width:100%;padding:8px 10px;border:1px solid #cbd4d9;border-radius:9px;background:#fff;color:var(--ink)}
+    input[type=password]{letter-spacing:.1em}
+    textarea{min-height:68px;resize:vertical}
+    .hint{font-size:11px;color:#65737b;margin:5px 0 0}
+    .section-sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+    /* Buttons */
+    .buttons{display:grid;gap:7px;margin-top:16px}
+    button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 13px;cursor:pointer;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px}
+    button.secondary{background:#e5eff0;color:var(--navy)}
+    button.accent{background:var(--teal);color:#fff}
+    button.danger{background:#dc3545;color:#fff}
+    button.sm{font-size:12px;padding:5px 9px;border-radius:7px}
+    button:hover{filter:brightness(.94)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    button.icon-btn{background:transparent;color:var(--navy);padding:6px;border-radius:8px;border:1px solid var(--line);font-size:17px}
+    /* Tabs */
+    .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+    .tab{color:#5f6b72;background:transparent;border-radius:9px 9px 0 0;font-size:13px;padding:7px 12px}
+    .tab.active{color:var(--teal);border-bottom:3px solid var(--teal)}
+    .view{display:none}.view.active{display:block}
+    /* Overview */
+    .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 18px}
+    .metric{padding:12px;background:var(--soft);border-radius:12px}
+    .metric strong{display:block;font-size:18px;color:var(--navy)}.metric span{font-size:11px;color:#55646d}
+    /* Calendar */
+    .calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .day{border:1px solid var(--line);border-radius:12px;padding:10px;min-height:140px;cursor:pointer;background:#fff;transition:box-shadow .15s}
+    .day:hover,.day.selected{border-color:var(--teal);box-shadow:0 0 0 2px #d4efeb}
+    .day .num{font-size:11px;color:var(--teal);font-weight:800}.day .date{font-size:10px;color:#77858c;margin-left:3px}
+    .tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:99px;background:#edf2f3;color:#44545c;margin-top:6px}
+    .tag.festival{background:#fef3c7;color:#92400e}
+    .day h3{font-size:12px;line-height:1.35;margin:6px 0 0;color:var(--navy)}
+    .day .ai-flag{font-size:10px;color:var(--teal);font-weight:700}
+    /* Script card */
+    .script-card{border:1px solid var(--line);border-radius:14px;padding:18px}
+    .script-card h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
+    .script-card .meta{color:#66757d;font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+    .script-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:14px;margin-top:14px}
+    .block{background:#f8fbfb;border-radius:11px;padding:12px}
+    .block h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);margin:0 0 6px}
+    .block p,.block ol{margin:0}.block ol{padding-left:18px}
+    /* Gemini prompts */
+    .gemini{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+    .gemini-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .gemini h4{color:var(--navy);margin:0;font-size:14px}
+    .prompt{margin-top:9px;background:#f8fbfb;border-radius:11px;padding:12px}
+    .prompt-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--teal);font-weight:800;font-size:12px;flex-wrap:wrap}
+    .copy{background:#e5eff0;color:var(--navy);padding:5px 8px;font-size:11px;border-radius:7px}
+    .prompt pre{white-space:pre-wrap;font:12px/1.55 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;margin:7px 0 0;color:#2b3940}
+    .gemini-note{font-size:11px;color:#65737b;margin:7px 0 0}
+    /* Schedule table */
+    .schedule-table{width:100%;border-collapse:collapse;font-size:13px}
+    .schedule-table th,.schedule-table td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+    .schedule-table th{color:#607078;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+    .tbl-caption{font-size:11px;max-width:200px;line-height:1.4}
+    .status-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px}
+    .status-ai{background:#d4efeb;color:#05635e}.status-template{background:#e8e8f5;color:#3a3aad}.status-published{background:#d1fae5;color:#065f46}
+    /* Events panel */
+    .events-grid{display:grid;gap:9px;margin-top:2px}
+    .event-card{border:1px solid var(--line);border-radius:11px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+    .event-date{background:var(--teal);color:#fff;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:800;white-space:nowrap;min-width:44px;text-align:center}
+    .event-body h4{margin:0 0 3px;font-size:14px;color:var(--navy)}.event-body p{margin:0;font-size:12px;color:#55646d}
+    .score-bar{display:flex;align-items:center;gap:6px;margin-top:5px}
+    .score-fill{height:5px;border-radius:99px;background:var(--teal)}
+    .score-label{font-size:10px;color:#65737b}
+    /* Analytics */
+    .analytics-tbl{width:100%;border-collapse:collapse;font-size:13px}
+    .analytics-tbl th{color:#607078;font-size:11px;text-transform:uppercase;padding:6px 8px;border-bottom:2px solid var(--line)}
+    .analytics-tbl td{padding:6px 8px;border-bottom:1px solid var(--line)}
+    .analytics-tbl input{padding:5px 7px;font-size:12px;border-radius:6px;width:80px}
+    .insight-card{background:var(--soft);border-radius:12px;padding:14px;margin-top:14px}
+    .insight-card h4{color:var(--navy);margin:0 0 8px;font-size:14px}
+    .insight-card p{margin:0 0 6px;font-size:13px}
+    /* Modal */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:18px;padding:28px;max-width:500px;width:94%;max-height:90vh;overflow-y:auto}
+    .modal h3{margin:0 0 16px;color:var(--navy);font-size:18px}
+    .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+    .key-row{display:flex;gap:6px;align-items:center}.key-row input{flex:1}
+    .api-status{font-size:12px;padding:6px 10px;border-radius:7px;background:#f0f0f0;color:#555}
+    .api-status.ok{background:#d4efeb;color:#05635e}.api-status.err{background:#f8d7da;color:#721c24}
+    /* Progress */
+    .progress{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px;background:#fff}
+    .progress h4{margin:0 0 10px;font-size:14px;color:var(--navy)}
+    .step{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px}
+    .step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .step-pending{background:#e8eaed;color:#777}.step-active{background:#fff3cd;color:#7a4800}.step-done{background:#d4efeb;color:#05635e}.step-error{background:#f8d7da;color:#721c24}
+    /* Notion & IG */
+    .connect-card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
+    .connect-card h4{margin:0 0 8px;font-size:14px;color:var(--navy)}
+    .connect-card p{margin:0 0 8px;font-size:12px;color:#55646d}
+    /* Misc */
+    .empty{padding:25px;text-align:center;color:#63717a;font-size:14px}
+    .alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px}
+    .alert-warn{background:var(--warn);color:#7a4800;border:1px solid #ffc107}
+    .alert-info{background:#d4efeb;color:#05635e;border:1px solid #a3d9d3}
+    .trend-chip{display:inline-block;background:#edf2f3;color:#44545c;border-radius:99px;padding:3px 9px;font-size:11px;margin:2px}
+    .collapsible-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:8px 0;user-select:none}
+    .collapsible-body{display:none}.collapsible-body.open{display:block}
+    /* IG caption */
+    .ig-post{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+    .ig-post h4{margin:0 0 6px;font-size:14px;color:var(--navy)}
+    .ig-post .caption{font-size:13px;white-space:pre-wrap;background:#f8fbfb;border-radius:8px;padding:10px;margin-top:6px}
+    .ig-post .hashtags{font-size:12px;color:var(--teal);margin-top:5px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.panel{position:static}.calendar{grid-template-columns:repeat(3,1fr)}.overview{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.app{padding:12px}.calendar{grid-template-columns:repeat(2,1fr)}.script-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <!-- Header -->
+  <header class="top">
+    <div class="brand">
+      <div class="mark">PP</div>
+      <div>
+        <h1>人與地球優選市集｜Reels AI 內容助理 v3</h1>
+        <p>AI 時事感知 · 30 天內容規劃 · 數據優化 · Notion 同步</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="badge badge-green" id="liveStatus">● 就緒</div>
+      <button class="icon-btn" id="settingsBtn" title="API 設定">⚙️</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Left Panel -->
+    <aside class="panel">
+      <h2>帳號設定</h2>
+      <label for="account">帳號名稱</label>
+      <input id="account" value="人與地球優選市集">
+      <label for="audience">目標受眾</label>
+      <textarea id="audience" style="min-height:60px">25–45 歲重視質感、送禮心意與永續生活的都會消費者；節慶送禮需求者；企業採購、HR 與 ESG／CSR 負責人；關注社會企業、惜食、友善農業與多元共融的親子及上班族。</textarea>
+      <label for="pillars">內容主軸（以逗號分隔）</label>
+      <textarea id="pillars" style="min-height:60px">永續好物選品與開箱,社企品牌與創辦人故事,惜食與友善農業生活提案,DEI共融與支持特殊需求社群,節慶送禮與企業採購提案,消費背後的社會影響力</textarea>
+      <label for="startDate">首發日期</label>
+      <input id="startDate" type="date">
+      <label for="cta">預設 CTA 關鍵字</label>
+      <input id="cta" value="送禮">
+      <label for="visualRef">素材指示</label>
+      <textarea id="visualRef" style="min-height:50px">台灣質感生活風，自然光，真實人物，溫暖情感，不含文字Logo水印。</textarea>
+
+      <hr class="section-sep">
+
+      <!-- Analytics section -->
+      <div class="collapsible-head" id="analyticsToggle">
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">📊 上月數據回饋</span>
+        <span id="analyticsArrow">▶</span>
+      </div>
+      <div class="collapsible-body" id="analyticsBody">
+        <p class="hint">輸入各主軸上月表現，AI 將自動調整本月比例。</p>
+        <table class="analytics-tbl" id="analyticsTable">
+          <thead><tr><th>主軸</th><th>觸及</th><th>收藏</th><th>留言</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <button class="accent sm" id="analyzeBtn" style="margin-top:10px;width:100%">🧠 分析並建議調整</button>
+        <div id="insightBox"></div>
+      </div>
+
+      <hr class="section-sep">
+
+      <!-- Integration section -->
+      <div class="collapsible-head" id="integrationToggle">
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">🔗 外部整合</span>
+        <span id="integrationArrow">▶</span>
+      </div>
+      <div class="collapsible-body" id="integrationBody">
+        <div class="connect-card">
+          <h4>📓 Notion 資料庫</h4>
+          <p>需在設定中填入 Integration Token 與 Database ID，並啟動本機伺服器（server.js）。</p>
+          <button class="secondary sm" id="notionSyncBtn" style="width:100%">🔄 同步至 Notion</button>
+        </div>
+        <div class="connect-card">
+          <h4>📸 Instagram / Meta</h4>
+          <p>切換至「IG 草稿」分頁查看格式化貼文，或匯出 CSV 至 Meta Business Suite 排程。</p>
+        </div>
+      </div>
+
+      <hr class="section-sep">
+      <div class="buttons">
+        <button id="liveGenerate" class="accent">⚡ AI 時事規劃（OpenAI）</button>
+        <button id="generate" class="secondary">📋 使用內建模板</button>
+        <button id="exportCSV" class="secondary">↓ 匯出 CSV（Notion / Meta）</button>
+      </div>
+    </aside>
+
+    <!-- Right Workspace -->
+    <section class="workspace">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <h2 id="calendarTitle" style="margin:0">Reels 內容行事曆</h2>
+        <div class="overview" style="margin:0;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div class="metric"><strong id="total">—</strong><span>已排定</span></div>
+          <div class="metric"><strong id="frequency">—</strong><span>頻率</span></div>
+          <div class="metric"><strong id="time">20:30</strong><span>主時段</span></div>
+          <div class="metric"><strong id="festivalCount">—</strong><span>節慶場次</span></div>
+        </div>
+      </div>
+
+      <div id="progressBox" style="display:none"></div>
+
+      <nav class="tabs">
+        <button class="tab active" data-view="calendar">📅 內容日曆</button>
+        <button class="tab" data-view="script">📝 腳本＋Gemini</button>
+        <button class="tab" data-view="schedule">🗓 發布排程</button>
+        <button class="tab" data-view="events">🌐 本月時事</button>
+        <button class="tab" data-view="igdraft">📸 IG 草稿</button>
+      </nav>
+
+      <!-- Calendar -->
+      <div id="calendar" class="view active">
+        <div class="calendar" id="calendarGrid">
+          <div class="empty" style="grid-column:1/-1">請點選「⚡ AI 時事規劃」或「使用內建模板」開始生成內容行事曆。</div>
+        </div>
+      </div>
+
+      <!-- Script + Gemini -->
+      <div id="script" class="view">
+        <div id="scriptContent" class="empty">請先從內容日曆選擇一天。</div>
+      </div>
+
+      <!-- Schedule -->
+      <div id="schedule" class="view">
+        <div class="table-wrap" style="overflow-x:auto">
+          <table class="schedule-table">
+            <thead><tr><th>日</th><th>時段</th><th>節慶連結</th><th>內容標題</th><th>主軸</th><th>格式</th><th>IG 說明文字</th><th>狀態</th></tr></thead>
+            <tbody id="scheduleBody"><tr><td colspan="8" class="empty">尚未生成。</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div id="events" class="view">
+        <div id="eventsContent" class="empty">點擊「⚡ AI 時事規劃」後，AI 將自動抓取本月相關時事與節慶。</div>
+      </div>
+
+      <!-- IG Draft -->
+      <div id="igdraft" class="view">
+        <div id="igContent" class="empty">生成內容後可在此預覽 Instagram 格式貼文。</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ API 設定</h3>
+    <div class="alert alert-warn">⚠️ API Key 儲存於瀏覽器 localStorage，僅供本機使用，請勿在公用設備上操作。</div>
+    <label>\u9078\u64c7 AI \u4f9b\u61c9\u5546</label>
+    <select id="aiProvider" style="margin-bottom:8px">
+      <option value="gemini">Google Gemini\uff08\u514d\u8cbb\u984d\u5ea6\uff0c\u63a8\u85a6\uff09</option>
+      <option value="openai">OpenAI GPT-4o\uff08\u9700\u4ed8\u8cbb\u984d\u5ea6\uff09</option>
+    </select>
+    <div id="geminiSection">
+      <label>Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:11px;color:#007f7a">\u2192 \u514d\u8cbb\u53d6\u5f97</a></label>
+      <div class="key-row">
+        <input type="password" id="geminiKey" placeholder="AIza...">
+        <button class="secondary sm" id="toggleGeminiKey">\ud83d\udc41</button>
+      </div>
+      <div id="geminiKeyStatus" class="api-status" style="margin-top:6px">\u672a\u8a2d\u5b9a</div>
+    </div>
+    <div id="openaiSection" style="display:none">
+      <label>OpenAI API Key</label>
+      <div class="key-row">
+        <input type="password" id="openaiKey" placeholder="sk-...">
+        <button class="secondary sm" id="toggleKey">\ud83d\udc41</button>
+      </div>
+      <div id="keyStatus" class="api-status" style="margin-top:6px">\u672a\u8a2d\u5b9a</div>
+    </div>
+    <div id="keyStatus" class="api-status" style="margin-top:6px">未設定</div>
+
+    <hr class="section-sep">
+    <label>Notion Integration Token（需啟動 server.js）</label>
+    <input type="password" id="notionToken" placeholder="secret_...">
+    <label>Notion Database ID</label>
+    <input id="notionDbId" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+
+    <hr class="section-sep">
+    <label>Meta / Instagram Access Token（需啟動 server.js）</label>
+    <input type="password" id="metaToken" placeholder="EAAxxxxxxx...">
+    <label>Instagram Business Account ID</label>
+    <input id="igAccountId" placeholder="1234567890">
+
+    <hr class="section-sep">
+    <p class="hint">📦 Notion 同步 與 Instagram 自動排程需在同目錄啟動 <code>start.cmd</code>，然後開啟 <a href="http://localhost:8787" target="_blank">http://localhost:8787</a>。</p>
+    <div class="modal-footer">
+      <button class="secondary" id="settingsCancel">取消</button>
+      <button id="settingsSave">💾 儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   人與地球優選市集 | Reels AI 內容助理 v3
+   功能：AI 時事抓取 + 內容生成 + 數據回饋 + Notion/IG 整合
+   ============================================================ */
+
+// ──────── State ────────
+const state = {
+  posts: [],
+  events: { events: [], trends: [], season: '' },
+  analytics: {},
+  analyticsNote: '',
+  selected: 0,
+  generating: false,
+  mode: 'idle' // idle | ai | template
+};
+
+// ──────── Shortcuts ────────
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+
+// ──────── Persistence ────────
+function loadSettings() {
+  const prov = localStorage.getItem('ai_provider') || 'gemini';
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) { provEl.value = prov; }
+  toggleProviderUI();
+  const gkEl = document.getElementById('geminiKey');
+  if (gkEl) gkEl.value = localStorage.getItem('gemini_key') || '';
+  $('openaiKey').value    = localStorage.getItem('oa_key') || '';
+  $('notionToken').value  = localStorage.getItem('no_token') || '';
+  $('notionDbId').value   = localStorage.getItem('no_db') || '';
+  $('metaToken').value    = localStorage.getItem('meta_token') || '';
+  $('igAccountId').value  = localStorage.getItem('ig_account') || '';
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+}
+function toggleProviderUI() {
+  const provEl = document.getElementById('aiProvider');
+  if (!provEl) return;
+  const isGemini = provEl.value === 'gemini';
+  const gs = document.getElementById('geminiSection');
+  const os = document.getElementById('openaiSection');
+  if (gs) gs.style.display = isGemini ? '' : 'none';
+  if (os) os.style.display = isGemini ? 'none' : '';
+}
+function updateGeminiKeyStatus() {
+  const el = document.getElementById('geminiKeyStatus');
+  const keyEl = document.getElementById('geminiKey');
+  if (!el || !keyEl) return;
+  const key = keyEl.value.trim();
+  if (!key) { el.className='api-status'; el.textContent='\u672a\u8a2d\u5b9a'; return; }
+  el.className = key.length >= 20 ? 'api-status ok' : 'api-status err';
+  el.textContent = key.length >= 20 ? '\u2705 \u5df2\u8a2d\u5b9a\uff08' + key.slice(0,8) + '...\uff09' : '\u274c \u8acb\u78ba\u8a8d Key \u5df2\u8907\u88fd\u5b8c\u6574';
+}
+function saveSettings() {
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) localStorage.setItem('ai_provider', provEl.value);
+  const gkEl = document.getElementById('geminiKey');
+  if (gkEl) localStorage.setItem('gemini_key', gkEl.value.trim());
+  localStorage.setItem('oa_key',      $('openaiKey').value.trim());
+  localStorage.setItem('no_token',    $('notionToken').value.trim());
+  localStorage.setItem('no_db',       $('notionDbId').value.trim());
+  localStorage.setItem('meta_token',  $('metaToken').value.trim());
+  localStorage.setItem('ig_account',  $('igAccountId').value.trim());
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+}
+function updateKeyStatus() {
+  const key = $('openaiKey').value.trim();
+  const el  = $('keyStatus');
+  if (!key) { el.className='api-status'; el.textContent='未設定'; return; }
+  el.className = key.startsWith('sk-') ? 'api-status ok' : 'api-status err';
+  el.textContent = key.startsWith('sk-') ? `✅ 已設定（${key.slice(0,8)}...）` : '❌ 格式不正確';
+}
+
+// ──────── AI Call Router (Gemini preferred, OpenAI fallback) ────────
+async function callOpenAI(messages, jsonMode = true) {
+  const provider = localStorage.getItem('ai_provider') || 'gemini';
+  if (provider === 'gemini') return callGemini(messages, jsonMode);
+  // OpenAI path
+  const key = localStorage.getItem('oa_key') || '';
+  if (!key) throw new Error('\u8acb\u5148\u5728\u8a2d\u5b9a\u4e2d\u586b\u5165 OpenAI API Key\u3002');
+  const body = { model: 'gpt-4o', messages, temperature: 0.75 };
+  if (jsonMode) body.response_format = { type: 'json_object' };
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`OpenAI ${res.status}: ${err?.error?.message || '\u8acb\u78ba\u8a8d API Key \u6709\u6548\u4e14\u6709\u5269\u9918\u984d\u5ea6'}`);
+  }
+  const data = await res.json();
+  const c = data.choices[0].message.content;
+  return jsonMode ? JSON.parse(c) : c;
+}
+
+async function callGemini(messages, jsonMode = true) {
+  const key = localStorage.getItem('gemini_key') || '';
+  if (!key || key.length < 10) throw new Error('\u8acb\u5148\u5728\u8a2d\u5b9a\u4e2d\u586b\u5165 Gemini API Key\uff08\u514d\u8cbb\uff1ahttps://aistudio.google.com/app/apikey\uff09\u3002');
+  const parts = messages.map(m => ({ text: m.content }));
+  const body = {
+    contents: [{ role: 'user', parts }],
+    generationConfig: { temperature: 0.75, ...(jsonMode ? { responseMimeType: 'application/json' } : {}) }
+  };
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Gemini ${res.status}: ${err?.error?.message || '\u8acb\u6c42\u5931\u6557'}`);
+  }
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) throw new Error('Gemini \u56de\u50b3\u7a7a\u767d\uff0c\u8acb\u91cd\u8a66\u3002');
+  if (jsonMode) {
+    const clean = text.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+    try { return JSON.parse(clean); }
+    catch(e) {
+      const m = clean.match(/\{[\s\S]*\}/);
+      if (m) return JSON.parse(m[0]);
+      throw new Error('Gemini JSON \u89e3\u6790\u5931\u6557\uff0c\u8acb\u91cd\u8a66\u3002');
+    }
+  }
+  return text;
+}
+// ──────── Step 1: Fetch Month Events ────────
+async function fetchMonthEvents(year, month) {
+  const monthName = ['一','二','三','四','五','六','七','八','九','十','十一','十二'][month-1];
+  const pillars = val('pillars');
+  const prompt = `你是台灣社企與永續消費的內容策略師。現在是 ${year} 年 ${monthName} 月。
+請列出本月（${month}/1 至月底）所有與「人與地球優選市集」品牌相關的重要資訊。
+品牌主軸：${pillars}
+
+請輸出 JSON，格式如下：
+{
+  "events": [
+    {"date": "${month}/16", "name": "世界糧食日", "description": "呼籲減少食物浪費，關注全球糧食安全", "relevance": "直接對應惜食選品主軸", "score": 9},
+    ...
+  ],
+  "trends": ["永續送禮", "惜食加工", "共融就業", ...],
+  "season": "${monthName}月季節主題（一句話，例如：秋日永續生活）",
+  "topicBalance": {
+    "永續好物選品與開箱": 5,
+    "社企品牌與創辦人故事": 5,
+    "惜食與友善農業生活提案": 5,
+    "DEI共融與支持特殊需求社群": 4,
+    "節慶送禮與企業採購提案": 6,
+    "消費背後的社會影響力": 5
+  }
+}
+
+events 最多 12 個，score 1–10 代表與品牌關聯度，只保留 score ≥ 6 的。
+trends 最多 8 個。`;
+
+  return await callOpenAI([{ role: 'user', content: prompt }]);
+}
+
+// ──────── Step 2: Generate 30-Day Plan ────────
+async function generateAIPlan(events, profile, analyticsNote) {
+  const eventsText = events.events.map(e => `- ${e.date} ${e.name}（${e.relevance}）`).join('\n');
+  const trendsText = events.trends.join('、');
+  const balanceText = events.topicBalance ? JSON.stringify(events.topicBalance) : '';
+  const prompt = `你是「${profile.account}」的 Instagram Reels 內容策略師。
+
+【品牌資料】
+帳號：${profile.account}
+受眾：${profile.audience}
+主軸（共六項）：${profile.pillars}
+品牌月份季節：${events.season}
+
+【本月節慶與時事】
+${eventsText}
+
+【本月社群趨勢】
+${trendsText}
+
+${analyticsNote ? `【上月數據建議】\n${analyticsNote}\n` : ''}
+${balanceText ? `【建議各主軸篇數分配】${balanceText}` : ''}
+
+請生成完整的 30 天 Reels 內容計畫。
+要求：
+1. 節慶日（如世界糧食日、中秋等）必須有對應內容。
+2. 每篇包含吸引人的 3 秒 Hook、3 段口播重點、個性化 CTA、格式建議、Instagram 說明文字（含 emoji，100 字以內）、3–5 個相關 hashtag。
+3. 格式使用：真人口播＋字卡、開箱＋旁白、問答互動、品牌故事等四種輪替。
+4. 週末（週六/日）用較輕鬆生活感主題。
+
+請輸出 JSON：
+{
+  "posts": [
+    {
+      "title": "完整標題",
+      "hook": "3秒 Hook 文案",
+      "category": "主軸分類",
+      "points": ["口播重點1", "口播重點2", "口播重點3"],
+      "cta": "結尾 CTA",
+      "format": "格式",
+      "festivalTie": "對應節慶名稱或 null",
+      "igCaption": "IG 說明文字（含 emoji）",
+      "hashtags": ["#tag1", "#tag2", "#tag3"]
+    }
+  ]
+}
+
+posts 必須恰好 30 個，按日期順序排列。`;
+
+  return await callOpenAI([{ role: 'user', content: prompt }]);
+}
+
+// ──────── Analytics: Generate Insight ────────
+async function analyzeMetrics() {
+  const rows = document.querySelectorAll('#analyticsTable tbody tr');
+  const data = {};
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td, th');
+    const name = cells[0].textContent.trim();
+    const reach   = parseFloat(cells[1].querySelector('input')?.value) || 0;
+    const saves   = parseFloat(cells[2].querySelector('input')?.value) || 0;
+    const comments= parseFloat(cells[3].querySelector('input')?.value) || 0;
+    if (name) data[name] = { reach, saves, comments };
+  });
+  state.analytics = data;
+  const summary = Object.entries(data)
+    .filter(([,v]) => v.reach > 0 || v.saves > 0 || v.comments > 0)
+    .map(([k,v]) => `${k}：觸及 ${v.reach}、收藏 ${v.saves}、留言 ${v.comments}`)
+    .join('；');
+  if (!summary) { $('insightBox').innerHTML='<p class="hint">請填入至少一個主軸的數據。</p>'; return; }
+
+  const key = localStorage.getItem('oa_key') || '';
+  if (!key) {
+    const best = Object.entries(data).sort((a,b)=>(b[1].saves+b[1].comments)-(a[1].saves+a[1].comments))[0];
+    const note = best ? `建議增加「${best[0]}」比例，該主軸互動表現最佳。` : '';
+    state.analyticsNote = note;
+    $('insightBox').innerHTML = `<div class="insight-card"><h4>📊 數據摘要</h4><p>${note || '數據已記錄，將在 AI 規劃時參考。'}</p></div>`;
+    return;
+  }
+
+  $('insightBox').innerHTML = `<div class="insight-card"><p>🧠 AI 分析中…</p></div>`;
+  try {
+    const result = await callOpenAI([{ role: 'user', content:
+      `以下是「人與地球優選市集」Instagram 上月各主軸表現數據：\n${summary}\n\n請分析：1. 哪些主軸表現最好？2. 下月應如何調整內容比例？3. 給出具體建議（繁體中文，三點以內）。輸出 JSON：{"insights":["...","..."],"note":"整合建議一段話"}` }]);
+    state.analyticsNote = result.note || '';
+    $('insightBox').innerHTML = `<div class="insight-card"><h4>📊 AI 分析建議</h4>${result.insights.map(i=>`<p>• ${i}</p>`).join('')}<p style="margin-top:8px;font-size:12px;color:#65737b">${result.note}</p></div>`;
+  } catch(e) {
+    $('insightBox').innerHTML = `<div class="insight-card"><p class="hint">${e.message}</p></div>`;
+  }
+}
+
+// ──────── Build Posts from Template ────────
+const templateConcepts = [
+['今年中秋，送一份有故事的好禮','你送的，不只是一盒禮。','節慶送禮',['每份選品背後都有被支持的人。','社企好物同時照顧人與地球。','讓心意也成為一次美好投票。'],'留言「%CTA%」了解更多。','真人口播＋字卡',null,'🎑 中秋快到了！今年試試送一份有故事的永續好禮，讓心意更有溫度。',['#中秋送禮','#永續好物','#人與地球優選市集']],
+['一盒格外果乾，如何減少農業浪費','長得不完美的水果，值得被珍惜。','惜食與友善農業',['外觀瑕疵不影響風味與營養。','加工延長食材生命，降低農損。','你的選擇讓浪費少一點點。'],'追蹤我們，看更多惜食好物。','開箱＋旁白',null,'🍊 那些「格外」的水果，其實超好吃！一起支持惜食加工品牌。',['#惜食','#友善農業','#格外品']],
+['什麼是社會企業？30 秒認識','不是做愛心，是用商業解決問題。','消費背後的社會影響力',['社企用商業模式回應真實困境。','你的消費是讓使命持續的收入。','選好物，也是選你想要的社會。'],'留言「%CTA%」取得延伸資源。','問答互動',null,'💡 你知道「社會企業」和一般公益有何不同嗎？30 秒幫你搞懂！',['#社會企業','#消費影響力','#永續消費']],
+['企業採購，為何選擇社企禮盒','一份員工禮，可以同時完成三件事。','節慶送禮與企業採購',['照顧員工節慶感受。','展現企業 ESG 與共融行動。','支持在地社企進入更多市場。'],'聯絡我們了解企業採購專案。','真人口播＋字卡',null,'🏢 企業年節送禮想更有意義？社企禮盒一次達成三個目標！',['#企業採購','#ESG','#社企禮盒']],
+['滴雞精背後的友善選擇','你喝的，從哪裡開始被好好對待？','永續好物選品與開箱',['從飼養到製作都值得被看見。','友善生產是品質，也是承諾。','送禮時選一份安心的在地心意。'],'限時優惠，把握時機。','開箱＋旁白',null,'🐔 一罐好滴雞精，從友善飼養開始。帶你認識背後的故事。',['#滴雞精','#友善畜產','#在地好物']],
+['一杯咖啡如何支持弱勢就業','這不只是一杯咖啡。','DEI共融與支持特殊需求社群',['工作參與帶來技能與自信。','穩定訂單支持培力持續運轉。','用欣賞職人的眼光看見每一杯。'],'追蹤我們，看更多共融故事。','品牌故事',null,'☕ 喝一杯咖啡，也能支持特殊需求工作者！這個品牌的故事讓人感動。',['#共融就業','#社企咖啡','#DEI']],
+['永續生活從一個選擇開始','你不用一次做到完美。','永續好物選品與開箱',['先挑一個真正需要的商品。','優先選耐用、友善與有來源的產品。','讓每次消費更靠近理想生活。'],'留言「%CTA%」取得推薦清單。','問答互動',null,'🌱 永續生活聽起來很難？其實從一個選擇開始就夠了！',['#永續生活','#友善消費','#每天一選擇']],
+['三種人最適合送永續禮盒','如果你的送禮對象是這三種人，先收藏。','節慶送禮與企業採購',['在意健康與品質的家人。','重視心意與風格的朋友。','希望送禮更有意義的企業主管。'],'留言「%CTA%」取得禮盒推薦。','真人口播＋字卡',null,'🎁 還在想送什麼？這三種收禮者最適合永續禮盒！',['#節慶送禮','#永續禮盒','#社企好物']],
+['買東西，也能支持身心障礙就業','你的一次購買，可能是一個工作機會。','DEI共融與支持特殊需款社群',['每件作品都是反覆練習的成果。','穩定訂單讓更多人有參與機會。','用平等眼光欣賞每位職人。'],'追蹤我們，看更多共融好物。','品牌故事',null,'❤️ 結帳的那一刻，你也在創造就業機會。一起認識這個品牌！',['#身心障礙就業','#共融','#社企好物']],
+['社企商品比較貴？先看這件事','價格背後，藏著看不見的成本。','消費背後的社會影響力',['有些成本是對土地的照顧。','有些成本是公平的工作機會。','選擇前先比價值，再比標價。'],'留言「%CTA%」了解更多。','問答互動',null,'💰 社企商品真的比較貴嗎？先看看你買到的是什麼！',['#永續消費','#社會企業','#消費覺察']],
+['好好吃完，是對土地的尊重','盤子裡剩的，從來不只是剩菜。','惜食與友善農業',['食物背後有土地、水與人的投入。','適量購買是減少浪費的起點。','讓每一餐都多一點珍惜。'],'追蹤我們，看更多惜食生活提案。','真人口播＋字卡',null,'🌾 每次把食物吃完，都是對土地說謝謝。你今天做到了嗎？',['#惜食','#食物浪費','#友善農業']],
+['一份好禮如何同時照顧人與地球','最好的禮物，不只讓人開心一天。','節慶送禮與企業採購',['看食材、生產與包裝的選擇。','看品牌關注的社會議題。','選能延續美好影響的日常好物。'],'預購禮盒，限量中。','開箱＋旁白',null,'🌍 好禮盒不只好看好吃，還能對人與地球更好！來看我們的選品邏輯。',['#永續送禮','#社企選品','#人與地球']],
+['這個品牌如何讓格外水果重生','不是醜水果，是被低估的好水果。','惜食與友善農業',['外觀不影響食材的好品質。','加工成果乾延長食材生命。','少一點浪費，多一點土地喘息。'],'留言「%CTA%」取得推薦。','品牌故事',null,'🍋 外觀不完美，風味卻超棒！這個惜食品牌讓格外水果重生。',['#格外品','#惜食加工','#永續選品']],
+['你買的不是果乾，是一次惜食行動','一口甜，也能讓浪費少一點。','消費背後的社會影響力',['讓可食農產被重新珍惜利用。','消費者的選擇讓改變持續。','每一包果乾都是一次正向投票。'],'追蹤我們，了解更多。','真人口播＋字卡',null,'✨ 你每次買惜食品，都在為農業永續投一票！',['#惜食消費','#永續行動','#食物不浪費']],
+['企業 ESG 怎麼做才有感？','你不是沒做 ESG，是還沒被看見。','消費背後的社會影響力',['從採購端開始串聯社企。','讓員工感受企業真實的價值關懷。','用可量化的成果讓 ESG 說清楚。'],'聯絡我們了解企業合作方案。','問答互動',null,'📊 ESG 報告做了一堆，員工感受到了嗎？從採購改變開始！',['#ESG','#企業永續','#社企採購']],
+['一分鐘認識什麼是「共融就業」','給機會，不是給同情。','DEI共融與支持特殊需求社群',['共融讓每個人有發揮的空間。','工作參與創造連結與自我價值。','你的購買是共融最直接的支持。'],'追蹤我們，看更多共融故事。','問答互動',null,'🙌 共融就業不只是愛心，是讓每個人都能工作的社會設計！',['#共融就業','#特殊需求','#社會設計']],
+['你的選擇正在影響誰？','結帳那一刻，你其實在投票。','消費背後的社會影響力',['支持社企讓使命持續運轉。','支持社福讓參與機會更多。','選好物，也是選你想要的社會。'],'留言「%CTA%」加入我們。','真人口播＋字卡',null,'🗳️ 你知道嗎？每一次購物都是一次社會投票！',['#消費影響力','#社企','#永續消費']],
+['週末慢活提案：從一杯茶開始','今天不趕行程，試著好好生活。','永續好物選品與開箱',['為自己沖一杯在地好茶。','選購季節食材的小確幸。','和重要的人分享不被打斷的時間。'],'追蹤我們，每週新品推薦。','品牌故事',null,'🍵 週末最美的事：一杯好茶 + 一段慢時光。推薦這款在地茶品給你。',['#週末慢活','#在地好茶','#永續生活']],
+['送禮不只是選商品，是選一句話','你希望這份禮物替你說什麼？','節慶送禮與企業採購',['謝謝你：選溫暖實用的好物。','我關心你：選健康生活提案。','我們一起更好：選有社會影響力的禮物。'],'留言「%CTA%」取得送禮指南。','真人口播＋字卡',null,'💌 禮物代替你說話。你想讓這份心意說什麼？',['#送禮指南','#心意禮物','#永續送禮']],
+['農業不只是種菜，是照顧一片土地','每一口食物背後，都有人在守護。','惜食與友善農業',['友善農法讓土地持續有生命力。','在地農產支持農夫與生態。','選購有來源的食材，從今天開始。'],'追蹤我們，認識在地農場。','品牌故事',null,'🌾 一口米飯，背後是農夫的用心和土地的生命力。',['#友善農業','#在地食材','#永續農法']],
+['共融工作坊：用手做出有價值的事','這雙手創造的，比你想像得更多。','DEI共融與支持特殊需求社群',['職能訓練讓潛力被看見。','每件產品都是真實的工作成果。','欣賞作品，就是最直接的支持。'],'追蹤我們，了解更多共融品牌。','開箱＋旁白',null,'👐 每件作品背後都有一雙努力的手，今天來認識這個共融品牌！',['#共融工作坊','#身心障礙','#職能培力']],
+['為什麼我們挑選社企商品？','因為好產品，不該只靠低價被看見。','永續好物選品與開箱',['社企用商業方法解決真實問題。','市集把好產品與對的人連起來。','讓每個品牌的努力被好好看見。'],'追蹤我們，看最新選品。','真人口播＋字卡',null,'🛍️ 我們怎麼挑選品牌？三個核心標準告訴你！',['#社企選品','#永續市集','#好物推薦']],
+['送禮給長輩，怎麼送得有品味？','今年別再只送制式月餅。','節慶送禮與企業採購',['選健康、方便分享的在地好物。','附上一張手寫卡，心意更完整。','告訴他：這份禮也支持了公益。'],'預購禮盒，限量中。','開箱＋旁白',null,'🎁 今年送長輩什麼好？健康＋有故事的在地好禮，讓他們感動！',['#節慶送禮','#在地好物','#送禮不踩雷']],
+['今天的你，想支持哪一種改變？','惜食、共融、友善農業，你選哪個？','消費背後的社會影響力',['留言選一個最在意的議題。','認識對應的社企好物。','讓下一次購物成為你的價值投票。'],'留言選你最在意的議題！','問答互動',null,'❓ 惜食 / 共融 / 友善農業，你最關心哪一個？留言告訴我！',['#互動貼文','#永續議題','#社企']],
+['一分鐘說完永續消費是什麼','不是買貴的，是買對的。','消費背後的社會影響力',['看來源：誰生產、在哪生產。','看影響：對人與環境的正負效益。','看價值：物品的全部成本與意義。'],'追蹤我們，每週一選品。','真人口播＋字卡',null,'⏱️ 1 分鐘搞懂永續消費：不是買貴的，是買對的！',['#永續消費','#消費覺察','#買對選擇']],
+['小農故事：從山上到你的餐桌','一包茶背後，是一個農家的堅持。','惜食與友善農業',['友善農法讓土地保持活力。','公平收購讓農夫能持續耕作。','每一口滋味都來自真實的故事。'],'留言「%CTA%」了解農場故事。','品牌故事',null,'🍃 這包茶從山上的農場來，背後有一個值得被聽見的故事。',['#小農故事','#友善農業','#台灣茶']],
+['如何讓節日禮物被記住更久？','有時候，是包裝裡的故事讓人感動。','節慶送禮與企業採購',['選一個有話可說的產品。','一句話說明它背後的故事。','讓禮物成為彼此交流的起點。'],'留言「%CTA%」取得選禮指南。','真人口播＋字卡',null,'💝 你知道讓禮物被記住的秘訣是什麼嗎？不是包裝，是故事！',['#送禮心意','#節慶禮物','#永續好禮']],
+['永續有沒有質感？有，而且很好看','有理念，當然也可以很有品味。','永續好物選品與開箱',['好設計讓送禮更有儀式感。','好產品讓收禮的人真心喜歡。','好故事讓心意被記得更久。'],'追蹤我們，看最新質感選品。','開箱＋旁白',null,'✨ 永續好物其實超有質感！這幾款選品讓人驚豔！',['#永續質感','#社企好物','#有品味送禮']],
+['每一筆訂單，都是給在地團隊的鼓勵','小小訂單，為什麼那麼重要？','消費背後的社會影響力',['訂單支持團隊的營運與創新。','市場回饋讓產品越做越好。','讓有理念的品牌持續被看見。'],'追蹤我們，支持在地社企。','品牌故事',null,'📦 你的每筆訂單，都是給在地社企團隊的一份力量！',['#在地支持','#社企','#消費影響力']],
+['好物和好事，可以同時發生','你不用在好品質和好理念之間二選一。','永續好物選品與開箱',['市集先替你篩選有品質的商品。','也替你找出有正向影響的故事。','你只要安心挑一份喜歡的好物。'],'留言「%CTA%」，取得本週推薦。','真人口播＋字卡',null,'🎯 好物 + 好事可以同時發生！這就是我們選品的核心精神。',['#社企選品','#永續市集','#好物好事']],
+['你的下一筆消費，想留下什麼？','不必做大事，也能讓世界往前一點。','消費背後的社會影響力',['從需要的日常好物開始。','選擇對人與地球更好的方案。','把每次消費，變成持續的正向影響。'],'追蹤「%ACCOUNT%」，一起選好物做好事。','真人口播＋字卡',null,'🌏 你的下一筆消費，想留下什麼樣的改變？',['#永續消費','#消費影響','#人與地球優選市集']]
+];
+
+function makeTemplatePosts() {
+  const start   = new Date(val('startDate') + 'T00:00:00');
+  if (Number.isNaN(start.valueOf())) return;
+  const cta     = val('cta') || '送禮';
+  const account = val('account') || '人與地球優選市集';
+  state.posts   = templateConcepts.map((c, i) => {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const weekend = [0,6].includes(d.getDay());
+    return buildPost({
+      title: c[0], hook: c[1], category: c[2],
+      points: c[3], cta: c[4].replace('%CTA%', cta),
+      format: c[5], festivalTie: c[6],
+      igCaption: c[7], hashtags: c[8]
+    }, i+1, d, weekend, account, cta);
+  });
+  state.mode = 'template';
+}
+
+function buildPost(data, day, d, weekend, account, cta) {
+  const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+  const iso  = d => d.toISOString().slice(0,10);
+  const post = {
+    day,
+    date:    iso(d),
+    display: fmt(d),
+    title:   data.title,
+    hook:    data.hook,
+    category:data.category,
+    points:  data.points,
+    cta:     (data.cta || `追蹤「${account}」，一起選好物做好事。`).replace('%CTA%', cta).replace('%ACCOUNT%', account),
+    format:  data.format || '真人口播＋字卡',
+    festivalTie: data.festivalTie || null,
+    igCaption: (data.igCaption || '') + `\n\n${(data.hashtags||[]).join(' ')}`,
+    hashtags: data.hashtags || [],
+    time:    weekend ? '10:30' : '20:30',
+    status:  state.mode === 'ai' ? 'AI 已規劃' : '模板'
+  };
+  post.gemini = buildGeminiPrompts(post, account, val('visualRef'));
+  return post;
+}
+
+function buildGeminiPrompts(p, brand, asset) {
+  return [
+    `請生成 9:16 直式 Instagram Reels 畫面，8 秒。主題：「${p.hook}」。台灣質感生活風格，自然光、真實人物、溫暖有情感；鏡頭從日常場景快速推近主角或物件，保留畫面中央下方空白供後製字幕使用。不要出現任何文字、Logo、水印、價格或錯誤包裝。`,
+    `請生成 9:16 直式產品 B-roll，8 秒。品牌：${brand}；內容主題：${p.title}。以細緻近景依序呈現「${p.points[0]}」的視覺意象，慢速推鏡、自然材質、乾淨背景、真實台灣生活感。不要出現文字、Logo、水印或可辨識的錯誤包裝。${asset?' 視覺素材要求：'+asset:''}`,
+    `請生成 9:16 直式故事畫面，8 秒。以溫暖紀實風呈現「${p.points[1]}」與「${p.points[2]}」：真實人物自然互動、手部工作或分享情境、柔和光線，傳達關心、共融與永續。不出現任何文字、Logo、水印、醫療標籤或煽情畫面。`,
+    `請生成 9:16 直式收尾畫面，8 秒。主題：${p.title}。在乾淨的木質或自然生活場景中，讓禮物／選品／溫暖互動成為畫面焦點；鏡頭緩慢拉遠，畫面中央預留空白，供後製加入 CTA：「${p.cta}」。不要在 AI 生成畫面中放文字、Logo、水印、價格或錯誤產品標示。`
+  ];
+}
+
+// ──────── Main AI Workflow ────────
+async function runAIPlan() {
+  const key = localStorage.getItem('oa_key') || '';
+  if (!key) { $('settingsModal').classList.add('open'); return; }
+  const startStr = val('startDate');
+  if (!startStr) { alert('請先設定首發日期。'); return; }
+  const start  = new Date(startStr + 'T00:00:00');
+  const year   = start.getFullYear();
+  const month  = start.getMonth() + 1;
+  const account= val('account') || '人與地球優選市集';
+  const cta    = val('cta') || '送禮';
+
+  state.generating = true;
+  $('liveGenerate').disabled = true;
+
+  const steps = [
+    { id: 's1', label: '🌐 查找本月時事與節慶…' },
+    { id: 's2', label: '🧠 AI 分析議題關聯性…' },
+    { id: 's3', label: '📝 生成 30 天內容計畫…' },
+    { id: 's4', label: '✅ 整理並渲染行事曆…' }
+  ];
+  showProgress(steps);
+  setStatus('● AI 規劃中…', 'orange');
+
+  try {
+    setStep('s1', 'active'); setStep('s2', 'pending');
+    const events = await fetchMonthEvents(year, month);
+    state.events = events;
+    setStep('s1', 'done'); setStep('s2', 'active');
+
+    // Small delay for UX
+    await new Promise(r => setTimeout(r, 400));
+    setStep('s2', 'done'); setStep('s3', 'active');
+
+    const profile = {
+      account, audience: val('audience'),
+      pillars: val('pillars'), visualRef: val('visualRef')
+    };
+    const plan = await generateAIPlan(events, profile, state.analyticsNote);
+    setStep('s3', 'done'); setStep('s4', 'active');
+
+    state.posts = plan.posts.map((p, i) => {
+      const d = new Date(start); d.setDate(start.getDate() + i);
+      const weekend = [0,6].includes(d.getDay());
+      return buildPost(p, i+1, d, weekend, account, cta);
+    });
+    state.mode = 'ai';
+    state.selected = 0;
+
+    renderAll(year, month, events.season);
+    setStep('s4', 'done');
+    setStatus(`● AI 規劃完成｜已整合 ${events.events.length} 個時事`, 'green');
+  } catch(e) {
+    Object.values({s1:'s1',s2:'s2',s3:'s3',s4:'s4'}).forEach(id => {
+      const el = document.querySelector(`[data-step="${id}"]`);
+      if (el && !el.classList.contains('step-done')) setStep(id, 'error');
+    });
+    setStatus('● AI 規劃失敗', 'orange');
+    alert(`生成失敗：${e.message}`);
+  } finally {
+    state.generating = false;
+    $('liveGenerate').disabled = false;
+    setTimeout(() => { $('progressBox').style.display='none'; }, 3000);
+  }
+}
+
+// ──────── Progress UI ────────
+function showProgress(steps) {
+  $('progressBox').style.display = 'block';
+  $('progressBox').innerHTML = `<div class="progress"><h4>⚡ AI 內容規劃進度</h4>${steps.map(s=>`<div class="step" data-step="${s.id}"><div class="step-icon step-pending" id="icon-${s.id}">○</div><span id="lbl-${s.id}">${s.label}</span></div>`).join('')}</div>`;
+}
+function setStep(id, state) {
+  const icon = $(`icon-${id}`);
+  if (!icon) return;
+  const map = { pending: ['step-pending','○'], active: ['step-active','⟳'], done: ['step-done','✓'], error: ['step-error','✗'] };
+  const [cls, sym] = map[state] || map.pending;
+  icon.className = `step-icon ${cls}`;
+  icon.textContent = sym;
+}
+
+// ──────── Render ────────
+function renderAll(year, month, season) {
+  const label = season || `${month} 月`;
+  $('calendarTitle').textContent = `${label} Reels 內容行事曆`;
+  $('total').textContent = state.posts.length;
+  $('frequency').textContent = '每日 1 支';
+  const festivals = state.posts.filter(p => p.festivalTie).length;
+  $('festivalCount').textContent = festivals || '—';
+
+  renderCalendar();
+  renderSchedule();
+  renderEvents();
+  renderIGDraft();
+}
+
+function renderCalendar() {
+  const grid = $('calendarGrid');
+  if (!state.posts.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">尚未生成內容。</div>';
+    return;
+  }
+  grid.innerHTML = state.posts.map((p,i) => `
+    <article class="day ${i===state.selected?'selected':''}" data-i="${i}">
+      <span class="num">Day ${p.day}</span><span class="date">${p.display}</span>
+      <div class="tag ${p.festivalTie?'festival':''}">${p.festivalTie||p.category}</div>
+      <h3>${p.title}</h3>
+      ${state.mode==='ai'?'<div class="ai-flag">⚡ AI</div>':''}
+    </article>`).join('');
+  grid.querySelectorAll('.day').forEach(x => x.onclick = () => {
+    state.selected = +x.dataset.i;
+    renderCalendar();
+    renderScript();
+    show('script');
+  });
+  renderScript();
+}
+
+function renderScript() {
+  const p = state.posts[state.selected];
+  if (!p) { $('scriptContent').innerHTML = '<div class="empty">請選擇日期。</div>'; return; }
+  $('scriptContent').innerHTML = `
+    <article class="script-card">
+      <div class="meta">
+        Day ${p.day} · ${p.date} · <span class="tag ${p.festivalTie?'festival':''}">${p.festivalTie||p.category}</span>
+        · ${p.format} · 🕐 ${p.time}
+        ${state.mode==='ai'?'<span class="badge badge-green">⚡ AI 時事生成</span>':'<span class="badge badge-blue">📋 模板</span>'}
+      </div>
+      <h3 style="margin:10px 0 4px">${p.title}</h3>
+      <div class="script-grid">
+        <section class="block"><h4>黃金 3 秒 Hook</h4><p>${p.hook}</p></section>
+        <section class="block"><h4>25–40 秒口播腳本</h4><ol>${p.points.map(x=>`<li>${x}</li>`).join('')}</ol></section>
+        <section class="block"><h4>收尾 CTA</h4><p>${p.cta}</p></section>
+        <section class="block"><h4>IG 說明文字</h4><p style="white-space:pre-wrap;font-size:12px">${p.igCaption}</p></section>
+      </div>
+      <section class="gemini">
+        <div class="gemini-head">
+          <h4>🎬 Gemini 影片提示詞｜4 個 8 秒片段</h4>
+          <button class="copy" id="copyAll">複製整組</button>
+        </div>
+        <p class="gemini-note">先上傳真實產品圖／Logo 作參考，再逐段生成；字幕與 CTA 請在剪輯工具後製。</p>
+        ${p.gemini.map((x,i)=>`<div class="prompt"><div class="prompt-title">片段 ${i+1}：${['Hook','產品特寫','故事畫面','CTA 收尾'][i]}<button class="copy" data-copy="${i}">複製</button></div><pre>${x}</pre></div>`).join('')}
+      </section>
+    </article>`;
+  $('copyAll').onclick = e => copyText(p.gemini.join('\n\n--- 下一片段 ---\n\n'), e.currentTarget);
+  document.querySelectorAll('[data-copy]').forEach(b => b.onclick = e => copyText(p.gemini[+e.currentTarget.dataset.copy], e.currentTarget));
+}
+
+function renderSchedule() {
+  $('scheduleBody').innerHTML = state.posts.map(p => `
+    <tr>
+      <td>${p.date}<br><small style="color:#77858c">${['日','一','二','三','四','五','六'][new Date(p.date+'T00:00:00').getDay()]}</small></td>
+      <td>${p.time}</td>
+      <td style="font-size:11px;color:#7a4800">${p.festivalTie||'—'}</td>
+      <td class="tbl-caption">${p.title}</td>
+      <td><div class="tag">${p.category.slice(0,8)}</div></td>
+      <td style="font-size:12px">${p.format}</td>
+      <td class="tbl-caption" style="max-width:180px">${p.igCaption.slice(0,60)}…</td>
+      <td><span class="status-badge ${p.status==='AI 已規劃'?'status-ai':'status-template'}">${p.status}</span></td>
+    </tr>`).join('');
+}
+
+function renderEvents() {
+  const ev = state.events;
+  if (!ev || !ev.events || !ev.events.length) {
+    $('eventsContent').innerHTML = '<div class="empty">請先執行「⚡ AI 時事規劃」以載入本月時事。</div>';
+    return;
+  }
+  $('eventsContent').innerHTML = `
+    <div class="alert alert-info">📅 共找到 ${ev.events.length} 個相關時事節慶 · 季節主題：${ev.season}</div>
+    <div style="margin-bottom:10px"><strong style="font-size:12px;color:#46545e">本月社群趨勢：</strong>
+    ${ev.trends.map(t=>`<span class="trend-chip">${t}</span>`).join('')}</div>
+    <div class="events-grid">
+      ${ev.events.map(e=>`
+        <div class="event-card">
+          <div class="event-date">${e.date}</div>
+          <div class="event-body">
+            <h4>${e.name}</h4>
+            <p>${e.description||e.relevance}</p>
+            <div class="score-bar">
+              <div class="score-fill" style="width:${e.score*10}%"></div>
+              <span class="score-label">關聯度 ${e.score}/10</span>
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderIGDraft() {
+  if (!state.posts.length) {
+    $('igContent').innerHTML = '<div class="empty">生成內容後可在此預覽 Instagram 格式貼文。</div>';
+    return;
+  }
+  $('igContent').innerHTML = `
+    <div class="alert alert-info">💡 以下為前 7 天 IG 草稿預覽，可直接複製至 Meta Business Suite 或手動發布。</div>
+    ${state.posts.slice(0,7).map(p=>`
+      <div class="ig-post">
+        <h4>Day ${p.day} · ${p.date} · ${p.time} · <span class="tag">${p.category}</span></h4>
+        <div style="display:flex;justify-content:flex-end"><button class="copy sm" onclick="copyText(this.parentElement.nextElementSibling.nextElementSibling.textContent,this)">複製貼文</button></div>
+        <div class="caption">${p.igCaption}</div>
+        <div class="hashtags">${p.hashtags.join(' ')}</div>
+      </div>`).join('')}`;
+}
+
+function buildAnalyticsTable() {
+  const pillars = val('pillars').split(',').map(s=>s.trim()).filter(Boolean);
+  const tbody = document.querySelector('#analyticsTable tbody');
+  tbody.innerHTML = pillars.map(p=>`
+    <tr>
+      <td style="font-size:12px;min-width:120px">${p.slice(0,10)}…</td>
+      <td><input type="number" min="0" placeholder="0" data-cat="${p}" data-metric="reach"></td>
+      <td><input type="number" min="0" placeholder="0" data-cat="${p}" data-metric="saves"></td>
+      <td><input type="number" min="0" placeholder="0" data-cat="${p}" data-metric="comments"></td>
+    </tr>`).join('');
+}
+
+// ──────── Notion Sync ────────
+async function syncToNotion() {
+  const token = localStorage.getItem('no_token') || '';
+  const db    = localStorage.getItem('no_db') || '';
+  if (!token || !db) { alert('請先在設定中填入 Notion Token 與 Database ID，並確認 server.js 正在執行（http://localhost:8787）。'); return; }
+  if (!state.posts.length) { alert('請先生成內容。'); return; }
+  try {
+    const res = await fetch('http://localhost:8787/api/notion/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, dbId: db, posts: state.posts })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || '同步失敗');
+    alert(`✅ 已成功同步 ${data.synced} 筆到 Notion！`);
+  } catch(e) {
+    alert(`Notion 同步失敗：${e.message}\n\n請確認 server.js 正在執行（執行 start.cmd）。`);
+  }
+}
+
+// ──────── CSV Export ────────
+function exportCSV() {
+  if (!state.posts.length) { alert('請先生成內容。'); return; }
+  const headers = ['Day','Date','Weekday','Time','Festival','Category','Title','Hook','Script1','Script2','Script3','CTA','Format','IG_Caption','Hashtags','GeminiPrompt1','GeminiPrompt2','GeminiPrompt3','GeminiPrompt4','Status'];
+  const days    = ['日','一','二','三','四','五','六'];
+  const q       = x => '"' + String(x||'').replaceAll('"','""') + '"';
+  const csv     = [headers, ...state.posts.map(p => [
+    p.day, p.date, days[new Date(p.date+'T00:00:00').getDay()], p.time,
+    p.festivalTie||'', p.category, p.title, p.hook,
+    p.points[0]||'', p.points[1]||'', p.points[2]||'',
+    p.cta, p.format, p.igCaption, p.hashtags.join(' '),
+    p.gemini[0]||'', p.gemini[1]||'', p.gemini[2]||'', p.gemini[3]||'',
+    p.status
+  ])].map(r => r.map(q).join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `30天-Reels-內容日曆-${val('startDate')||'export'}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ──────── Utilities ────────
+function copyText(value, button) {
+  const done = () => { const old=button.textContent; button.textContent='已複製'; setTimeout(()=>button.textContent=old,1200); };
+  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(value).then(done); return; }
+  const a = document.createElement('textarea'); a.value=value; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove(); done();
+}
+function show(name) {
+  document.querySelectorAll('.view').forEach(x => x.classList.toggle('active', x.id===name));
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x.dataset.view===name));
+}
+function setStatus(text, type='green') {
+  const el = $('liveStatus');
+  el.textContent = text;
+  el.className = `badge badge-${type === 'green' ? 'green' : type === 'orange' ? 'orange' : 'blue'}`;
+}
+
+// ──────── Init ────────
+function init() {
+  // Set default date to 1st of current month
+  const now = new Date();
+  $('startDate').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
+
+  loadSettings();
+  buildAnalyticsTable();
+
+  // Event listeners
+  // Gemini provider toggle
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) provEl.onchange = toggleProviderUI;
+  const tgkEl = document.getElementById('toggleGeminiKey');
+  if (tgkEl) tgkEl.onclick = function() {
+    const i = document.getElementById('geminiKey');
+    if (i) i.type = i.type === 'password' ? 'text' : 'password';
+  };
+  const gkEl2 = document.getElementById('geminiKey');
+  if (gkEl2) gkEl2.oninput = updateGeminiKeyStatus;
+  // End Gemini wiring
+    $('settingsBtn').onclick    = () => $('settingsModal').classList.add('open');
+  $('settingsCancel').onclick = () => $('settingsModal').classList.remove('open');
+  $('settingsSave').onclick   = () => { saveSettings(); $('settingsModal').classList.remove('open'); };
+  $('toggleKey').onclick      = () => {
+    const i = $('openaiKey'); i.type = i.type==='password' ? 'text' : 'password';
+  };
+  $('openaiKey').oninput = updateKeyStatus;
+
+  $('liveGenerate').onclick = runAIPlan;
+  $('generate').onclick     = () => { makeTemplatePosts(); renderAll(new Date(val('startDate')).getFullYear(), new Date(val('startDate')).getMonth()+1, ''); };
+  $('exportCSV').onclick    = exportCSV;
+  $('notionSyncBtn').onclick= syncToNotion;
+  $('analyzeBtn').onclick   = analyzeMetrics;
+
+  // Collapsibles
+  $('analyticsToggle').onclick = () => {
+    const b = $('analyticsBody'); const open = b.classList.toggle('open');
+    $('analyticsArrow').textContent = open ? '▼' : '▶';
+  };
+  $('integrationToggle').onclick = () => {
+    const b = $('integrationBody'); const open = b.classList.toggle('open');
+    $('integrationArrow').textContent = open ? '▼' : '▶';
+  };
+
+  document.querySelectorAll('.tab').forEach(x => x.onclick = () => show(x.dataset.view));
+
+  // Auto-update analytics table when pillars change
+  $('pillars').addEventListener('input', buildAnalyticsTable);
+
+  // Modal close on overlay click
+  $('settingsModal').onclick = e => { if (e.target === $('settingsModal')) $('settingsModal').classList.remove('open'); };
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
