@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>人與地球優選市集｜Reels AI 內容助理</title>
+  <style>
+    :root{--navy:#10253f;--teal:#007f7a;--mint:#dff5ec;--cream:#f7f4ee;--ink:#17202a;--line:#dce1e4;--soft:#eef7f6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--cream);color:var(--ink);font:15px/1.5 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
+    .app{max-width:1200px;margin:auto;padding:24px}
+    h1{font-size:24px;color:var(--navy);margin-bottom:8px}
+    p{font-size:13px;color:#666;margin-bottom:20px}
+    .layout{display:grid;grid-template-columns:300px 1fr;gap:20px}
+    .panel,.main{background:#fff;border-radius:12px;padding:20px;border:1px solid var(--line)}
+    .panel{height:fit-content;position:sticky;top:20px}
+    .panel h2,.main h2{font-size:16px;color:var(--navy);margin-bottom:12px}
+    label{display:block;font-size:12px;font-weight:700;margin:12px 0 4px;color:#555;text-transform:uppercase}
+    input,textarea,select{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;margin-bottom:8px}
+    textarea{resize:vertical;min-height:60px}
+    button{width:100%;padding:10px;border:0;border-radius:8px;font-weight:700;cursor:pointer;font-size:14px;margin-bottom:8px;transition:0.2s}
+    button.primary{background:var(--teal);color:#fff}
+    button.primary:hover{background:#006460}
+    button.primary:disabled{opacity:0.5;cursor:not-allowed}
+    button.secondary{background:#f0f0f0;color:var(--navy)}
+    button.secondary:hover{background:#e0e0e0}
+    .tabs{display:flex;gap:8px;border-bottom:2px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+    .tab{padding:8px 12px;background:transparent;border:none;cursor:pointer;font-weight:600;color:#666;border-bottom:3px solid transparent;margin-bottom:-2px}
+    .tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+    .view{display:none}
+    .view.active{display:block}
+    .grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+    .day{border:1px solid var(--line);padding:12px;border-radius:8px;background:#f9f9f9;min-height:120px;font-size:12px}
+    .day-num{font-weight:700;color:var(--teal)}
+    .day-title{font-weight:600;margin:6px 0 3px;line-height:1.3}
+    .day-cat{font-size:11px;color:#888}
+    .day-fest{font-size:10px;background:#ffe0e0;color:#c00;padding:2px 4px;border-radius:3px;display:inline-block;margin-bottom:4px}
+    .alert{padding:10px;border-radius:8px;margin-bottom:12px;font-size:13px}
+    .alert-err{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
+    .alert-ok{background:#d4efeb;color:#05635e;border:1px solid #80d4cc}
+    .empty{text-align:center;color:#999;padding:30px 10px}
+    .list-item{padding:10px;border-left:3px solid var(--teal);background:#f9f9f9;margin-bottom:8px;border-radius:4px;font-size:13px}
+    .list-item-date{font-weight:700;color:var(--navy)}
+    .list-item-title{margin-top:4px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.panel{position:static}.grid-5{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:600px){.grid-5{grid-template-columns:repeat(2,1fr)}.tabs{font-size:12px}.tab{padding:6px 8px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>🎬 Reels AI 內容助理</h1>
+  <p>人與地球優選市集｜快速生成 30 天內容日曆</p>
+
+  <div class="layout">
+    <!-- 左側設定 -->
+    <div class="panel">
+      <h2>⚙️ 設定</h2>
+      
+      <label>帳號名稱</label>
+      <input id="account" value="人與地球優選市集">
+      
+      <label>目標受眾</label>
+      <textarea id="audience">25–45 歲重視質感、送禮心意與永續生活的都會消費者</textarea>
+      
+      <label>內容主軸（逗號分隔）</label>
+      <textarea id="pillars">永續好物選品與開箱,社企品牌故事,DEI共融與支持特殊需求社群,節慶送禮與企業採購提案</textarea>
+      
+      <label>首發日期</label>
+      <input id="startDate" type="date">
+      
+      <label>Gemini API Key</label>
+      <input id="apiKey" type="password" placeholder="AQ... 或 AIza...">
+      
+      <button class="primary" id="generateBtn">⚡ 一鍵生成</button>
+      <button class="secondary" id="templateBtn">📋 用範本</button>
+      <button class="secondary" id="exportBtn">💾 匯出 CSV</button>
+      
+      <div id="status" style="font-size:12px;margin-top:12px;padding:8px;border-radius:6px;display:none"></div>
+    </div>
+
+    <!-- 右側內容 -->
+    <div class="main">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('calendar')">📅 日曆</button>
+        <button class="tab" onclick="switchTab('script')">📝 腳本</button>
+        <button class="tab" onclick="switchTab('schedule')">🗓 排程</button>
+        <button class="tab" onclick="switchTab('events')">🌐 時事</button>
+        <button class="tab" onclick="switchTab('drafts')">📸 草稿</button>
+      </div>
+
+      <!-- 📅 日曆 -->
+      <div id="calendar" class="view active">
+        <div class="grid-5" id="calendarGrid">
+          <div class="empty" style="grid-column:1/-1">點擊「⚡ 一鍵生成」開始</div>
+        </div>
+      </div>
+
+      <!-- 📝 腳本 -->
+      <div id="script" class="view">
+        <div id="scriptContent" class="empty">尚未生成</div>
+      </div>
+
+      <!-- 🗓 排程 -->
+      <div id="schedule" class="view">
+        <div id="scheduleContent" class="empty">尚未生成</div>
+      </div>
+
+      <!-- 🌐 時事 -->
+      <div id="events" class="view">
+        <div id="eventsContent" class="empty">尚未生成</div>
+      </div>
+
+      <!-- 📸 草稿 -->
+      <div id="drafts" class="view">
+        <div id="draftsContent" class="empty">尚未生成</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 全域狀態
+const data = {
+  posts: [],
+  selectedIdx: 0
+};
+
+// 節慶資料
+const festivals = {
+  '2026-09-10': '🎐 中秋節',
+  '2026-10-10': '🇹🇼 國慶日',
+  '2026-11-11': '🛍 雙十一購物節',
+  '2026-11-27': '🦃 感恩節',
+  '2026-12-01': '🎄 聖誕季開幕',
+  '2026-12-25': '🎅 聖誕節',
+  '2027-01-01': '✨ 新年新氣象',
+  '2027-02-01': '🧧 農曆新年',
+  '2027-03-08': '👩 婦女節',
+  '2027-04-04': '👶 兒童節',
+  '2027-05-01': '⚙ 勞動節'
+};
+
+// 簡單的狀態提示
+function showStatus(msg, type = 'ok') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = type === 'ok' ? 'alert alert-ok' : 'alert alert-err';
+  el.style.display = 'block';
+}
+
+// 頁籤切換
+function switchTab(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// 呼叫 Gemini API（超簡單版本）
+async function callGemini(prompt) {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  
+  if (!apiKey) {
+    throw new Error('請輸入 API Key');
+  }
+  
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 200, temperature: 0.7 }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error?.message || `HTTP ${response.status}`);
+  }
+
+  const result = await response.json();
+  return result.candidates[0].content.parts[0].text.trim();
+}
+
+// 一鍵生成
+async function generate() {
+  try {
+    showStatus('生成中...', 'ok');
+    
+    const account = document.getElementById('account').value || '人與地球優選市集';
+    const audience = document.getElementById('audience').value;
+    const pillars = document.getElementById('pillars').value.split(',').map(p => p.trim()).filter(p => p);
+    const startDate = document.getElementById('startDate').value;
+    
+    if (!startDate) throw new Error('請設定首發日期');
+    if (pillars.length === 0) throw new Error('請填入內容主軸');
+    
+    data.posts = [];
+    const start = new Date(startDate + 'T00:00:00');
+    
+    document.getElementById('generateBtn').disabled = true;
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      const dateStr = date.toISOString().slice(0, 10);
+      const pillar = pillars[i % pillars.length];
+      
+      const prompt = `為 Instagram Reels 生成 15-25 字標題。
+品牌: ${account}
+受眾: ${audience}
+主軸: ${pillar}
+日期: ${dateStr}${festivals[dateStr] ? '\n節慶: ' + festivals[dateStr] : ''}
+
+只回傳標題，不要加引號或說明。`;
+
+      try {
+        const title = await callGemini(prompt);
+        data.posts.push({
+          day: i + 1,
+          date: dateStr,
+          title: title.replace(/['"]/g, '').substring(0, 50),
+          pillar,
+          festival: festivals[dateStr] || ''
+        });
+      } catch (e) {
+        console.log(`Day ${i + 1} 失敗:`, e.message);
+        // 繼續下一個
+      }
+    }
+    
+    if (data.posts.length === 0) throw new Error('無法生成任何內容');
+    
+    renderAll();
+    showStatus(`✅ 成功生成 ${data.posts.length} 天內容`, 'ok');
+    
+  } catch (e) {
+    showStatus(`❌ 錯誤: ${e.message}`, 'err');
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+// 範本模式
+function template() {
+  try {
+    const startDate = document.getElementById('startDate').value;
+    if (!startDate) throw new Error('請設定首發日期');
+    
+    const account = document.getElementById('account').value || '人與地球優選市集';
+    const pillars = document.getElementById('pillars').value.split(',').map(p => p.trim()).filter(p => p);
+    
+    data.posts = [];
+    const start = new Date(startDate + 'T00:00:00');
+    
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      const dateStr = date.toISOString().slice(0, 10);
+      const pillar = pillars[i % pillars.length];
+      const fest = festivals[dateStr];
+      
+      data.posts.push({
+        day: i + 1,
+        date: dateStr,
+        title: fest ? fest.substring(2) + '：選好禮，一起永續前行' : `第 ${i + 1} 天：${pillar}`,
+        pillar,
+        festival: fest || ''
+      });
+    }
+    
+    renderAll();
+    showStatus(`✅ 成功生成 30 天內容（範本模式）`, 'ok');
+    
+  } catch (e) {
+    showStatus(`❌ 錯誤: ${e.message}`, 'err');
+  }
+}
+
+// 匯出 CSV
+function exportCSV() {
+  if (data.posts.length === 0) {
+    showStatus('請先生成內容', 'err');
+    return;
+  }
+  
+  const csv = [
+    ['日期', '標題', '分類'],
+    ...data.posts.map(p => [p.date, `"${p.title}"`, p.pillar])
+  ].map(row => row.join(',')).join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `reels-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+}
+
+// 渲染所有
+function renderAll() {
+  renderCalendar();
+  renderScript();
+  renderSchedule();
+  renderEvents();
+  renderDrafts();
+}
+
+// 📅 日曆
+function renderCalendar() {
+  const grid = document.getElementById('calendarGrid');
+  if (data.posts.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">尚未生成</div>';
+    return;
+  }
+  
+  grid.innerHTML = data.posts.map(p => `
+    <div class="day">
+      <div class="day-num">Day ${p.day}</div>
+      <div class="day-date">${p.date}</div>
+      ${p.festival ? `<div class="day-fest">${p.festival.split(' ')[0]}</div>` : ''}
+      <div class="day-title">${p.title}</div>
+      <div class="day-cat">${p.pillar}</div>
+    </div>
+  `).join('');
+}
+
+// 📝 腳本
+function renderScript() {
+  const cont = document.getElementById('scriptContent');
+  if (data.posts.length === 0) {
+    cont.innerHTML = '<div class="empty">尚未生成</div>';
+    return;
+  }
+  
+  const p = data.posts[data.selectedIdx];
+  const script = `【標題】${p.title}
+
+【CTA】馬上送禮
+
+【腳本】
+1. 開頭 3 秒吸睛
+2. 中段 5 秒說故事
+3. 結尾 2 秒行動
+
+【文案】
+${p.title}
+
+在「人與地球優選市集」，每一個選擇都是永續的實踐。
+立即選購，一起守護地球 💚`;
+  
+  cont.innerHTML = `
+    <select onchange="data.selectedIdx = this.value; renderScript()" style="width:100%;margin-bottom:12px">
+      ${data.posts.map((post, i) => `<option value="${i}">${post.date} - ${post.title.substring(0, 25)}</option>`).join('')}
+    </select>
+    <pre style="background:#f5f5f5;padding:12px;border-radius:8px;white-space:pre-wrap;word-wrap:break-word;font-size:12px">${script}</pre>
+    <button class="secondary" onclick="navigator.clipboard.writeText(\`${script}\`); alert('✓ 已複製')">📋 複製</button>
+  `;
+}
+
+// 🗓 排程
+function renderSchedule() {
+  const cont = document.getElementById('scheduleContent');
+  if (data.posts.length === 0) {
+    cont.innerHTML = '<div class="empty">尚未生成</div>';
+    return;
+  }
+  
+  cont.innerHTML = `<div class="alert alert-ok">共排定 ${data.posts.length} 篇，每日 20:30 發布</div>` +
+    data.posts.map(p => `
+      <div class="list-item">
+        <div class="list-item-date">${p.date} 20:30</div>
+        <div class="list-item-title">📱 ${p.title}</div>
+      </div>
+    `).join('');
+}
+
+// 🌐 時事
+function renderEvents() {
+  const cont = document.getElementById('eventsContent');
+  if (data.posts.length === 0) {
+    cont.innerHTML = '<div class="empty">尚未生成</div>';
+    return;
+  }
+  
+  const fests = data.posts.filter(p => p.festival);
+  cont.innerHTML = `<div class="alert alert-ok">共 ${fests.length} 個節慶時事</div>` +
+    (fests.length > 0 
+      ? fests.map(p => `
+          <div class="list-item">
+            <div class="list-item-date">${p.date}</div>
+            <div class="list-item-title">${p.festival}</div>
+          </div>
+        `).join('')
+      : '<div class="empty">無節慶</div>');
+}
+
+// 📸 草稿
+function renderDrafts() {
+  const cont = document.getElementById('draftsContent');
+  if (data.posts.length === 0) {
+    cont.innerHTML = '<div class="empty">尚未生成</div>';
+    return;
+  }
+  
+  cont.innerHTML = '<div class="alert alert-ok">近 5 天預覽</div>' +
+    data.posts.slice(0, 5).map(p => `
+      <div class="list-item">
+        <div class="list-item-date">${p.date}</div>
+        <div class="list-item-title">${p.title}</div>
+      </div>
+    `).join('');
+}
+
+// 初始化
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('startDate').value = today;
+  
+  document.getElementById('generateBtn').addEventListener('click', generate);
+  document.getElementById('templateBtn').addEventListener('click', template);
+  document.getElementById('exportBtn').addEventListener('click', exportCSV);
+});
+</script>
+</body>
+</html>
