@@ -363,13 +363,11 @@ function toggleProviderUI() {
   if (os) os.style.display = isGemini ? 'none' : '';
 }
 function updateGeminiKeyStatus() {
-  const el = document.getElementById('geminiKeyStatus');
-  const keyEl = document.getElementById('geminiKey');
-  if (!el || !keyEl) return;
-  const key = keyEl.value.trim();
-  if (!key) { el.className='api-status'; el.textContent='\u672a\u8a2d\u5b9a'; return; }
-  el.className = key.length >= 20 ? 'api-status ok' : 'api-status err';
-  el.textContent = key.length >= 20 ? '\u2705 \u5df2\u8a2d\u5b9a\uff08' + key.slice(0,8) + '...\uff09' : '\u274c \u8acb\u78ba\u8a8d Key \u5df2\u8907\u88fd\u5b8c\u6574';
+  const isValidFormat = key.startsWith('AIza') || key.startsWith('AQ');
+  el.className = (isValidFormat && key.length >= 20) ? 'api-status ok' : 'api-status err';
+  el.textContent = (isValidFormat && key.length >= 20) 
+    ? `✅ 已設定（${key.slice(0,8)}...）` 
+    : '❌ 請確認 Key 已複製完整（長度 ≥20）';
 }
 function saveSettings() {
   const provEl = document.getElementById('aiProvider');
