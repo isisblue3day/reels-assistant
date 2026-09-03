@@ -362,13 +362,71 @@ function toggleProviderUI() {
   if (gs) gs.style.display = isGemini ? '' : 'none';
   if (os) os.style.display = isGemini ? 'none' : '';
 }
+// ✅ 修正版本 1：updateGeminiKeyStatus
 function updateGeminiKeyStatus() {
+  const el = document.getElementById('geminiKeyStatus');
+  const keyEl = document.getElementById('geminiKey');
+  
+  if (!el || !keyEl) return;
+  
+  const key = keyEl.value.trim();
+  
+  if (!key) {
+    el.className = 'api-status';
+    el.textContent = '未設定';
+    return;
+  }
+  
+  // 接受 AIza 或 AQ 開頭
   const isValidFormat = key.startsWith('AIza') || key.startsWith('AQ');
   el.className = (isValidFormat && key.length >= 20) ? 'api-status ok' : 'api-status err';
-  el.textContent = (isValidFormat && key.length >= 20) 
-    ? `✅ 已設定（${key.slice(0,8)}...）` 
+  el.textContent = (isValidFormat && key.length >= 20)
+    ? `✅ 已設定（${key.slice(0, 8)}...）`
     : '❌ 請確認 Key 已複製完整（長度 ≥20）';
 }
+
+// ✅ 修正版本 2：updateKeyStatus（OpenAI 金鑰驗證）
+function updateKeyStatus() {
+  const keyEl = document.getElementById('openaiKey');
+  const el = document.getElementById('keyStatus');
+  
+  if (!el || !keyEl) return;
+  
+  const key = keyEl.value.trim();
+  
+  if (!key) {
+    el.className = 'api-status';
+    el.textContent = '未設定';
+    return;
+  }
+  
+  el.className = key.startsWith('sk-') && key.length >= 20 ? 'api-status ok' : 'api-status err';
+  el.textContent = key.startsWith('sk-') && key.length >= 20
+    ? `✅ 已設定（${key.slice(0, 8)}...）`
+    : '❌ 格式不正確（須以 sk- 開頭）';
+}
+
+// ✅ 修正版本 3：saveSettings（修復後並驗證）
+function saveSettings() {
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) localStorage.setItem('ai_provider', provEl.value);
+  
+  const gkEl = document.getElementById('geminiKey');
+  if (gkEl) localStorage.setItem('gemini_key', gkEl.value.trim());
+  
+  localStorage.setItem('oa_key', document.getElementById('openaiKey').value.trim());
+  localStorage.setItem('no_token', document.getElementById('notionToken').value.trim());
+  localStorage.setItem('no_db', document.getElementById('notionDbId').value.trim());
+  localStorage.setItem('meta_token', document.getElementById('metaToken').value.trim());
+  localStorage.setItem('ig_account', document.getElementById('igAccountId').value.trim());
+  
+  // 儲存後立即驗證
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+  
+  alert('✅ 設定已儲存！');
+}
+
 function saveSettings() {
   const provEl = document.getElementById('aiProvider');
   if (provEl) localStorage.setItem('ai_provider', provEl.value);
