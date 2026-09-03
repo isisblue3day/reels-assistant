@@ -362,7 +362,16 @@ function toggleProviderUI() {
   if (gs) gs.style.display = isGemini ? '' : 'none';
   if (os) os.style.display = isGemini ? 'none' : '';
 }
-// ✅ 修正版本 1：updateGeminiKeyStatus
+function updateGeminiKeyStatus() {
+// ============================================================
+// 修正版本：Reels AI 內容助理 v3 - API Key 驗證 & 設定管理
+// ============================================================
+
+// ──────── Shortcuts ────────
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+
+// ──────── FIXED: updateGeminiKeyStatus ────────
 function updateGeminiKeyStatus() {
   const el = document.getElementById('geminiKeyStatus');
   const keyEl = document.getElementById('geminiKey');
@@ -377,7 +386,7 @@ function updateGeminiKeyStatus() {
     return;
   }
   
-  // 接受 AIza 或 AQ 開頭
+  // ✅ 接受 AIza 或 AQ 開頭，長度 ≥20
   const isValidFormat = key.startsWith('AIza') || key.startsWith('AQ');
   el.className = (isValidFormat && key.length >= 20) ? 'api-status ok' : 'api-status err';
   el.textContent = (isValidFormat && key.length >= 20)
@@ -385,7 +394,7 @@ function updateGeminiKeyStatus() {
     : '❌ 請確認 Key 已複製完整（長度 ≥20）';
 }
 
-// ✅ 修正版本 2：updateKeyStatus（OpenAI 金鑰驗證）
+// ──────── FIXED: updateKeyStatus ────────
 function updateKeyStatus() {
   const keyEl = document.getElementById('openaiKey');
   const el = document.getElementById('keyStatus');
@@ -406,7 +415,50 @@ function updateKeyStatus() {
     : '❌ 格式不正確（須以 sk- 開頭）';
 }
 
-// ✅ 修正版本 3：saveSettings（修復後並驗證）
+// ──────── FIXED: toggleProviderUI ────────
+function toggleProviderUI() {
+  const provEl = document.getElementById('aiProvider');
+  if (!provEl) return;
+  
+  const isGemini = provEl.value === 'gemini';
+  const gs = document.getElementById('geminiSection');
+  const os = document.getElementById('openaiSection');
+  
+  if (gs) gs.style.display = isGemini ? '' : 'none';
+  if (os) os.style.display = isGemini ? 'none' : '';
+}
+
+// ──────── FIXED: loadSettings ────────
+function loadSettings() {
+  const prov = localStorage.getItem('ai_provider') || 'gemini';
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) provEl.value = prov;
+  
+  toggleProviderUI();
+  
+  const gkEl = document.getElementById('geminiKey');
+  if (gkEl) gkEl.value = localStorage.getItem('gemini_key') || '';
+  
+  const okEl = document.getElementById('openaiKey');
+  if (okEl) okEl.value = localStorage.getItem('oa_key') || '';
+  
+  const ntEl = document.getElementById('notionToken');
+  if (ntEl) ntEl.value = localStorage.getItem('no_token') || '';
+  
+  const ndEl = document.getElementById('notionDbId');
+  if (ndEl) ndEl.value = localStorage.getItem('no_db') || '';
+  
+  const mtEl = document.getElementById('metaToken');
+  if (mtEl) mtEl.value = localStorage.getItem('meta_token') || '';
+  
+  const igEl = document.getElementById('igAccountId');
+  if (igEl) igEl.value = localStorage.getItem('ig_account') || '';
+  
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+}
+
+// ──────── FIXED: saveSettings ────────
 function saveSettings() {
   const provEl = document.getElementById('aiProvider');
   if (provEl) localStorage.setItem('ai_provider', provEl.value);
@@ -414,11 +466,20 @@ function saveSettings() {
   const gkEl = document.getElementById('geminiKey');
   if (gkEl) localStorage.setItem('gemini_key', gkEl.value.trim());
   
-  localStorage.setItem('oa_key', document.getElementById('openaiKey').value.trim());
-  localStorage.setItem('no_token', document.getElementById('notionToken').value.trim());
-  localStorage.setItem('no_db', document.getElementById('notionDbId').value.trim());
-  localStorage.setItem('meta_token', document.getElementById('metaToken').value.trim());
-  localStorage.setItem('ig_account', document.getElementById('igAccountId').value.trim());
+  const okEl = document.getElementById('openaiKey');
+  if (okEl) localStorage.setItem('oa_key', okEl.value.trim());
+  
+  const ntEl = document.getElementById('notionToken');
+  if (ntEl) localStorage.setItem('no_token', ntEl.value.trim());
+  
+  const ndEl = document.getElementById('notionDbId');
+  if (ndEl) localStorage.setItem('no_db', ndEl.value.trim());
+  
+  const mtEl = document.getElementById('metaToken');
+  if (mtEl) localStorage.setItem('meta_token', mtEl.value.trim());
+  
+  const igEl = document.getElementById('igAccountId');
+  if (igEl) localStorage.setItem('ig_account', igEl.value.trim());
   
   // 儲存後立即驗證
   updateGeminiKeyStatus();
@@ -426,6 +487,67 @@ function saveSettings() {
   
   alert('✅ 設定已儲存！');
 }
+
+// ──────── Event Listeners 初始化 ────────
+function initSettings() {
+  // 載入已儲存的設定
+  loadSettings();
+  
+  // 綁定設定按鈕
+  const settingsBtn = document.getElementById('settingsBtn');
+  if (settingsBtn) {
+    settingsBtn.onclick = () => {
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.classList.add('open');
+    };
+  }
+  
+  // 綁定 AI Provider 切換
+  const provEl = document.getElementById('aiProvider');
+  if (provEl) provEl.onchange = toggleProviderUI;
+  
+  // 綁定 API Key 輸入即時驗證
+  const gkEl = document.getElementById('geminiKey');
+  if (gkEl) gkEl.oninput = updateGeminiKeyStatus;
+  
+  const okEl = document.getElementById('openaiKey');
+  if (okEl) okEl.oninput = updateKeyStatus;
+  
+  // 綁定密碼顯示/隱藏切換
+  const toggleGk = document.getElementById('toggleGeminiKey');
+  if (toggleGk) {
+    toggleGk.onclick = () => {
+      if (gkEl) gkEl.type = gkEl.type === 'password' ? 'text' : 'password';
+    };
+  }
+  
+  const toggleOk = document.getElementById('toggleKey');
+  if (toggleOk) {
+    toggleOk.onclick = () => {
+      if (okEl) okEl.type = okEl.type === 'password' ? 'text' : 'password';
+    };
+  }
+  
+  // 綁定設定保存與取消
+  const settingsSave = document.getElementById('settingsSave');
+  if (settingsSave) {
+    settingsSave.onclick = () => {
+      saveSettings();
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.classList.remove('open');
+    };
+  }
+  
+  const settingsCancel = document.getElementById('settingsCancel');
+  if (settingsCancel) {
+    settingsCancel.onclick = () => {
+      const modal = document.getElementById('settingsModal');
+      if (modal) modal.classList.remove('open');
+      loadSettings(); // 重新載入，放棄未保存的更改
+    };
+  }
+}
+
 
 function saveSettings() {
   const provEl = document.getElementById('aiProvider');
@@ -982,7 +1104,8 @@ function setStatus(text, type='green') {
 }
 
 // ──────── Init ────────
-function init() {
+function init() {initSettings(); // 初始化設定
+
   // Set default date to 1st of current month
   const now = new Date();
   $('startDate').value = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-01`;
