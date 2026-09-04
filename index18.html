@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>人與地球優選市集｜Reels AI 內容助理 v3.7 (混合模式)</title>
+  <style>
+    :root{--navy:#10253f;--teal:#007f7a;--mint:#dff5ec;--cream:#f7f4ee;--ink:#17202a;--line:#dce1e4;--soft:#eef7f6;--warn:#fff3cd;--danger:#f8d7da}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
+    .app{max-width:1400px;margin:auto;padding:24px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{width:44px;height:44px;border-radius:13px;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px}
+    .brand h1{font-size:20px;margin:0;color:var(--navy)}.brand p{margin:0;color:#61707c;font-size:12px}
+    .badge{padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700;color:#05635e;background:var(--mint)}
+    .layout{display:grid;grid-template-columns:340px 1fr;gap:18px}
+    .panel,.workspace{background:#fff;border:1px solid var(--line);border-radius:18px}
+    .panel{padding:18px;height:max-content;position:sticky;top:14px}
+    .workspace{padding:22px}
+    label{display:block;font-size:11px;font-weight:700;margin:12px 0 4px;color:#46545e;text-transform:uppercase}
+    input,textarea,select{font:inherit;width:100%;padding:8px 10px;border:1px solid #cbd4d9;border-radius:9px;background:#fff;color:var(--ink)}
+    textarea{min-height:60px;resize:vertical}
+    button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 13px;cursor:pointer;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px}
+    button.accent{background:var(--teal)}
+    button.secondary{background:#e5eff0;color:var(--navy)}
+    button:hover{filter:brightness(.94)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .buttons{display:grid;gap:7px;margin-top:16px}
+    .section-sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+    .hint{font-size:11px;color:#65737b;margin:5px 0 0}
+    .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px}
+    .tab{cursor:pointer;color:#5f6b72;font-size:13px;padding:7px 12px;background:transparent}
+    .tab.active{color:var(--teal);border-bottom:3px solid var(--teal)}
+    .view{display:none}.view.active{display:block}
+    .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+    .metric{padding:12px;background:var(--soft);border-radius:12px;text-align:center}
+    .metric strong{display:block;font-size:18px;color:var(--navy)}.metric span{font-size:11px;color:#55646d}
+    .calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .day{border:1px solid var(--line);border-radius:12px;padding:10px;min-height:130px;cursor:pointer;background:#fff;transition:box-shadow .2s}
+    .day:hover,.day.selected{border-color:var(--teal);box-shadow:0 0 0 2px #d4efeb}
+    .day .num{font-size:11px;color:var(--teal);font-weight:800}
+    .day h3{font-size:12px;line-height:1.35;margin:6px 0 0;color:var(--navy)}
+    .tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:6px;background:#edf2f3;color:#44545c;margin-top:6px}
+    .script-card{border:1px solid var(--line);border-radius:14px;padding:18px}
+    .block{background:#f8fbfb;border-radius:11px;padding:12px;margin-bottom:12px}
+    .block h4{font-size:11px;text-transform:uppercase;color:var(--teal);margin:0 0 6px}
+    .block p{margin:0}.block ol{margin:0;padding-left:18px}
+    .schedule-table{width:100%;border-collapse:collapse;font-size:13px}
+    .schedule-table th,.schedule-table td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+    .schedule-table th{font-size:11px;text-transform:uppercase;color:#607078}
+    .empty{padding:25px;text-align:center;color:#63717a}
+    .alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;border:1px solid}
+    .alert-info{background:#d4efeb;color:#05635e;border-color:#a3d9d3}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:18px;padding:28px;max-width:500px;width:94%;max-height:90vh;overflow-y:auto}
+    .modal h3{margin:0 0 16px;color:var(--navy)}
+    .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+    .progress{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px;background:#fff}
+    .progress h4{margin:0 0 10px;font-size:14px;color:var(--navy)}
+    .step{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px}
+    .step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .step-active{background:#fff3cd;color:#7a4800}.step-done{background:#d4efeb;color:#05635e}
+    .diagnostic{background:#f8fbfb;border:1px solid #cbd4d9;border-radius:9px;padding:12px;font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto;color:#2b3940}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.calendar{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">PP</div>
+      <div>
+        <h1>人與地球優選市集｜Reels AI 內容助理 v3.7</h1>
+        <p>📅 每月自動更新 · 時事 + 模板混合 · 智能內容規劃</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="badge" id="liveStatus">● 就緒</div>
+      <button id="settingsBtn" style="background:transparent;color:var(--navy);border:1px solid var(--line);font-size:17px;padding:6px">⚙️</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>帳號設定</h2>
+      <label for="account">帳號名稱</label>
+      <input id="account" value="人與地球優選市集">
+      <label for="audience">目標受眾</label>
+      <textarea id="audience">25–45 歲重視質感、送禮心意與永續生活的都會消費者</textarea>
+      <label for="pillars">內容主軸（逗號分隔）</label>
+      <textarea id="pillars">永續好物選品,社企品牌故事,惜食與友善農業,DEI共融,節慶送禮,消費影響力</textarea>
+      <label for="startDate">本月首發日期</label>
+      <input id="startDate" type="date">
+
+      <hr class="section-sep">
+
+      <div class="buttons">
+        <button id="generateBtn" class="accent">⚡ 生成本月內容</button>
+        <button id="exportCSV" class="secondary">↓ 匯出 CSV</button>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:16px">
+        <h2 id="monthTitle" style="margin:0">月度內容規劃</h2>
+        <div class="overview" style="margin:0;grid-template-columns:repeat(3,1fr);gap:8px;flex:1">
+          <div class="metric"><strong id="total">—</strong><span>篇數</span></div>
+          <div class="metric"><strong id="freq">—</strong><span>頻率</span></div>
+          <div class="metric"><strong id="cats">—</strong><span>主軸</span></div>
+        </div>
+      </div>
+
+      <div id="progressBox" style="display:none;margin-bottom:16px"></div>
+      <div id="diagnosticBox" style="display:none;margin-bottom:16px"></div>
+
+      <nav class="tabs">
+        <button class="tab active" data-view="calendar">📅 行事曆</button>
+        <button class="tab" data-view="script">📝 腳本</button>
+        <button class="tab" data-view="schedule">🗓 排程</button>
+        <button class="tab" data-view="ig">📸 IG 草稿</button>
+      </nav>
+
+      <div id="calendar" class="view active">
+        <div class="calendar" id="calendarGrid">
+          <div class="empty" style="grid-column:1/-1">點擊「⚡ 生成本月內容」開始</div>
+        </div>
+      </div>
+
+      <div id="script" class="view">
+        <div id="scriptContent" class="empty">請從行事曆選擇一天</div>
+      </div>
+
+      <div id="schedule" class="view">
+        <table class="schedule-table">
+          <thead><tr><th>日期</th><th>時段</th><th>標題</th><th>主軸</th><th>IG 說明</th></tr></thead>
+          <tbody id="scheduleBody"><tr><td colspan="5" class="empty">未生成</td></tr></tbody>
+        </table>
+      </div>
+
+      <div id="ig" class="view">
+        <div id="igContent" class="empty">貼文預覽</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ API 設定</h3>
+    <div class="alert alert-info">ℹ️ 輸入 Gemini API Key 以啟用 AI 時事感知。<a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:#007f7a">免費申請</a></div>
+    <label>Gemini API Key</label>
+    <div style="display:flex;gap:6px">
+      <input type="password" id="geminiKey" placeholder="AIza...">
+      <button class="secondary" id="toggleKey" style="padding:8px 10px">👁</button>
+    </div>
+    <div class="modal-footer">
+      <button class="secondary" id="settingsCancel">取消</button>
+      <button id="settingsSave">💾 儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   人與地球優選市集 v3.7 混合模式
+   策略：模板 + AI 時事替換
+   ============================================================ */
+
+const state = {
+  posts: [],
+  selected: 0,
+  diagnostics: []
+};
+
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+
+function log(msg) {
+  state.diagnostics.push(`[${new Date().toLocaleTimeString()}] ${msg}`);
+  console.log(msg);
+}
+
+function showDiagnostic() {
+  const box = $('diagnosticBox');
+  if (state.diagnostics.length === 0) {
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+  box.innerHTML = `<div class="alert alert-info"><strong>🔍 診斷</strong><div class="diagnostic">${state.diagnostics.slice(-12).join('<br>')}</div></div>`;
+}
+
+// ──────── 模板架構（不變的部分） ────────
+const frameworks = [
+  { hook: '黃金 3 秒 Hook', points: 3, format: '真人口播＋字卡', baseCategory: '永續好物選品' },
+  { hook: '格外產品的故事', points: 3, format: '開箱＋旁白', baseCategory: '惜食與友善農業' },
+  { hook: '社企 101 課程', points: 3, format: '問答互動', baseCategory: '消費影響力' },
+  { hook: '企業採購提案', points: 3, format: '真人口播＋字卡', baseCategory: '節慶送禮' },
+  { hook: '友善生產故事', points: 3, format: '開箱＋旁白', baseCategory: '永續好物選品' },
+  { hook: '共融就業介紹', points: 3, format: '品牌故事', baseCategory: 'DEI共融' },
+  { hook: '永續生活入門', points: 3, format: '問答互動', baseCategory: '永續好物選品' },
+  { hook: '禮盒推薦', points: 3, format: '真人口播＋字卡', baseCategory: '節慶送禮' },
+  { hook: '身障就業支持', points: 3, format: '品牌故事', baseCategory: 'DEI共融' },
+  { hook: '價格背後的故事', points: 3, format: '問答互動', baseCategory: '消費影響力' },
+  { hook: '食物浪費議題', points: 3, format: '真人口播＋字卡', baseCategory: '惜食與友善農業' },
+  { hook: '永續好禮選擇', points: 3, format: '開箱＋旁白', baseCategory: '節慶送禮' },
+  { hook: '格外水果重生', points: 3, format: '品牌故事', baseCategory: '惜食與友善農業' },
+  { hook: '惜食行動倡議', points: 3, format: '真人口播＋字卡', baseCategory: '消費影響力' },
+  { hook: 'ESG 企業實踐', points: 3, format: '問答互動', baseCategory: '消費影響力' },
+  { hook: '共融工作定義', points: 3, format: '品牌故事', baseCategory: 'DEI共融' },
+  { hook: '消費即投票', points: 3, format: '真人口播＋字卡', baseCategory: '消費影響力' },
+  { hook: '慢活提案', points: 3, format: '品牌故事', baseCategory: '永續好物選品' },
+  { hook: '送禮心意表達', points: 3, format: '真人口播＋字卡', baseCategory: '節慶送禮' },
+  { hook: '農業與土地', points: 3, format: '品牌故事', baseCategory: '惜食與友善農業' },
+  { hook: '職能培力故事', points: 3, format: '開箱＋旁白', baseCategory: 'DEI共融' },
+  { hook: '社企選品標準', points: 3, format: '真人口播＋字卡', baseCategory: '永續好物選品' },
+  { hook: '長輩送禮指南', points: 3, format: '開箱＋旁白', baseCategory: '節慶送禮' },
+  { hook: '互動投票貼文', points: 3, format: '問答互動', baseCategory: '消費影響力' },
+  { hook: '永續消費 101', points: 3, format: '真人口播＋字卡', baseCategory: '永續好物選品' },
+  { hook: '小農故事', points: 3, format: '品牌故事', baseCategory: '惜食與友善農業' },
+  { hook: '禮物記憶秘訣', points: 3, format: '真人口播＋字卡', baseCategory: '節慶送禮' },
+  { hook: '永續質感生活', points: 3, format: '開箱＋旁白', baseCategory: '永續好物選品' },
+  { hook: '訂單力量倡議', points: 3, format: '品牌故事', baseCategory: '消費影響力' },
+  { hook: '好物好事共存', points: 3, format: '真人口播＋字卡', baseCategory: '永續好物選品' }
+];
+
+// ──────── 調用 Gemini 生成本月內容 ────────
+async function callGemini(prompt) {
+  const key = localStorage.getItem('gemini_key') || '';
+  if (!key) throw new Error('請設定 API Key');
+
+  log(`📡 調用 Gemini API...`);
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash-lite:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 1.0, maxOutputTokens: 800 }
+      })
+    }
+  );
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const msg = err?.error?.message || res.statusText;
+    throw new Error(msg);
+  }
+
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) throw new Error('AI 回傳空白');
+  return text;
+}
+
+async function generateMonthContent() {
+  const startStr = val('startDate');
+  if (!startStr) {
+    alert('請先設定首發日期');
+    return;
+  }
+
+  const start = new Date(startStr + 'T00:00:00');
+  const month = start.getMonth() + 1;
+  const year = start.getFullYear();
+  const account = val('account');
+  const pillars = val('pillars').split(',').map(p => p.trim());
+
+  state.generating = true;
+  state.diagnostics = [];
+  log(`🚀 生成 ${year} 年 ${month} 月內容`);
+
+  const steps = [
+    { id: 's1', label: '🌐 查詢本月時事…' },
+    { id: 's2', label: '🧠 AI 強化內容…' },
+    { id: 's3', label: '✅ 整理行事曆…' }
+  ];
+  $('progressBox').style.display = 'block';
+  $('progressBox').innerHTML = `<div class="progress"><h4>⚡ 內容生成進度</h4>${steps.map(s => `<div class="step"><div class="step-icon step-active" id="i-${s.id}">○</div><span id="l-${s.id}">${s.label}</span></div>`).join('')}</div>`;
+
+  try {
+    // 第一步：查詢時事
+    const eventPrompt = `2026年${month}月台灣的重要節慶、時事新聞、購物旺季有哪些？用「節日名稱：時事摘要」的格式列舉 3-5 個，簡短扼要。`;
+    const eventText = await callGemini(eventPrompt);
+    log(`✅ 獲得時事資訊`);
+    $('i-s1').textContent = '✓';
+    $('i-s1').className = 'step-icon step-done';
+
+    await new Promise(r => setTimeout(r, 500));
+
+    // 第二步：強化內容主軸
+    $('i-s2').textContent = '⟳';
+    const enhancePrompt = `「${account}」的內容主軸：${pillars.join('、')}
+本月重點事項：${eventText}
+
+請根據上述，用 JSON 格式列舉 30 個 Reels 的主軸調整建議（只需 title 和 keyword 兩個字段，各 3-5 字），不超過50字解釋為什麼調整：
+{"adjustments": [{"title": "...", "keyword": "..."}]}`;
+    
+    let adjustments = [];
+    try {
+      const adjText = await callGemini(enhancePrompt);
+      const clean = adjText.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+      const parsed = JSON.parse(clean);
+      adjustments = parsed.adjustments || [];
+      log(`✅ 獲得 ${adjustments.length} 個內容調整建議`);
+    } catch (e) {
+      log(`⚠️ JSON 解析失敗，使用默認模板: ${e.message}`);
+      adjustments = [];
+    }
+
+    $('i-s2').textContent = '✓';
+    $('i-s2').className = 'step-icon step-done';
+
+    await new Promise(r => setTimeout(r, 400));
+
+    // 第三步：組合最終內容
+    $('i-s3').textContent = '⟳';
+    state.posts = frameworks.map((frame, i) => {
+      const adj = adjustments[i] || {};
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const weekend = [0, 6].includes(d.getDay());
+
+      return {
+        day: i + 1,
+        date: d.toISOString().slice(0, 10),
+        display: `${d.getMonth()+1}/${d.getDate()}`,
+        title: adj.title ? `${frame.hook} · ${adj.title}` : frame.hook,
+        category: adj.keyword || frame.baseCategory,
+        format: frame.format,
+        time: weekend ? '10:30' : '20:30',
+        igCaption: `${frame.hook}\n\n時間：${d.toLocaleDateString('zh-TW')} ${frame.format}${adj.keyword ? ` · 今月主題：${adj.keyword}` : ''}`
+      };
+    });
+
+    log(`✅ 生成完成 (30 篇)`);
+    $('i-s3').textContent = '✓';
+    $('i-s3').className = 'step-icon step-done';
+
+    renderAll(month, year);
+    state.generating = false;
+    setTimeout(() => $('progressBox').style.display = 'none', 2000);
+  } catch (e) {
+    log(`❌ 錯誤: ${e.message}`);
+    state.generating = false;
+    alert(`生成失敗：${e.message}\n\n💡 提示：\n1. 檢查 API Key 是否正確\n2. 確認是否有足夠額度\n3. 稍後再試一次`);
+  } finally {
+    showDiagnostic();
+  }
+}
+
+function renderAll(month, year) {
+  $('monthTitle').textContent = `${year} 年 ${month} 月內容規劃`;
+  $('total').textContent = state.posts.length;
+  $('freq').textContent = '每日 1 支';
+  $('cats').textContent = new Set(state.posts.map(p => p.category)).size;
+
+  renderCalendar();
+  renderSchedule();
+  renderIG();
+}
+
+function renderCalendar() {
+  const grid = $('calendarGrid');
+  if (!state.posts.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">未生成</div>';
+    return;
+  }
+  grid.innerHTML = state.posts.map((p, i) => `
+    <article class="day ${i===state.selected?'selected':''}" data-i="${i}">
+      <span class="num">Day ${p.day}</span><span style="font-size:9px;color:#77858c"> ${p.display}</span>
+      <h3>${p.title.slice(0,18)}</h3>
+      <div class="tag">${p.category}</div>
+    </article>`).join('');
+
+  grid.querySelectorAll('.day').forEach(x => x.onclick = () => {
+    state.selected = +x.dataset.i;
+    renderCalendar();
+    renderScript();
+    show('script');
+  });
+  renderScript();
+}
+
+function renderScript() {
+  const p = state.posts[state.selected];
+  if (!p) { $('scriptContent').innerHTML = '<div class="empty">選擇一天</div>'; return; }
+
+  $('scriptContent').innerHTML = `
+    <div class="script-card">
+      <div style="color:#66757d;font-size:12px;margin-bottom:10px">Day ${p.day} · ${p.date} · ${p.format} · ${p.time}</div>
+      <h3 style="margin:0 0 10px;font-size:18px">${p.title}</h3>
+      <div class="block"><h4>類別</h4><p>${p.category}</p></div>
+      <div class="block"><h4>IG 說明文字</h4><p style="white-space:pre-wrap;font-size:12px">${p.igCaption}</p></div>
+      <div style="margin-top:14px">
+        <button class="secondary" style="width:100%">📋 複製貼文文案</button>
+      </div>
+    </div>`;
+  document.querySelector('.script-card button').onclick = () => {
+    navigator.clipboard.writeText(p.igCaption).then(() => {
+      const btn = document.querySelector('.script-card button');
+      btn.textContent = '✓ 已複製';
+      setTimeout(() => btn.textContent = '📋 複製貼文文案', 1500);
+    });
+  };
+}
+
+function renderSchedule() {
+  if (!state.posts.length) {
+    $('scheduleBody').innerHTML = '<tr><td colspan="5" class="empty">未生成</td></tr>';
+    return;
+  }
+  $('scheduleBody').innerHTML = state.posts.map(p => `
+    <tr>
+      <td>${p.date}</td>
+      <td>${p.time}</td>
+      <td style="max-width:200px">${p.title}</td>
+      <td><div class="tag">${p.category}</div></td>
+      <td style="max-width:150px;font-size:12px">${p.igCaption.slice(0,40)}…</td>
+    </tr>`).join('');
+}
+
+function renderIG() {
+  if (!state.posts.length) {
+    $('igContent').innerHTML = '<div class="empty">未生成</div>';
+    return;
+  }
+  $('igContent').innerHTML = state.posts.slice(0, 10).map(p => `
+    <div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px">
+      <h4 style="margin:0 0 8px;font-size:14px;color:var(--navy)">${p.title}</h4>
+      <div style="font-size:12px;white-space:pre-wrap;background:var(--soft);padding:8px;border-radius:8px">${p.igCaption}</div>
+    </div>`).join('') + '<div style="text-align:center;color:#aaa;margin-top:20px">... 還有 ' + (state.posts.length - 10) + ' 篇</div>';
+}
+
+function show(view) {
+  document.querySelectorAll('[data-view]').forEach(t => t.classList.toggle('active', t.dataset.view === view));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === view));
+}
+
+function exportCSV() {
+  if (!state.posts.length) { alert('請先生成'); return; }
+  let csv = '日期,標題,類別,時段,貼文文案\n';
+  state.posts.forEach(p => {
+    csv += [p.date, `"${p.title}"`, p.category, p.time, `"${p.igCaption.replace(/"/g, '""')}"`].join(',') + '\n';
+  });
+  const link = document.createElement('a');
+  link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  link.download = `reels-${new Date().toISOString().slice(0, 7)}.csv`;
+  link.click();
+}
+
+// ──────── 事件 ────────
+document.addEventListener('DOMContentLoaded', () => {
+  $('geminiKey').value = localStorage.getItem('gemini_key') || '';
+  $('settingsBtn').onclick = () => $('settingsModal').classList.add('open');
+  $('settingsSave').onclick = () => {
+    localStorage.setItem('gemini_key', $('geminiKey').value.trim());
+    $('settingsModal').classList.remove('open');
+    log('⚙️ 設定已儲存');
+  };
+  $('settingsCancel').onclick = () => $('settingsModal').classList.remove('open');
+  $('toggleKey').onclick = () => {
+    const el = $('geminiKey');
+    el.type = el.type === 'password' ? 'text' : 'password';
+  };
+  $('generateBtn').onclick = generateMonthContent;
+  $('exportCSV').onclick = exportCSV;
+  document.querySelectorAll('[data-view]').forEach(tab => {
+    tab.onclick = () => show(tab.dataset.view);
+  });
+  
+  // 自動設定今月日期
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+  const iso = firstDay.toISOString().slice(0, 10);
+  $('startDate').value = iso;
+
+  log('✅ 應用程式已就緒');
+  showDiagnostic();
+});
+</script>
+</body>
+</html>
