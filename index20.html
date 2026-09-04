@@ -502,44 +502,61 @@ async function callAI(messages) {
   }
 }
 
-async function callGemini(key, messages) {
-  const parts = messages.map(m => ({ text: m.content }));
-  const body = {
-    contents: [{ role: 'user', parts }],
-    generationConfig: { temperature: 0.75, responseMimeType: 'application/json' }
-  };
-  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`Gemini API 錯誤: ${res.status}`);
-  const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  if (!text) throw new Error('Gemini 無回應');
-  const clean = text.replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
-  return JSON.parse(clean);
+async function callGemini(key, messages, retries = 0) {
+  const MAX_RETRIES = 3;
+  const models = ['gemini-2.0-flash', 'gemini-1.5-pro']; // 備用模型清單
+  const model = models[0]; // 先用 2.0-flash
+
+  try {
+    const parts = messages.map(m => ({ text: m.content }));
+    const body = {
+      contents: [{ role: 'user', parts }],
+      generationConfig: { 
+        temperature: 0.7, 
+        maxOutputTokens: 4000,
+        responseMimeType: 'application/json' 
+      }
+    };
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': key
+        },
+        body: JSON.stringify(body),
+        timeout: 30000
+      }
+    );
+
+    // 處理速率限制 & 伺服器錯誤
+    if (res.status === 503 || res.status === 429) {
+      if (retries < MAX_RETRIES) {
+        console.log(`⏳ Gemini 暫時無法使用，${2 ** retries} 秒後重試...`);
+        await new Promise(r => setTimeout(r, 1000 * (2 ** retries))); // 指數退避
+        return callGemini(key, messages, retries + 1);
+      } else {
+        throw new Error(`Gemini 已重試 ${MAX_RETRIES} 次仍無法連接，請稍後再試或改用 OpenAI`);
+      }
+    }
+
+    if (!res.ok) throw new Error(`Gemini API: ${res.status}`);
+
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (!text) throw new Error('Gemini 無回應，請重試');
+
+    const clean = text.replace(/^```json\s*/, '').replace(/\s*```$/, '').trim();
+    return JSON.parse(clean);
+
+  } catch (err) {
+    console.error('Gemini 錯誤:', err.message);
+    throw err;
+  }
 }
 
-async function callOpenAI(key, messages) {
-  const body = {
-    model: 'gpt-4o',
-    messages,
-    temperature: 0.75,
-    response_format: { type: 'json_object' }
-  };
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`
-    },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`OpenAI ${res.status}`);
-  const data = await res.json();
-  return JSON.parse(data.choices[0].message.content);
-}
 
 // ─────────── Content Generation ───────────
 async function generateMonthlyPlan(monthNum) {
@@ -829,6 +846,21 @@ async function startGeneration(fullYear = false) {
     const progressBox = $('progressBox');
     progressBox.style.display = 'block';
 
+    // 檢查 API Key
+    const provider = localStorage.getItem('ai_provider') || 'gemini';
+    const key = provider === 'gemini'
+      ? localStorage.getItem('gemini_key')
+      : localStorage.getItem('oa_key');
+    
+    if (!key) {
+      alert(`❌ 未設定 ${provider === 'gemini' ? 'Gemini' : 'OpenAI'} API Key\n\n請先點擊 ⚙️ 設定 → 輸入 API Key`);
+      state.generating = false;
+      $('generate').disabled = false;
+      $('generateFull').disabled = false;
+      progressBox.style.display = 'none';
+      return;
+    }
+
     const months = fullYear ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] : [9];
     state.posts = [];
     state.events = [];
@@ -849,23 +881,27 @@ async function startGeneration(fullYear = false) {
           </div>
           <div class="step">
             <div class="step-icon step-active">⚙</div>
-            <span>正在生成 ${MONTHLY_EVENTS[m].name} 內容...</span>
+            <span>正在生成 ${MONTHLY_EVENTS[m].name} 內容（預計 30-60 秒）...</span>
           </div>
         </div>
       `;
 
-      const monthPlan = await generateMonthlyPlan(m);
-      if (monthPlan.posts && monthPlan.posts.length > 0) {
-        state.posts.push(...monthPlan.posts.slice(0, 30));
-      }
+      try {
+        const monthPlan = await generateMonthlyPlan(m);
+        if (monthPlan.posts && monthPlan.posts.length > 0) {
+          state.posts.push(...monthPlan.posts.slice(0, 30));
+        }
 
-      const monthData = MONTHLY_EVENTS[m];
-      if (monthData && monthData.events) {
-        state.events.push(...monthData.events);
+        const monthData = MONTHLY_EVENTS[m];
+        if (monthData && monthData.events) {
+          state.events.push(...monthData.events);
+        }
+      } catch (monthErr) {
+        throw new Error(`${MONTHLY_EVENTS[m].name}生成失敗: ${monthErr.message}`);
       }
 
       if (i < months.length - 1) {
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 1000));
       }
     }
 
@@ -881,15 +917,27 @@ async function startGeneration(fullYear = false) {
     setTimeout(() => { progressBox.style.display = 'none'; }, 3000);
 
   } catch (err) {
-    alert(`❌ 生成失敗：${err.message}`);
+    console.error('生成失敗:', err);
     const progressBox = $('progressBox');
-    progressBox.innerHTML = `<div class="progress alert alert-warn"><h4>⚠ 錯誤</h4><p>${err.message}</p></div>`;
+    progressBox.innerHTML = `
+      <div class="progress alert alert-warn">
+        <h4>⚠ 生成失敗</h4>
+        <p>${err.message}</p>
+        <p style="font-size:12px;margin-top:8px;color:#666">
+          💡 建議：<br>
+          • 稍等 1-2 分鐘後重試<br>
+          • 或改用 OpenAI GPT-4o<br>
+          • 或檢查 API Key 是否正確
+        </p>
+      </div>
+    `;
   } finally {
     state.generating = false;
     $('generate').disabled = false;
     $('generateFull').disabled = false;
   }
 }
+
 
 // ─────────── Event Listeners ───────────
 document.addEventListener('DOMContentLoaded', () => {
