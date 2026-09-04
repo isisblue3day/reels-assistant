@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>人與地球優選市集｜Reels AI 內容助理 v4</title>
+  <style>
+    :root{--navy:#10253f;--teal:#007f7a;--mint:#dff5ec;--cream:#f7f4ee;--ink:#17202a;--line:#dce1e4;--soft:#eef7f6;--warn:#fff3cd;--danger:#f8d7da;--gold:#e8a020}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
+    .app{max-width:1400px;margin:auto;padding:24px}
+    .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{width:44px;height:44px;border-radius:13px;background:var(--teal);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;flex-shrink:0}
+    .brand h1{font-size:20px;margin:0;color:var(--navy)}.brand p{margin:0;color:#61707c;font-size:12px}
+    .top-right{display:flex;gap:8px;align-items:center}
+    .badge{padding:5px 11px;border-radius:99px;font-size:12px;font-weight:700}
+    .badge-green{color:#05635e;background:var(--mint)}.badge-orange{color:#7a4800;background:#ffecd1}.badge-blue{color:#003a80;background:#d4e6ff}
+    .layout{display:grid;grid-template-columns:340px 1fr;gap:18px}
+    .panel,.workspace{background:#fff;border:1px solid var(--line);border-radius:18px}
+    .panel{padding:18px;height:max-content;position:sticky;top:14px}
+    .workspace{padding:22px;min-width:0}
+    .panel h2,.workspace h2{font-size:15px;margin:0 0 12px;color:var(--navy)}
+    label{display:block;font-size:11px;font-weight:700;margin:12px 0 4px;color:#46545e;text-transform:uppercase;letter-spacing:.04em}
+    input,textarea,select{font:inherit;width:100%;padding:8px 10px;border:1px solid #cbd4d9;border-radius:9px;background:#fff;color:var(--ink)}
+    input[type=password]{letter-spacing:.1em}
+    textarea{min-height:68px;resize:vertical}
+    .hint{font-size:11px;color:#65737b;margin:5px 0 0}
+    .section-sep{border:0;border-top:1px solid var(--line);margin:14px 0}
+    .buttons{display:grid;gap:7px;margin-top:16px}
+    button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:9px 13px;cursor:pointer;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;gap:6px}
+    button.secondary{background:#e5eff0;color:var(--navy)}
+    button.accent{background:var(--teal);color:#fff}
+    button.danger{background:#dc3545;color:#fff}
+    button.sm{font-size:12px;padding:5px 9px;border-radius:7px}
+    button:hover{filter:brightness(.94)}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    button.icon-btn{background:transparent;color:var(--navy);padding:6px;border-radius:8px;border:1px solid var(--line);font-size:17px}
+    .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:16px;flex-wrap:wrap}
+    .tab{color:#5f6b72;background:transparent;border-radius:9px 9px 0 0;font-size:13px;padding:7px 12px}
+    .tab.active{color:var(--teal);border-bottom:3px solid var(--teal)}
+    .view{display:none}.view.active{display:block}
+    .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 18px}
+    .metric{padding:12px;background:var(--soft);border-radius:12px}
+    .metric strong{display:block;font-size:18px;color:var(--navy)}.metric span{font-size:11px;color:#55646d}
+    .calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .day{border:1px solid var(--line);border-radius:12px;padding:10px;min-height:140px;cursor:pointer;background:#fff;transition:box-shadow .15s}
+    .day:hover,.day.selected{border-color:var(--teal);box-shadow:0 0 0 2px #d4efeb}
+    .day .num{font-size:11px;color:var(--teal);font-weight:800}.day .date{font-size:10px;color:#77858c;margin-left:3px}
+    .tag{display:inline-block;font-size:10px;padding:2px 6px;border-radius:99px;background:#edf2f3;color:#44545c;margin-top:6px}
+    .tag.festival{background:#fef3c7;color:#92400e}
+    .day h3{font-size:12px;line-height:1.35;margin:6px 0 0;color:var(--navy)}
+    .day .ai-flag{font-size:10px;color:var(--teal);font-weight:700}
+    .script-card{border:1px solid var(--line);border-radius:14px;padding:18px}
+    .script-card h3{margin:0 0 4px;font-size:20px;color:var(--navy)}
+    .script-card .meta{color:#66757d;font-size:12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+    .script-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:14px;margin-top:14px}
+    .block{background:#f8fbfb;border-radius:11px;padding:12px}
+    .block h4{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--teal);margin:0 0 6px}
+    .block p,.block ol{margin:0}.block ol{padding-left:18px}
+    .gemini{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+    .gemini-head{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .gemini h4{color:var(--navy);margin:0;font-size:14px}
+    .prompt{margin-top:9px;background:#f8fbfb;border-radius:11px;padding:12px}
+    .prompt-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--teal);font-weight:800;font-size:12px;flex-wrap:wrap}
+    .copy{background:#e5eff0;color:var(--navy);padding:5px 8px;font-size:11px;border-radius:7px}
+    .prompt pre{white-space:pre-wrap;font:12px/1.55 "Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;margin:7px 0 0;color:#2b3940}
+    .gemini-note{font-size:11px;color:#65737b;margin:7px 0 0}
+    .schedule-table{width:100%;border-collapse:collapse;font-size:13px}
+    .schedule-table th,.schedule-table td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+    .schedule-table th{color:#607078;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+    .tbl-caption{font-size:11px;max-width:200px;line-height:1.4}
+    .status-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px}
+    .status-ai{background:#d4efeb;color:#05635e}.status-template{background:#e8e8f5;color:#3a3aad}.status-published{background:#d1fae5;color:#065f46}
+    .events-grid{display:grid;gap:9px;margin-top:2px}
+    .event-card{border:1px solid var(--line);border-radius:11px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+    .event-date{background:var(--teal);color:#fff;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:800;white-space:nowrap;min-width:44px;text-align:center}
+    .event-body h4{margin:0 0 3px;font-size:14px;color:var(--navy)}.event-body p{margin:0;font-size:12px;color:#55646d}
+    .analytics-tbl{width:100%;border-collapse:collapse;font-size:13px}
+    .analytics-tbl th{color:#607078;font-size:11px;text-transform:uppercase;padding:6px 8px;border-bottom:2px solid var(--line)}
+    .analytics-tbl td{padding:6px 8px;border-bottom:1px solid var(--line)}
+    .analytics-tbl input{padding:5px 7px;font-size:12px;border-radius:6px;width:80px}
+    .insight-card{background:var(--soft);border-radius:12px;padding:14px;margin-top:14px}
+    .insight-card h4{color:var(--navy);margin:0 0 8px;font-size:14px}
+    .insight-card p{margin:0 0 6px;font-size:13px}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:18px;padding:28px;max-width:500px;width:94%;max-height:90vh;overflow-y:auto}
+    .modal h3{margin:0 0 16px;color:var(--navy);font-size:18px}
+    .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
+    .key-row{display:flex;gap:6px;align-items:center}.key-row input{flex:1}
+    .api-status{font-size:12px;padding:6px 10px;border-radius:7px;background:#f0f0f0;color:#555}
+    .api-status.ok{background:#d4efeb;color:#05635e}.api-status.err{background:#f8d7da;color:#721c24}
+    .progress{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px;background:#fff}
+    .progress h4{margin:0 0 10px;font-size:14px;color:var(--navy)}
+    .step{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13px}
+    .step-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+    .step-pending{background:#e8eaed;color:#777}.step-active{background:#fff3cd;color:#7a4800}.step-done{background:#d4efeb;color:#05635e}.step-error{background:#f8d7da;color:#721c24}
+    .connect-card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
+    .connect-card h4{margin:0 0 8px;font-size:14px;color:var(--navy)}
+    .connect-card p{margin:0 0 8px;font-size:12px;color:#55646d}
+    .empty{padding:25px;text-align:center;color:#63717a;font-size:14px}
+    .alert{padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px}
+    .alert-warn{background:var(--warn);color:#7a4800;border:1px solid #ffc107}
+    .alert-info{background:#d4efeb;color:#05635e;border:1px solid #a3d9d3}
+    .collapsible-head{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:8px 0;user-select:none}
+    .collapsible-body{display:none}.collapsible-body.open{display:block}
+    .ig-post{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+    .ig-post h4{margin:0 0 6px;font-size:14px;color:var(--navy)}
+    .ig-post .caption{font-size:13px;white-space:pre-wrap;background:#f8fbfb;border-radius:8px;padding:10px;margin-top:6px}
+    .ig-post .hashtags{font-size:12px;color:var(--teal);margin-top:5px}
+    @media(max-width:900px){.layout{grid-template-columns:1fr}.panel{position:static}.calendar{grid-template-columns:repeat(3,1fr)}.overview{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.app{padding:12px}.calendar{grid-template-columns:repeat(2,1fr)}.script-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="mark">PP</div>
+      <div>
+        <h1>人與地球優選市集｜Reels AI 內容助理 v4</h1>
+        <p>AI 時事感知 · 月份自動生成 · 主軸平衡 · Notion 同步</p>
+      </div>
+    </div>
+    <div class="top-right">
+      <div class="badge badge-green" id="liveStatus">● 就緒</div>
+      <button class="icon-btn" id="settingsBtn" title="API 設定">⚙️</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel">
+      <h2>帳號設定</h2>
+      <label for="account">帳號名稱</label>
+      <input id="account" value="人與地球優選市集">
+      <label for="audience">目標受眾</label>
+      <textarea id="audience" style="min-height:60px">25–45 歲重視質感、送禮心意與永續生活的都會消費者；節慶送禮需求者；企業採購、HR 與 ESG／CSR 負責人；關注社會企業、惜食、友善農業與多元共融的親子及上班族。</textarea>
+      <label for="pillars">內容主軸（以逗號分隔）</label>
+      <textarea id="pillars" style="min-height:60px">永續好物選品與開箱,社企品牌與創辦人故事,惜食與友善農業生活提案,DEI共融與支持特殊需求社群,節慶送禮與企業採購提案,消費背後的社會影響力</textarea>
+      <label for="startDate">本月首發日期</label>
+      <input id="startDate" type="date">
+      <label for="cta">預設 CTA 關鍵字</label>
+      <input id="cta" value="送禮">
+      <label for="visualRef">素材指示</label>
+      <textarea id="visualRef" style="min-height:50px">台灣質感生活風，自然光，真實人物，溫暖情感，不含文字Logo水印。</textarea>
+
+      <hr class="section-sep">
+
+      <div class="collapsible-head" id="analyticsToggle">
+        <span style="font-size:13px;font-weight:700;color:var(--navy)">📊 上月數據回饋</span>
+        <span id="analyticsArrow">▶</span>
+      </div>
+      <div class="collapsible-body" id="analyticsBody">
+        <p class="hint">輸入各主軸上月表現，AI 將自動調整本月比例。</p>
+        <table class="analytics-tbl" id="analyticsTable">
+          <thead><tr><th>主軸</th><th>觸及</th><th>收藏</th><th>留言</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <button class="accent sm" id="analyzeBtn" style="margin-top:10px;width:100%">🧠 分析並建議調整</button>
+        <div id="insightBox"></div>
+      </div>
+
+      <hr class="section-sep">
+      <div class="buttons">
+        <button id="liveGenerate" class="accent">⚡ 生成本月內容</button>
+        <button id="exportCSV" class="secondary">↓ 匯出 CSV</button>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <h2 id="calendarTitle" style="margin:0">Reels 內容行事曆</h2>
+        <div class="overview" style="margin:0;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div class="metric"><strong id="total">—</strong><span>已排定</span></div>
+          <div class="metric"><strong id="frequency">—</strong><span>頻率</span></div>
+          <div class="metric"><strong id="time">20:30</strong><span>主時段</span></div>
+          <div class="metric"><strong id="festivalCount">—</strong><span>節慶場次</span></div>
+        </div>
+      </div>
+
+      <div id="progressBox" style="display:none"></div>
+
+      <nav class="tabs">
+        <button class="tab active" data-view="calendar">📅 內容日曆</button>
+        <button class="tab" data-view="script">📝 腳本＋Gemini</button>
+        <button class="tab" data-view="schedule">🗓 發布排程</button>
+        <button class="tab" data-view="events">🌐 本月時事</button>
+      </nav>
+
+      <div id="calendar" class="view active">
+        <div class="calendar" id="calendarGrid">
+          <div class="empty" style="grid-column:1/-1">請點選「⚡ 生成本月內容」開始規劃。</div>
+        </div>
+      </div>
+
+      <div id="script" class="view">
+        <div id="scriptContent" class="empty">請先從內容日曆選擇一天。</div>
+      </div>
+
+      <div id="schedule" class="view">
+        <div class="table-wrap" style="overflow-x:auto">
+          <table class="schedule-table">
+            <thead><tr><th>日</th><th>時段</th><th>節慶連結</th><th>內容標題</th><th>主軸</th><th>格式</th><th>狀態</th></tr></thead>
+            <tbody id="scheduleBody"><tr><td colspan="7" class="empty">尚未生成。</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="events" class="view">
+        <div id="eventsContent" class="empty">點擊「⚡ 生成本月內容」後，本月時事將顯示在此。</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h3>⚙️ API 設定</h3>
+    <div class="alert alert-warn">⚠️ API Key 儲存於瀏覽器 localStorage，僅供本機使用，請勿在公用設備上操作。</div>
+    <label>選擇 AI 供應商</label>
+    <select id="aiProvider" style="margin-bottom:8px">
+      <option value="gemini">Google Gemini（推薦，免費額度）</option>
+      <option value="openai">OpenAI GPT-4o（需付費）</option>
+    </select>
+    <div id="geminiSection">
+      <label>Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" style="font-size:11px;color:#007f7a">→ 免費取得</a></label>
+      <div class="key-row">
+        <input type="password" id="geminiKey" placeholder="AIza...">
+        <button class="secondary sm" id="toggleGeminiKey">👁</button>
+      </div>
+      <div id="geminiKeyStatus" class="api-status" style="margin-top:6px">未設定</div>
+    </div>
+    <div id="openaiSection" style="display:none">
+      <label>OpenAI API Key</label>
+      <div class="key-row">
+        <input type="password" id="openaiKey" placeholder="sk-...">
+        <button class="secondary sm" id="toggleKey">👁</button>
+      </div>
+      <div id="keyStatus" class="api-status" style="margin-top:6px">未設定</div>
+    </div>
+    <hr class="section-sep">
+    <p class="hint">💡 建議使用 Google Gemini（免費、無需信用卡）。</p>
+    <div class="modal-footer">
+      <button class="secondary" id="settingsCancel">取消</button>
+      <button id="settingsSave">💾 儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   人與地球優選市集 | Reels AI 內容助理 v4
+   改良版：月份自動時事感知 + 主軸比例平衡 + 文案自然化
+   ============================================================ */
+
+// ════════ State ════════
+const state = {
+  posts: [],
+  events: { events: [], trends: [], season: '' },
+  analytics: {},
+  selected: 0,
+  generating: false,
+  mode: 'ai'
+};
+
+// ════════ Shortcuts ════════
+const $ = id => document.getElementById(id);
+const val = id => $(id).value.trim();
+const selectedAIKey = () => {
+  const provider = localStorage.getItem('ai_provider') || 'gemini';
+  return provider === 'gemini'
+    ? (localStorage.getItem('gemini_key') || '')
+    : (localStorage.getItem('oa_key') || '');
+};
+
+// ════════ 主軸比例常數 ════════
+const PILLAR_DISTRIBUTION = {
+  '消費背後的社會影響力': 9,
+  '節慶送禮與企業採購': 7,
+  '永續好物選品與開箱': 6,
+  '惜食與友善農業': 5,
+  'DEI共融與支持特殊需求社群': 4
+};
+
+// ════════ 全年時事資料庫 ════════
+const MONTHLY_EVENTS = {
+  1: {
+    season: '新年新希望',
+    festivals: ['元旦 1/1', '農曆新年 1/29', '天公生 2/1'],
+    themes: ['新年計畫', '春節團圓', '送禮季'],
+    keywords: ['新年', '團圓', '希望', '開始']
+  },
+  2: {
+    season: '春暖花開',
+    festivals: ['元宵節 2/12', '228紀念日 2/28'],
+    themes: ['元宵猜燈謎', '春節後', '228紀念'],
+    keywords: ['春天', '團圓', '紀念', '新開始']
+  },
+  3: {
+    season: '春日永續',
+    festivals: ['婦女節 3/8', '清明節 4/4', '兒童節 4/4'],
+    themes: ['女力月', '春季食材', '家庭相聚'],
+    keywords: ['春天', '女力', '自然', '家庭']
+  },
+  4: {
+    season: '清明時節',
+    festivals: ['清明節 4/4', '兒童節 4/4', '穀雨 4/19'],
+    themes: ['清明祭祖', '親子互動', '春季食材'],
+    keywords: ['清明', '家族', '春天', '回家']
+  },
+  5: {
+    season: '夏初清爽',
+    festivals: ['勞動節 5/1', '端午節 6/10', '母親節 5/11'],
+    themes: ['母親節', '端午前奏', '夏季準備'],
+    keywords: ['母親', '感謝', '家庭', '端午']
+  },
+  6: {
+    season: '仲夏時光',
+    festivals: ['端午節 6/10', '芒種 6/5', '夏至 6/21'],
+    themes: ['端午粽子', '夏季食材', '水果季節'],
+    keywords: ['端午', '夏天', '惜食', '在地']
+  },
+  7: {
+    season: '炎夏盛季',
+    festivals: ['七夕 8/15', '立秋 8/7'],
+    themes: ['冰品季', '夏日優惠', '秋冬預告'],
+    keywords: ['夏天', '優惠', '清涼', '準備']
+  },
+  8: {
+    season: '秋初轉涼',
+    festivals: ['立秋 8/7', '中秋 9/25', '鬼門開 8/1'],
+    themes: ['秋季轉換', '中秋前奏', '滋補品'],
+    keywords: ['秋天', '準備', '團圓', '禮物']
+  },
+  9: {
+    season: '秋初永續',
+    festivals: ['中秋節 9/25', '教師節 9/28', '國慶 10/10'],
+    themes: ['中秋送禮', '新學期', '秋季農產'],
+    keywords: ['中秋', '團圓', '感謝', '秋收']
+  },
+  10: {
+    season: '國慶金秋',
+    festivals: ['國慶日 10/10', '台灣光復節 10/25'],
+    themes: ['愛台灣', '在地文化', '秋冬滋補'],
+    keywords: ['國慶', '光復', '台灣', '在地']
+  },
+  11: {
+    season: '冬日溫暖',
+    festivals: ['立冬 11/7', '感恩節 11/27', '聖誕 12/25'],
+    themes: ['冬季溫暖', '感謝季', '年終企購'],
+    keywords: ['感恩', '溫暖', '企業', '年終']
+  },
+  12: {
+    season: '跨年溫馨',
+    festivals: ['聖誕節 12/25', '跨年 12/31', '冬至 12/21'],
+    themes: ['聖誕禮物', '年終回顧', '跨年倒數'],
+    keywords: ['聖誕', '溫馨', '年終', '展望']
+  }
+};
+
+// ════════ Persistence ════════
+function loadSettings() {
+  const prov = localStorage.getItem('ai_provider') || 'gemini';
+  $('aiProvider').value = prov;
+  toggleProviderUI();
+  $('geminiKey').value = localStorage.getItem('gemini_key') || '';
+  $('openaiKey').value = localStorage.getItem('oa_key') || '';
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+}
+
+function toggleProviderUI() {
+  const isGemini = $('aiProvider').value === 'gemini';
+  $('geminiSection').style.display = isGemini ? '' : 'none';
+  $('openaiSection').style.display = isGemini ? 'none' : '';
+}
+
+function updateGeminiKeyStatus() {
+  const el = $('geminiKeyStatus');
+  const keyEl = $('geminiKey');
+  const key = keyEl.value.trim();
+  if (!key) { el.className='api-status'; el.textContent='未設定'; return; }
+  const looksValid = /^(AIza[\w-]{20,}|AQ\.[\w-]{20,})$/.test(key);
+  el.className = looksValid ? 'api-status ok' : 'api-status err';
+  el.textContent = looksValid ? '✅ 已設定（' + key.slice(0,8) + '...）' : '❌ 格式不正確';
+}
+
+function updateKeyStatus() {
+  const key = $('openaiKey').value.trim();
+  const el = $('keyStatus');
+  if (!key) { el.className='api-status'; el.textContent='未設定'; return; }
+  el.className = key.startsWith('sk-') ? 'api-status ok' : 'api-status err';
+  el.textContent = key.startsWith('sk-') ? `✅ 已設定（${key.slice(0,8)}...）` : '❌ 格式不正確';
+}
+
+function saveSettings() {
+  localStorage.setItem('ai_provider', $('aiProvider').value);
+  localStorage.setItem('gemini_key', $('geminiKey').value.trim());
+  localStorage.setItem('oa_key', $('openaiKey').value.trim());
+  updateGeminiKeyStatus();
+  updateKeyStatus();
+}
+
+// ════════ API Call ════════
+async function callGemini(messages, jsonMode = true) {
+  const key = localStorage.getItem('gemini_key') || '';
+  if (!/^(AIza[\w-]{20,}|AQ\.[\w-]{20,})$/.test(key)) throw new Error('請先在設定中填入 Gemini API Key。');
+  
+  const parts = messages.map(m => ({ text: m.content }));
+  const body = {
+    contents: [{ role: 'user', parts }],
+    generationConfig: { 
+      temperature: 0.75, 
+      topP: 0.9,
+      maxOutputTokens: 4000,
+      ...(jsonMode ? { responseMimeType: 'application/json' } : {})
+    }
+  };
+  
+  const res = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent',
+    { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body) }
+  );
+  
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Gemini ${res.status}: ${err?.error?.message || '請求失敗，請稍後重試'}`);
+  }
+  
+  const data = await res.json();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) throw new Error('Gemini 無回應，請重試。');
+  
+  if (jsonMode) {
+    const clean = text.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+    try { return JSON.parse(clean); }
+    catch(e) {
+      const m = clean.match(/\{[\s\S]*\}/);
+      if (m) return JSON.parse(m[0]);
+      throw new Error('JSON 解析失敗：' + e.message);
+    }
+  }
+  return text;
+}
+
+// ════════ Step 1: 抓月份時事 ════════
+async function fetchMonthEvents(year, month) {
+  const monthData = MONTHLY_EVENTS[month];
+  if (!monthData) throw new Error(`暫不支援 ${month} 月`);
+
+  const monthName = ['一','二','三','四','五','六','七','八','九','十','十一','十二'][month-1];
+  const pillars = val('pillars');
+  
+  const prompt = `你是台灣社企與永續消費的內容策略師。
+現在是 ${year} 年 ${monthName} 月。
+月份主題：${monthData.season}
+本月重點：${monthData.themes.join('、')}
+
+品牌主軸：${pillars}
+
+請列出本月與品牌相關的重要資訊。
+
+輸出 JSON：
+{
+  "events": [
+    {"date": "${month}/15", "name": "事件名稱", "description": "簡述", "relevance": "與品牌的關聯", "score": 8}
+  ],
+  "trends": ["趨勢1", "趨勢2"],
+  "season": "${monthData.season}"
+}
+
+events 最多 10 個、score ≥ 6 的才保留。`;
+
+  return await callGemini([{ role: 'user', content: prompt }]);
+}
+
+// ════════ Step 2: 生成 30 天內容 ════════
+async function generateMonthlyPlan(year, month, profile) {
+  const monthData = MONTHLY_EVENTS[month];
+  const pillars = Object.keys(PILLAR_DISTRIBUTION);
+  const distribution = Object.values(PILLAR_DISTRIBUTION);
+  
+  const prompt = `你是「${profile.account}」的 Instagram Reels 內容策略師。
+
+【品牌資料】
+帳號：${profile.account}
+受眾：${profile.audience}
+主軸：${profile.pillars}
+
+【${month}月特色】
+季節主題：${monthData.season}
+本月節慶：${monthData.festivals.join('、')}
+社群趨勢：${monthData.keywords.join('、')}
+
+【內容主軸配置（必須嚴格遵守）】
+第 1-9 篇：消費背後的社會影響力
+第 10-16 篇：節慶送禮與企業採購
+第 17-22 篇：永續好物選品與開箱
+第 23-27 篇：惜食與友善農業
+第 28-31 篇：DEI共融與支持特殊需求社群
+
+【寫作風格要求】
+1. 避免過去用過的故事角度（每個月都要全新內容）
+2. 文案自然親切，避免「好消息」、「展現」等教科書用詞
+3. 每篇 IG Caption 100 字以內，用真人話、不矯情
+4. 格式輪替：真人口播、開箱旁白、問答互動、品牌故事
+5. 每篇內容都要連結到${month}月的季節氛圍或時事
+
+請生成 JSON：
+{
+  "posts": [
+    {
+      "title": "完全新鮮的標題",
+      "hook": "3秒 Hook",
+      "category": "對應主軸",
+      "points": ["口播點1", "口播點2", "口播點3"],
+      "cta": "自然的結尾呼籲",
+      "format": "格式",
+      "festivalTie": "節慶或 null",
+      "igCaption": "自然親切的說明",
+      "hashtags": ["#tag1", "#tag2"]
+    }
+  ]
+}
+
+posts 必須恰好 30 個，順序按上述主軸配置。`;
+
+  return await callGemini([{ role: 'user', content: prompt }]);
+}
+
+// ════════ GeminiPrompt 生成（融入月份氛圍） ════════
+function buildGeminiPrompts(post, brand, month, visualRef) {
+  const monthVibe = {
+    1: '冬日暖陽、新年光芒',
+    2: '春色初露、溫暖光影',
+    3: '春陽柔和、生機盎然',
+    4: '清明細雨、青草香氣',
+    5: '初夏清爽、陽光溫暖',
+    6: '仲夏光影、水果飽滿',
+    7: '炎夏耀眼、冷調質感',
+    8: '秋初轉涼、光線柔和',
+    9: '秋日午後、柔和金光',
+    10: '金色秋季、溫暖明亮',
+    11: '深秋冷調、室內溫暖',
+    12: '冬日溫馨、節日氛圍'
+  }[month] || '自然台灣生活感';
+
+  return [
+    `${monthVibe}中，拍攝「${post.hook}」的場景。9:16 直式、8 秒。真實人物在日常中的自然互動，快速推近主物件，保留下方空白供後製字幕。台灣質感生活風，自然光，真實材質。勿含文字、Logo、水印。`,
+    
+    `特寫呈現「${post.points[0]}」的細節。9:16 直式、8 秒。品牌：${brand}。慢速推鏡、乾淨背景、自然素材。${visualRef}。勿含文字、Logo、水印。`,
+    
+    `溫暖紀實風，呈現「${post.points[1]}」與「${post.points[2]}」的故事。9:16 直式、8 秒。真實人物互動、手部工作、柔和光線。傳達關心與永續。勿含文字、Logo、水印、煽情畫面。`,
+    
+    `${monthVibe}的場景中，讓「${post.title}」的心意成為焦點。9:16 直式、8 秒。鏡頭緩拉遠、乾淨生活場景、預留中央空白供後製 CTA：「${post.cta}」。勿含文字、Logo、水印。`
+  ];
+}
+
+// ════════ 主流程 ════════
+async function runAIPlan() {
+  const key = selectedAIKey();
+  if (!key) { $('settingsModal').classList.add('open'); return; }
+  
+  const startStr = val('startDate');
+  if (!startStr) { alert('請先設定本月首發日期。'); return; }
+  
+  const start = new Date(startStr + 'T00:00:00');
+  const year = start.getFullYear();
+  const month = start.getMonth() + 1;
+  const account = val('account') || '人與地球優選市集';
+  const cta = val('cta') || '送禮';
+
+  state.generating = true;
+  $('liveGenerate').disabled = true;
+
+  const steps = [
+    { id: 's1', label: '🌐 查找本月時事…' },
+    { id: 's2', label: '🧠 分析主軸比例…' },
+    { id: 's3', label: '📝 生成 30 天新內容…' },
+    { id: 's4', label: '✅ 整理行事曆…' }
+  ];
+  showProgress(steps);
+  setStatus('● AI 規劃中…', 'orange');
+
+  try {
+    setStep('s1', 'active');
+    const events = await fetchMonthEvents(year, month);
+    state.events = events;
+    setStep('s1', 'done');
+
+    setStep('s2', 'active');
+    await new Promise(r => setTimeout(r, 500));
+    setStep('s2', 'done');
+
+    setStep('s3', 'active');
+    const profile = {
+      account,
+      audience: val('audience'),
+      pillars: val('pillars'),
+      visualRef: val('visualRef')
+    };
+    const plan = await generateMonthlyPlan(year, month, profile);
+    setStep('s3', 'done');
+
+    setStep('s4', 'active');
+    state.posts = plan.posts.map((p, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      const weekend = [0, 6].includes(d.getDay());
+      const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+      const iso = d => d.toISOString().slice(0, 10);
+      
+      const post = {
+        day: i + 1,
+        date: iso(d),
+        display: fmt(d),
+        title: p.title,
+        hook: p.hook,
+        category: p.category,
+        points: p.points,
+        cta: p.cta.replace('%CTA%', cta),
+        format: p.format || '真人口播＋字卡',
+        festivalTie: p.festivalTie || null,
+        igCaption: p.igCaption,
+        hashtags: p.hashtags || [],
+        time: weekend ? '10:30' : '20:30',
+        status: 'AI 已規劃'
+      };
+      post.gemini = buildGeminiPrompts(post, account, month, val('visualRef'));
+      return post;
+    });
+    state.mode = 'ai';
+    state.selected = 0;
+
+    renderAll(year, month, events.season);
+    setStep('s4', 'done');
+    setStatus(`● ${month}月內容已生成｜共 ${plan.posts.length} 篇`, 'green');
+  } catch (e) {
+    setStatus('● 生成失敗', 'orange');
+    alert(`❌ ${e.message}`);
+    Object.values({s1:'s1',s2:'s2',s3:'s3',s4:'s4'}).forEach(id => {
+      const el = document.querySelector(`[data-step="${id}"]`);
+      if (el && !el.classList.contains('step-done')) setStep(id, 'error');
+    });
+  } finally {
+    state.generating = false;
+    $('liveGenerate').disabled = false;
+    setTimeout(() => { $('progressBox').style.display='none'; }, 4000);
+  }
+}
+
+// ════════ Render ════════
+function renderAll(year, month, season) {
+  $('calendarTitle').textContent = `${month}月｜${season}`;
+  $('total').textContent = state.posts.length;
+  $('frequency').textContent = '每日 1 支';
+  const festivals = state.posts.filter(p => p.festivalTie).length;
+  $('festivalCount').textContent = festivals || '—';
+
+  renderCalendar();
+  renderSchedule();
+  renderEvents();
+}
+
+function renderCalendar() {
+  const grid = $('calendarGrid');
+  if (!state.posts.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">尚未生成內容。</div>';
+    return;
+  }
+  grid.innerHTML = state.posts.map((p,i) => `
+    <article class="day ${i===state.selected?'selected':''}" data-i="${i}">
+      <span class="num">Day ${p.day}</span><span class="date">${p.display}</span>
+      <div class="tag ${p.festivalTie?'festival':''}">${p.festivalTie||p.category.slice(0,8)}</div>
+      <h3>${p.title}</h3>
+      <div class="ai-flag">⚡ AI</div>
+    </article>`).join('');
+  grid.querySelectorAll('.day').forEach(x => x.onclick = () => {
+    state.selected = +x.dataset.i;
+    renderCalendar();
+    renderScript();
+    show('script');
+  });
+  renderScript();
+}
+
+function renderScript() {
+  const p = state.posts[state.selected];
+  if (!p) { $('scriptContent').innerHTML = '<div class="empty">請選擇日期。</div>'; return; }
+  
+  $('scriptContent').innerHTML = `
+    <article class="script-card">
+      <div class="meta">
+        Day ${p.day} · ${p.date} · <span class="tag ${p.festivalTie?'festival':''}">${p.festivalTie||p.category.slice(0,6)}</span>
+        · ${p.format} · 🕐 ${p.time}
+        <span class="badge badge-green">⚡ AI 生成</span>
+      </div>
+      <h3 style="margin:10px 0 4px">${p.title}</h3>
+      <div class="script-grid">
+        <section class="block"><h4>黃金 Hook</h4><p>${p.hook}</p></section>
+        <section class="block"><h4>口播腳本（3 段）</h4><ol>${p.points.map(x=>`<li>${x}</li>`).join('')}</ol></section>
+        <section class="block"><h4>結尾 CTA</h4><p>${p.cta}</p></section>
+        <section class="block"><h4>IG 說明文字</h4><p style="white-space:pre-wrap;font-size:12px">${p.igCaption}</p></section>
+      </div>
+      <section class="gemini">
+        <div class="gemini-head">
+          <h4>🎬 Gemini 影片提示詞</h4>
+          <button class="copy" id="copyAll">複製整組</button>
+        </div>
+        <p class="gemini-note">4 個 8 秒片段。先上傳參考圖，再逐段生成；字幕與 CTA 請後製。</p>
+        ${p.gemini.map((x,i)=>`<div class="prompt"><div class="prompt-title">片段 ${i+1}：${['Hook 場景','產品特寫','故事互動','CTA 收尾'][i]}<button class="copy" data-copy="${i}">複製</button></div><pre>${x}</pre></div>`).join('')}
+      </section>
+    </article>`;
+  
+  $('copyAll').onclick = e => copyText(p.gemini.join('\n\n――――\n\n'), e.currentTarget);
+  document.querySelectorAll('[data-copy]').forEach(b => b.onclick = e => copyText(p.gemini[+e.currentTarget.dataset.copy], e.currentTarget));
+}
+
+function renderSchedule() {
+  $('scheduleBody').innerHTML = state.posts.map(p => `
+    <tr>
+      <td>${p.date}</td>
+      <td>${p.time}</td>
+      <td style="font-size:11px;color:#7a4800">${p.festivalTie||'—'}</td>
+      <td class="tbl-caption">${p.title}</td>
+      <td><div class="tag">${p.category.slice(0,8)}</div></td>
+      <td><span class="status-badge status-ai">AI 規劃</span></td>
+    </tr>`).join('');
+}
+
+function renderEvents() {
+  if (!state.events.events || !state.events.events.length) {
+    $('eventsContent').innerHTML = '<div class="empty">本月時事尚未載入。</div>';
+    return;
+  }
+  $('eventsContent').innerHTML = `<div class="events-grid">${
+    state.events.events.map(e => `
+      <div class="event-card">
+        <div class="event-date">${e.date}</div>
+        <div class="event-body">
+          <h4>${e.name}</h4>
+          <p>${e.description}</p>
+          <p style="margin-top:6px;font-size:11px;color:#65737b">相關度：${'★'.repeat(Math.round(e.score/2))}</p>
+        </div>
+      </div>`).join('')
+  }</div>`;
+}
+
+// ════════ Utils ════════
+function showProgress(steps) {
+  $('progressBox').style.display = 'block';
+  $('progressBox').innerHTML = `<div class="progress"><h4>⚡ 內容規劃進度</h4>${steps.map(s=>`<div class="step" data-step="${s.id}"><div class="step-icon step-pending" id="icon-${s.id}">○</div><span id="lbl-${s.id}">${s.label}</span></div>`).join('')}</div>`;
+}
+
+function setStep(id, state) {
+  const icon = $(`icon-${id}`);
+  if (!icon) return;
+  const map = { pending: ['step-pending','○'], active: ['step-active','⟳'], done: ['step-done','✓'], error: ['step-error','✗'] };
+  const [cls, sym] = map[state] || map.pending;
+  icon.className = `step-icon ${cls}`;
+  icon.textContent = sym;
+}
+
+function setStatus(text, type) {
+  const el = $('liveStatus');
+  el.textContent = text;
+  el.className = type === 'green' ? 'badge badge-green' : 'badge badge-orange';
+}
+
+function show(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  $('calendar').classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.dataset.view === view) t.classList.add('active');
+  });
+  $(view).classList.add('active');
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = '✓ 已複製';
+  setTimeout(() => btn.textContent = orig, 2000);
+}
+
+// ════════ CSV Export ════════
+function exportCSV() {
+  if (!state.posts.length) { alert('請先生成內容。'); return; }
+  
+  const header = ['Day','Date','Weekday','Time','Festival','Category','Title','Hook','Script1','Script2','Script3','CTA','Format','IG_Caption','Hashtags','Status'];
+  const rows = state.posts.map(p => {
+    const d = new Date(p.date + 'T00:00:00');
+    const weekday = ['日','一','二','三','四','五','六'][d.getDay()];
+    return [
+      p.day,
+      p.date,
+      weekday,
+      p.time,
+      p.festivalTie || '',
+      p.category,
+      p.title,
+      p.hook,
+      p.points[0] || '',
+      p.points[1] || '',
+      p.points[2] || '',
+      p.cta,
+      p.format,
+      p.igCaption,
+      p.hashtags.join(' '),
+      p.status
+    ];
+  });
+  
+  const csv = [header, ...rows]
+    .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `30天-Reels-內容日曆-${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+}
+
+// ════════ Events ════════
+$('settingsBtn').onclick = () => $('settingsModal').classList.add('open');
+$('settingsCancel').onclick = () => $('settingsModal').classList.remove('open');
+$('settingsSave').onclick = () => { saveSettings(); $('settingsModal').classList.remove('open'); };
+$('aiProvider').onchange = toggleProviderUI;
+$('toggleGeminiKey').onclick = () => $('geminiKey').type = $('geminiKey').type === 'password' ? 'text' : 'password';
+$('toggleKey').onclick = () => $('openaiKey').type = $('openaiKey').type === 'password' ? 'text' : 'password';
+$('liveGenerate').onclick = runAIPlan;
+$('exportCSV').onclick = exportCSV;
+
+document.querySelectorAll('.tab').forEach(t => t.onclick = e => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  $(e.currentTarget.dataset.view).classList.add('active');
+});
+
+$('analyticsToggle').onclick = () => {
+  const body = $('analyticsBody');
+  const arrow = $('analyticsArrow');
+  body.classList.toggle('open');
+  arrow.textContent = body.classList.contains('open') ? '▼' : '▶';
+  
+  if (body.classList.contains('open') && !$('analyticsTable tbody').innerHTML.trim()) {
+    const pillars = Object.keys(PILLAR_DISTRIBUTION);
+    $('analyticsTable tbody').innerHTML = pillars.map(p => 
+      `<tr><td>${p}</td><td><input type="number" value="0"></td><td><input type="number" value="0"></td><td><input type="number" value="0"></td></tr>`
+    ).join('');
+  }
+};
+
+$('analyzeBtn').onclick = () => {
+  const rows = document.querySelectorAll('#analyticsTable tbody tr');
+  const data = {};
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td, th');
+    const name = cells[0].textContent.trim();
+    const reach = parseFloat(cells[1].querySelector('input')?.value) || 0;
+    const saves = parseFloat(cells[2].querySelector('input')?.value) || 0;
+    const comments = parseFloat(cells[3].querySelector('input')?.value) || 0;
+    if (name) data[name] = { reach, saves, comments };
+  });
+  
+  const summary = Object.entries(data)
+    .filter(([,v]) => v.reach > 0 || v.saves > 0 || v.comments > 0)
+    .map(([k,v]) => `${k}：觸及 ${v.reach}、收藏 ${v.saves}、留言 ${v.comments}`)
+    .join('；');
+  
+  if (!summary) {
+    $('insightBox').innerHTML = '<p class="hint">請填入至少一個主軸的數據。</p>';
+    return;
+  }
+  
+  $('insightBox').innerHTML = `<div class="insight-card"><p>📊 數據已記錄，將在下次生成時參考。</p></div>`;
+};
+
+// ════════ Init ════════
+loadSettings();
+</script>
+</body>
+</html>
