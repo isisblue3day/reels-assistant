@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>人與地球優選市集 | Reels AI 內容助理 v4.2</title>
+    <title>人與地球優選市集 | Reels AI 內容助理 v4.3</title>
     <style>
         * {
             margin: 0;
@@ -278,7 +278,7 @@
     <div class="container">
         <div class="header">
             <h1>🌍 人與地球優選市集</h1>
-            <p>Reels AI 內容助理 v4.2 — 365天自動化內容生成</p>
+            <p>Reels AI 內容助理 v4.3 — 365天自動化內容生成</p>
         </div>
         
         <div class="main-content">
@@ -312,11 +312,17 @@
                 </div>
                 
                 <div class="form-group">
+                    <label>開始日期</label>
+                    <input type="date" id="startDate">
+                </div>
+                
+                <div class="form-group">
                     <label>生成天數</label>
                     <select id="daysRange">
                         <option value="7">7 天</option>
                         <option value="14">14 天</option>
                         <option value="30">30 天</option>
+                        <option value="90">90 天</option>
                         <option value="365">365 天（全年）</option>
                     </select>
                 </div>
@@ -417,44 +423,52 @@
         
         // ===== 月份時事資料庫 =====
         const monthlyEvents = {
-            1: ['新年願景', '永續目標制定', '春節準備'],
-            2: ['情人節關係', '元宵文化', '社區陪伴'],
-            3: ['婦女節與性別平等', '植樹節', '春季戶外'],
-            4: ['清明傳統', '兒童節教育', '春季環保'],
-            5: ['母親節與家庭', '勞動節', '永續發展'],
-            6: ['父親節', '端午文化', '環境教育'],
-            7: ['暑期學習', '社區服務', '環保月'],
-            8: ['社企月', '永續倡議', '青年創業'],
-            9: ['中秋團圓', '新學期', '秋季收穫'],
-            10: ['雙十節', '消費者月', '秋季購物'],
-            11: ['感恩節', '社企週', '年末回顧'],
-            12: ['聖誕溫暖', '年末反思', '新年準備']
+            1: ['新年願景', '永續目標制定', '春節準備', '新學期開始'],
+            2: ['情人節關係', '元宵文化', '社區陪伴', '女力倡議'],
+            3: ['婦女節與性別平等', '植樹節', '春季戶外', '環保意識抬頭'],
+            4: ['清明傳統', '兒童節教育', '春季環保', '成人的責任'],
+            5: ['母親節與家庭', '勞動節', '永續發展', '社會關懷'],
+            6: ['父親節', '端午文化', '環境教育', '夏日消費'],
+            7: ['暑期學習', '社區服務', '環保月', '暑期實踐'],
+            8: ['社企月', '永續倡議', '青年創業', '新學期籌備'],
+            9: ['中秋團圓', '新學期', '秋季收穫', '換季購物'],
+            10: ['雙十節', '消費者月', '秋季購物', '國慶展望'],
+            11: ['感恩節', '社企週', '年末回顧', '給予季節'],
+            12: ['聖誕溫暖', '年末反思', '新年準備', '愛心捐贈']
         };
         
-        // ===== 內容模板庫（用於本地生成，不需要 API）=====
+        // ===== 豐富的內容模板庫 =====
         const contentTemplates = {
             reels: [
-                '今天和${partner}一起分享友善消費的力量。每一次購買都是支持，都是改變。${event}時節，我們邀請您成為影響力的推手！',
-                '你知道嗎？${partner}透過${value}支持著桃園的${community}。加入「人與地球優選市集」，讓每次消費都能創造實質影響力。',
-                '${partner}的故事告訴我們，社會企業不只能營利，更能創造永續的未來。這${event}，支持友善消費就是支持改變。',
-                '中央大學影響力中心與${partner}攜手推動DEI多元共融。在「人與地球優選市集」，你的選擇就是投票。',
-                '${event}到來，是時候重新思考消費的意義。${partner}邀請你一起，用行動支持永續、友善與共融。'
+                '中央大學影響力中心與${partner}合作，這${event}，讓每一次的友善消費都能創造實質影響。在「人與地球優選市集」，你的選擇就是改變的開始。',
+                '${partner}透過${value}默默守護著我們的未來。${event}到來，是時候用行動支持他們。加入「人與地球優選市集」，成為改變的推手。',
+                '你知道嗎？每一筆友善消費都有故事。${partner}的故事，正在「人與地球優選市集」等你發現。這${event}，一起支持永續。',
+                '社會企業不只能營利，更能創造永續的未來。${partner}用行動詮釋著這份承諾。在「人與地球優選市集」支持他們，讓改變發生。',
+                '${event}時節，是重新思考消費意義的時刻。與${partner}一起，用友善選品支持永續、多元與共融的世界。',
+                '中央大學亞洲影響力中心邀請你，在「人與地球優選市集」發現${partner}的故事。${event}，讓我們一起創造更好的未來。',
+                '每次購買都是投票。在「人與地球優選市集」支持${partner}，就是為永續、友善與共融投下一票。',
+                '${partner}正在用${product}改變世界。這${event}，加入「人與地球優選市集」，成為改變的一部分。'
             ],
             post: [
-                '【${partner}故事分享】\n\n${story}\n\n中央大學亞洲影響力中心與${partner}合作，透過「人與地球優選市集」線上平台，讓每一筆消費都能支持社會企業的永續發展。${event}時節，邀請你一起用友善消費創造影響力。',
-                '感謝${partner}的堅持，讓我們看見社會企業如何在${value}的路上持續前進。這個${event}，與我們一起支持友善選品，成為改變的力量。',
-                '${partner}透過${value}守護著我們的未來。在「人與地球優選市集」平台上，你可以直接支持他們的努力，讓每次消費都更有意義。',
-                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。加入我們，一起實踐友善消費的承諾。'
+                '【${partner}的故事】\n\n${story}\n\n中央大學亞洲影響力中心與${partner}透過「人與地球優選市集」線上平台，致力於讓每一筆消費都能支持社會企業的永續發展。${event}到來，邀請你一起用友善消費創造影響力。\n\n▶ 前往市集探索：人與地球優選市集',
+                '感謝${partner}在${value}路上的堅持與努力。${event}時節，我們邀請你加入「人與地球優選市集」，一起支持友善選品，成為改變的力量。',
+                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。在「人與地球優選市集」認識他們，一起實踐友善消費的承諾。',
+                '中央大學影響力中心與${partner}合作，透過「人與地球優選市集」，讓${value}不再是理想，而是日常實踐。${event}，你也可以成為改變者。',
+                '你有想過每一次購買的影響嗎？在「人與地球優選市集」，${partner}的${product}不只是商品，更是一份承諾。${event}，支持友善消費。',
+                '社會企業的力量在於改變。看${partner}如何透過${value}守護著我們的未來。在「人與地球優選市集」，與他們一起創造更好的世界。'
             ],
             story: [
-                '你有認識的社會企業或友善品牌嗎？在「人與地球優選市集」分享你的選擇吧！💚',
-                '這個${event}，你最想支持的是哪個友善品牌？投票表情符號給予支持！👇',
-                '${partner}推出了新的${product}！有人想試試看嗎？在留言區分享你的想法！✨',
-                '中央大學與${partner}合作推動友善消費。你也想加入嗎？按讚分享，一起創造影響力！'
+                '你認識哪個社會企業或友善品牌呢？在「人與地球優選市集」分享你的故事吧！👇',
+                '${event}到來，你最想支持的友善品牌是？在留言區告訴我們！💚',
+                '${partner}推出新品了！有人對${product}感興趣嗎？留言分享你的想法！✨',
+                '在「人與地球優選市集」購物，就是支持永續。你最喜歡哪個社企品牌？分享一下吧！',
+                '中央大學與${partner}推動友善消費。你準備好加入了嗎？按讚分享，讓更多人認識社會企業的力量！',
+                '${event}月份，你想支持哪個夥伴的商品？投票在留言區！👇👇👇'
             ],
             newsletter: [
-                '【影響力市集通訊】\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}透過平台上的友善選品，你的每次購買都能支持這份堅持。\n\n立即探索市集，發現更多改變世界的夥伴。\n\n中央大學亞洲影響力衡量與管理研究總中心',
-                '【市集推薦】${partner}新品上市！\n\n${story}\n\n在「人與地球優選市集」線上購物平台上，你可以找到來自各個社會企業與公益團體的友善選品。這${event}，支持永續、多元與共融。\n\n▶ 前往市集探索：[連結]'
+                '【影響力市集通訊】${event}特輯\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}\n\n透過平台上的友善選品，你的每次購買都能支持這份堅持。立即探索市集，發現更多改變世界的夥伴。\n\n▶ 前往市集探索：[連結]\n\n中央大學亞洲影響力衡量與管理研究總中心',
+                '【市集推薦】${partner}${product}新品\n\n${story}\n\n在「人與地球優選市集」線上購物平台，你可以找到來自各個社會企業與公益團體的友善選品。每次購買都是支持永續、多元與共融的行動。\n\n這${event}，我們推薦你認識${partner}的故事，用消費力支持改變。',
+                '【影響力洞察】友善消費的力量\n\n你有想過嗎？每一筆消費背後都藏著故事。${partner}透過${value}守護著我們的未來，而你的支持能讓這份力量持續擴大。\n\n在「人與地球優選市集」，探索更多社會企業的故事，一起創造永續的世界。'
             ]
         };
         
@@ -466,6 +480,12 @@
         function init() {
             renderPillars();
             renderPartners();
+            setDefaultDate();
+        }
+        
+        function setDefaultDate() {
+            const today = new Date();
+            document.getElementById('startDate').valueAsDate = today;
         }
         
         function renderPillars() {
@@ -531,6 +551,7 @@
             const contentType = document.getElementById('contentType').value;
             const daysRange = parseInt(document.getElementById('daysRange').value);
             const customTheme = document.getElementById('customTheme').value;
+            const startDate = new Date(document.getElementById('startDate').value);
             
             if (selectedPillars.length === 0 && selectedPartners.length === 0) {
                 showStatus('請至少選擇一個內容主軸或夥伴故事', 'error');
@@ -543,10 +564,9 @@
             
             try {
                 generatedContent = [];
-                const today = new Date();
                 
                 for (let day = 0; day < daysRange; day++) {
-                    const date = new Date(today);
+                    const date = new Date(startDate);
                     date.setDate(date.getDate() + day);
                     const month = date.getMonth() + 1;
                     const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
@@ -601,8 +621,8 @@
             let content = template
                 .replace(/\$\{partner\}/g, partner.shortName || partner.name)
                 .replace(/\$\{story\}/g, partner.story)
-                .replace(/\$\{value\}/g, partner.values[0])
-                .replace(/\$\{product\}/g, partner.products[0])
+                .replace(/\$\{value\}/g, partner.values[Math.floor(Math.random() * partner.values.length)])
+                .replace(/\$\{product\}/g, partner.products[Math.floor(Math.random() * partner.products.length)])
                 .replace(/\$\{event\}/g, event)
                 .replace(/\$\{community\}/g, '社群');
             
@@ -692,6 +712,7 @@
             document.getElementById('outputBox').textContent = '選擇設定後按「生成內容」開始...';
             document.getElementById('outputBox').classList.add('empty');
             document.getElementById('statusMessage').textContent = '';
+            setDefaultDate();
             updatePillarUI();
             updatePartnerUI();
             showStatus('已重設所有設定', 'success');
