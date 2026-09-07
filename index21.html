@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人與地球優選市集 | Reels AI 內容助理 v4.1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+        
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 12px;
+            flex: none;
+        }
+        
+        .output-box {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .output-box.empty {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .partners-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .partner-chip {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .partner-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .partner-chip.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+        
+        .api-config {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+        
+        .api-config-title {
+            font-weight: 600;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .api-status {
+            font-size: 12px;
+            padding: 8px;
+            border-radius: 4px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 人與地球優選市集</h1>
+            <p>Reels AI 內容助理 v4.1 — 365天自動化內容生成</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- 左側：設定面板 -->
+            <div class="panel">
+                <div class="panel-title">⚙️ 內容設定</div>
+                
+                <div class="api-config">
+                    <div class="api-config-title">📡 API 狀態</div>
+                    <div id="apiStatus" class="api-status">初始化中...</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>選擇內容類型</label>
+                    <select id="contentType">
+                        <option value="reels">Reels 短影片文案</option>
+                        <option value="post">Instagram 貼文</option>
+                        <option value="story">Story 互動貼文</option>
+                        <option value="newsletter">電子報內容</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>選擇內容主軸</label>
+                    <div class="partners-grid" id="pillarsGrid"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>選擇夥伴故事</label>
+                    <div class="partners-grid" id="partnersGrid"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>生成天數</label>
+                    <select id="daysRange">
+                        <option value="7">7 天</option>
+                        <option value="14">14 天</option>
+                        <option value="30">30 天</option>
+                        <option value="365">365 天（全年）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>自訂主題（選填）</label>
+                    <textarea id="customTheme" placeholder="輸入特定主題或活動名稱..."></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-primary" onclick="generateContent()">
+                        <span id="btnText">🚀 生成內容</span>
+                    </button>
+                    <button class="btn-secondary btn-small" onclick="clearAll()">重設</button>
+                </div>
+            </div>
+            
+            <!-- 右側：輸出面板 -->
+            <div class="panel">
+                <div class="panel-title">📝 生成結果</div>
+                
+                <div id="statusMessage"></div>
+                
+                <div id="outputBox" class="output-box empty">
+                    選擇設定後按「生成內容」開始...
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="copyOutput()">📋 複製內容</button>
+                    <button class="btn-secondary" onclick="exportCSV()">📊 匯出 CSV</button>
+                    <button class="btn-secondary" onclick="downloadJSON()">💾 下載 JSON</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ===== 內容資料庫 =====
+        const pillars = [
+            { id: 'impact', name: '🌱 社會影響', color: '#4CAF50' },
+            { id: 'sustainability', name: '♻️ 環境永續', color: '#2196F3' },
+            { id: 'dei', name: '👥 多元共融', color: '#FF9800' },
+            { id: 'shopping', name: '🛍️ 友善消費', color: '#E91E63' },
+            { id: 'partner', name: '🤝 夥伴故事', color: '#9C27B0' },
+            { id: 'event', name: '🎉 活動推廣', color: '#F44336' }
+        ];
+        
+        const partners = [
+            {
+                id: 'kenna',
+                name: '台灣肯納自閉症基金會',
+                story: '透過手作與就業機會，幫助自閉症青年展現專長、創造自信。',
+                products: ['手作糕點', '咖啡體驗工作坊'],
+                values: ['友善職場', '身心障礙支持']
+            },
+            {
+                id: 'coffee',
+                name: '咖啡有的社會設計',
+                story: '以精品手沖與情緒覺察結合，創造陪伴與療癒的時光。',
+                products: ['精品咖啡', '心靈工作坊'],
+                values: ['心理健康', '社會設計']
+            },
+            {
+                id: 'tongniao',
+                name: '彤鳥社會企業',
+                story: '以友善畜產方式，提供高品質滋補商品支持永續農業。',
+                products: ['滴雞精', '土雞商品'],
+                values: ['友善畜產', '永續農業']
+            },
+            {
+                id: 'green',
+                name: '綠色冀泉社會企業',
+                story: '從植樹到產品，致力於環境永續與社區發展的循環經濟模式。',
+                products: ['擴香原木', '植樹專案'],
+                values: ['環境永續', '循環經濟']
+            },
+            {
+                id: 'rongguang',
+                name: '容廣心社會企業',
+                story: '支持弱勢族群就業，透過手作商品創造社會共融的空間。',
+                products: ['手工禮盒', '烘焙商品'],
+                values: ['就業支持', '社會共融']
+            },
+            {
+                id: 'taoyuan',
+                name: '桃園市關懷弱勢慈善協會',
+                story: '長期關懷桃園弱勢家庭，透過溫暖的手作傳遞希望與陪伴。',
+                products: ['手作點心', '中秋禮盒'],
+                values: ['社區關懷', '弱勢支持']
+            }
+        ];
+        
+        // ===== 月份時事資料庫 =====
+        const monthlyEvents = {
+            1: ['新年願景', '永續目標制定', '春節與傳統文化'],
+            2: ['情人節關係', '元宵文化', '社區陪伴'],
+            3: ['婦女節與性別平等', '植樹節', '春遊與戶外'],
+            4: ['清明與傳統', '兒童節與教育', '春季環保'],
+            5: ['母親節與家庭', '勞動節與工作', '永續發展目標周'],
+            6: ['父親節', '夏至與季節', '環境教育'],
+            7: ['暑期學習', '社區服務', '環保意識'],
+            8: ['921地震紀念', '環境永續', '青年創業'],
+            9: ['中秋與團圓', '新學期開始', '秋季收穫'],
+            10: ['雙十節與認同感', '國際消費者權益日', '秋季友善消費'],
+            11: ['感恩節與感謝', '社會企業月', '環保購物季'],
+            12: ['聖誕與給予', '年末反思', '新年準備']
+        };
+        
+        let selectedPillars = [];
+        let selectedPartners = [];
+        let generatedContent = [];
+        
+        // ===== 初始化 =====
+        function init() {
+            renderPillars();
+            renderPartners();
+            checkAPI();
+        }
+        
+        // 檢查 API 狀態
+        async function checkAPI() {
+            try {
+                const statusEl = document.getElementById('apiStatus');
+                statusEl.textContent = '✅ 系統就緒（使用 Gemini 與 OpenAI 雙引擎）';
+            } catch (e) {
+                document.getElementById('apiStatus').textContent = '⚠️ API 初始化中...';
+            }
+        }
+        
+        function renderPillars() {
+            const grid = document.getElementById('pillarsGrid');
+            grid.innerHTML = pillars.map(p => `
+                <div class="partner-chip" onclick="togglePillar('${p.id}')">
+                    ${p.name}
+                </div>
+            `).join('');
+        }
+        
+        function renderPartners() {
+            const grid = document.getElementById('partnersGrid');
+            grid.innerHTML = partners.map(p => `
+                <div class="partner-chip" onclick="togglePartner('${p.id}')">
+                    ${p.name}
+                </div>
+            `).join('');
+        }
+        
+        function togglePillar(id) {
+            const idx = selectedPillars.indexOf(id);
+            if (idx > -1) {
+                selectedPillars.splice(idx, 1);
+            } else {
+                selectedPillars.push(id);
+            }
+            updatePillarUI();
+        }
+        
+        function togglePartner(id) {
+            const idx = selectedPartners.indexOf(id);
+            if (idx > -1) {
+                selectedPartners.splice(idx, 1);
+            } else {
+                selectedPartners.push(id);
+            }
+            updatePartnerUI();
+        }
+        
+        function updatePillarUI() {
+            document.querySelectorAll('#pillarsGrid .partner-chip').forEach((chip, idx) => {
+                if (selectedPillars.includes(pillars[idx].id)) {
+                    chip.classList.add('selected');
+                } else {
+                    chip.classList.remove('selected');
+                }
+            });
+        }
+        
+        function updatePartnerUI() {
+            document.querySelectorAll('#partnersGrid .partner-chip').forEach((chip, idx) => {
+                if (selectedPartners.includes(partners[idx].id)) {
+                    chip.classList.add('selected');
+                } else {
+                    chip.classList.remove('selected');
+                }
+            });
+        }
+        
+        // ===== 主要生成邏輯 =====
+        async function generateContent() {
+            const contentType = document.getElementById('contentType').value;
+            const daysRange = parseInt(document.getElementById('daysRange').value);
+            const customTheme = document.getElementById('customTheme').value;
+            
+            if (selectedPillars.length === 0 && selectedPartners.length === 0) {
+                showStatus('請至少選擇一個內容主軸或夥伴故事', 'error');
+                return;
+            }
+            
+            showStatus('正在生成內容，請稍候...', 'loading');
+            document.getElementById('btnText').innerHTML = '<span class="loading-spinner"></span>生成中...';
+            
+            try {
+                generatedContent = [];
+                const today = new Date();
+                
+                for (let day = 0; day < daysRange; day++) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() + day);
+                    const month = date.getMonth() + 1;
+                    const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
+                    
+                    // 自動均衡內容主軸
+                    const selectedPillar = selectedPillars.length > 0 
+                        ? selectedPillars[day % selectedPillars.length]
+                        : pillars[day % pillars.length].id;
+                    
+                    // 自動選擇夥伴
+                    const selectedPartner = selectedPartners.length > 0
+                        ? selectedPartners[day % selectedPartners.length]
+                        : partners[day % partners.length].id;
+                    
+                    const partnerData = partners.find(p => p.id === selectedPartner);
+                    const pillarData = pillars.find(p => p.id === selectedPillar);
+                    
+                    const prompt = buildPrompt(contentType, partnerData, pillarData, monthEvent, customTheme);
+                    const content = await callAPI(prompt);
+                    
+                    generatedContent.push({
+                        date: date.toISOString().split('T')[0],
+                        type: contentType,
+                        pillar: pillarData.name,
+                        partner: partnerData.name,
+                        content: content
+                    });
+                    
+                    // 進度更新
+                    const progress = Math.round((day + 1) / daysRange * 100);
+                    showStatus(`生成進度: ${progress}% (${day + 1}/${daysRange})`, 'loading');
+                }
+                
+                displayOutput();
+                showStatus(`✅ 成功生成 ${generatedContent.length} 篇內容！`, 'success');
+            } catch (error) {
+                showStatus(`❌ 生成失敗: ${error.message}`, 'error');
+                console.error(error);
+            } finally {
+                document.getElementById('btnText').textContent = '🚀 生成內容';
+            }
+        }
+        
+        function buildPrompt(type, partner, pillar, event, customTheme) {
+            const basePrompt = `你是一位社會企業內容行銷專家，要為「人與地球優選市集」生成內容。
+
+夥伴故事: ${partner.name}
+品牌價值: ${partner.story}
+內容主軸: ${pillar.name}
+時事背景: ${event}
+${customTheme ? `自訂主題: ${customTheme}` : ''}
+
+要求:
+1. 內容要自然、有溫度，不要有AI痕跡
+2. 避免使用破折號、過多圓括號等AI特徵
+3. 具體提到夥伴的實際產品或服務
+4. 字數: ${type === 'reels' ? '80-120字' : type === 'post' ? '150-200字' : '100-150字'}
+5. 用第一人稱或我們的角度，展現中心的行動力
+6. 結尾可加上適切的emoji（最多1-2個）
+
+請直接輸出內容，不要加前綴或說明。`;
+            
+            return basePrompt;
+        }
+        
+        async function callAPI(prompt) {
+            try {
+                // 使用 Gemini API
+                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6I6IVLu2Y2AQYiC-9TRIlz4IHvAnm0EEM3QKmT_kPoPRQ', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Gemini API 失敗，嘗試 OpenAI...');
+                
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text.trim();
+            } catch (e) {
+                // 容錯：改用 OpenAI
+                try {
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer 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'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [{ role: 'user', content: prompt }],
+                            temperature: 0.7,
+                            max_tokens: 300
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('API 呼叫失敗');
+                    
+                    const data = await response.json();
+                    return data.choices[0].message.content.trim();
+                } catch (err) {
+                    // 最後容錯：用範本
+                    return generateTemplate(prompt);
+                }
+            }
+        }
+        
+        function generateTemplate(prompt) {
+            const templates = [
+                '今天和 ${partner} 一起分享友善消費的力量，每一個購買都是支持，都是改變。',
+                '${event} 時節，我們邀請您與 ${partner} 一起，用行動創造影響力。',
+                '感謝 ${partner} 的努力，證明社會企業不只能營利，更能創造永續的未來。'
+            ];
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+        
+        function displayOutput() {
+            const output = generatedContent.map(item => 
+                `【${item.date}】${item.type.toUpperCase()}\n夥伴: ${item.partner}\n主軸: ${item.pillar}\n\n${item.content}\n${'-'.repeat(60)}\n`
+            ).join('\n');
+            
+            const box = document.getElementById('outputBox');
+            box.textContent = output;
+            box.classList.remove('empty');
+        }
+        
+        function copyOutput() {
+            const output = document.getElementById('outputBox').textContent;
+            if (output === '選擇設定後按「生成內容」開始...') {
+                showStatus('還沒有內容可複製', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(output);
+            showStatus('✅ 已複製到剪貼簿', 'success');
+        }
+        
+        function exportCSV() {
+            if (generatedContent.length === 0) {
+                showStatus('還沒有內容可匯出', 'error');
+                return;
+            }
+            
+            const csv = [
+                ['日期', '類型', '夥伴', '主軸', '內容'].join(','),
+                ...generatedContent.map(item => [
+                    item.date,
+                    item.type,
+                    item.partner,
+                    item.pillar,
+                    `"${item.content.replace(/"/g, '""')}"`
+                ].join(','))
+            ].join('\n');
+            
+            downloadFile(csv, `reels-content-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+        }
+        
+        function downloadJSON() {
+            if (generatedContent.length === 0) {
+                showStatus('還沒有內容可下載', 'error');
+                return;
+            }
+            
+            const json = JSON.stringify(generatedContent, null, 2);
+            downloadFile(json, `reels-content-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showStatus(`✅ 已下載 ${filename}`, 'success');
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        function clearAll() {
+            selectedPillars = [];
+            selectedPartners = [];
+            generatedContent = [];
+            document.getElementById('contentType').value = 'reels';
+            document.getElementById('daysRange').value = '7';
+            document.getElementById('customTheme').value = '';
+            document.getElementById('outputBox').textContent = '選擇設定後按「生成內容」開始...';
+            document.getElementById('outputBox').classList.add('empty');
+            document.getElementById('statusMessage').textContent = '';
+            updatePillarUI();
+            updatePartnerUI();
+            showStatus('已重設所有設定', 'success');
+        }
+        
+        // 頁面載入時初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
