@@ -1,670 +1,1056 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>人與地球優選市集 | Reels AI 內容助理 v3</title>
+    <title>人與地球優選市集 | Reels AI內容助理 v5.2</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
-            background: #f0f2f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
         }
-        
-        .header {
-            background: linear-gradient(135deg, #1a7f5f 0%, #2ecc71 100%);
+
+        header {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
             color: white;
             padding: 30px;
             border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        
-        .header h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 5px;
+
+        header h1 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            margin-bottom: 8px;
         }
-        
-        .header p {
-            font-size: 13px;
+
+        header p {
             opacity: 0.9;
+            font-size: 14px;
         }
-        
-        .main-grid {
+
+        .main-layout {
             display: grid;
             grid-template-columns: 280px 1fr;
-            gap: 25px;
-            margin-bottom: 25px;
+            gap: 24px;
         }
-        
+
         .sidebar {
             background: white;
+            padding: 24px;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             height: fit-content;
+            position: sticky;
+            top: 20px;
         }
-        
+
         .sidebar-section {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-        
+
         .sidebar-section:last-child {
             margin-bottom: 0;
         }
-        
-        .sidebar-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #1a7f5f;
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1b5e20;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #2ecc71;
-        }
-        
-        .form-group {
-            margin-bottom: 12px;
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 6px;
         }
-        
-        .form-group label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #666;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 8px;
+
+        select, input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 8px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 14px;
             font-family: inherit;
-            font-size: 12px;
+            background: white;
+            cursor: pointer;
         }
-        
-        .form-group textarea {
-            resize: vertical;
-            min-height: 50px;
-        }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+
+        select:focus, input:focus {
             outline: none;
-            border-color: #2ecc71;
-            background: #f9fafb;
+            border-color: #43a047;
+            box-shadow: 0 0 0 2px rgba(67, 160, 71, 0.1);
         }
-        
+
         .checkbox-group {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
-        
+
         .checkbox-item {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
-        .checkbox-item input[type="checkbox"] {
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
             cursor: pointer;
-            width: 14px;
-            height: 14px;
+            accent-color: #43a047;
         }
-        
-        .checkbox-item label {
+
+        label {
             cursor: pointer;
-            font-size: 11px;
-            color: #555;
-            margin: 0;
+            font-size: 14px;
+            color: #333;
         }
-        
-        .btn {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s;
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: #1a7f5f;
-            color: white;
-            margin-bottom: 8px;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: #158a5e;
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        
-        .btn-secondary {
-            background: #2ecc71;
-            color: white;
-            font-size: 11px;
-            padding: 8px 12px;
-            margin-bottom: 6px;
-        }
-        
-        .btn-secondary:hover {
-            background: #27ae60;
-        }
-        
-        .tab-nav {
+
+        .button-group {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-            flex-wrap: wrap;
         }
-        
-        .tab-btn {
-            padding: 10px 15px;
-            background: white;
+
+        button {
+            padding: 12px 16px;
             border: none;
-            cursor: pointer;
-            font-size: 13px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
         }
-        
-        .tab-btn.active {
-            color: #1a7f5f;
-            border-bottom-color: #1a7f5f;
+
+        .btn-generate {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+            color: white;
         }
-        
-        .tab-content {
-            display: none;
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #eeeeee;
+        }
+
+        .btn-copy {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        .btn-copy:hover {
+            background: #c8e6c9;
+        }
+
+        .content-area {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
         }
-        
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+            background: #fafafa;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px 20px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .tab:hover {
+            background: #f5f5f5;
+        }
+
+        .tab.active {
+            color: #2e7d32;
+            border-bottom-color: #43a047;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
         .tab-content.active {
             display: block;
         }
-        
-        .calendar-grid {
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .content-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
+            gap: 20px;
         }
-        
-        .day-card {
-            background: #f9fafb;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            min-height: 120px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .day-card:hover {
-            background: white;
-            border-color: #2ecc71;
-            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
-        }
-        
-        .day-card.active {
-            background: #e8f8f5;
-            border-color: #1a7f5f;
-        }
-        
-        .day-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: #1a7f5f;
-            text-transform: uppercase;
-        }
-        
-        .day-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
-            line-height: 1.4;
-        }
-        
-        .day-partner {
-            font-size: 10px;
-            color: #999;
-        }
-        
-        .content-detail {
-            background: white;
+
+        .card {
             border: 1px solid #e0e0e0;
             border-radius: 8px;
             padding: 20px;
-            margin-top: 15px;
-            line-height: 1.8;
+            background: #fafafa;
+            transition: all 0.3s ease;
         }
-        
-        .content-detail h3 {
-            font-size: 14px;
-            color: #1a7f5f;
-            margin-bottom: 10px;
+
+        .card:hover {
+            border-color: #43a047;
+            box-shadow: 0 2px 8px rgba(67, 160, 71, 0.1);
         }
-        
-        .content-detail p {
-            font-size: 12px;
-            color: #555;
-            white-space: pre-wrap;
-        }
-        
-        .status-message {
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-        
-        .status-message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status-message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .status-message.loading {
-            background: #cfe2ff;
-            color: #084298;
-            border: 1px solid #b6d4fe;
-        }
-        
-        .event-list {
+
+        .card-header {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
-        
-        .event-item {
-            padding: 8px;
-            background: #f9fafb;
-            border-left: 3px solid #2ecc71;
+
+        .card-date {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .card-time {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-theme {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 4px 10px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 12px;
+            margin-top: 8px;
+            margin-right: 8px;
         }
-        
+
+        .card-format {
+            display: inline-block;
+            background: #f3e5f5;
+            color: #6a1b9a;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .script-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #ddd;
+        }
+
+        .script-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .script-text {
+            background: white;
+            padding: 12px;
+            border-left: 4px solid #43a047;
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .hashtags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .hashtag {
+            color: #0066cc;
+            font-size: 13px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .hashtag:hover {
+            color: #003d99;
+            text-decoration: underline;
+        }
+
+        .copy-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state small {
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        .gemini-prompt {
+            background: #e3f2fd;
+            border-left: 4px solid #1976d2;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #1565c0;
+        }
+
+        .gemini-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+        }
+
+        .schedule-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .schedule-table tr:hover {
+            background: #f9f9f9;
+        }
+
         @media (max-width: 1024px) {
-            .main-grid {
+            .main-layout {
                 grid-template-columns: 1fr;
             }
-            
-            .calendar-grid {
-                grid-template-columns: repeat(3, 1fr);
+
+            .sidebar {
+                position: static;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab {
+                white-space: nowrap;
+            }
+        }
+
+        .export-section {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .success-message {
+            background: #c8e6c9;
+            color: #1b5e20;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 13px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <header>
             <h1>🌍 人與地球優選市集</h1>
-            <p>Reels AI 內容助理 v3 — 365天內容日曆生成工具</p>
-        </div>
-        
-        <div class="main-grid">
-            <!-- 左側設定 -->
-            <div class="sidebar">
+            <p>Reels AI內容助理 v5.2 — 365天內容自動生成｜AI推薦發布時間｜時事導向</p>
+        </header>
+
+        <div class="main-layout">
+            <!-- 側邊欄 -->
+            <aside class="sidebar">
                 <div class="sidebar-section">
-                    <div class="sidebar-title">📋 設定選項</div>
-                    <div class="form-group">
-                        <label>內容類型</label>
-                        <select id="contentType">
-                            <option value="reels">Reels 短影片</option>
-                            <option value="post">Instagram 貼文</option>
-                            <option value="story">Story 互動</option>
-                            <option value="newsletter">電子報</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>開始日期</label>
-                        <input type="date" id="startDate">
-                    </div>
-                    <div class="form-group">
-                        <label>生成天數</label>
-                        <select id="daysRange">
-                            <option value="7">7 天</option>
-                            <option value="14">14 天</option>
-                            <option value="30">30 天</option>
-                        </select>
-                    </div>
+                    <div class="section-title">⚙️ 內容設定</div>
+                    <label for="contentType" style="display: block; margin-bottom: 6px; font-size: 12px;">內容類型</label>
+                    <select id="contentType">
+                        <option value="reels">📹 Reels（短影音）</option>
+                        <option value="post">📸 Post（靜態貼文）</option>
+                        <option value="story">📖 Story（限時動態）</option>
+                        <option value="newsletter">📧 Newsletter（電子報）</option>
+                    </select>
+
+                    <label for="startDate" style="display: block; margin-bottom: 6px; font-size: 12px; margin-top: 12px;">開始日期</label>
+                    <input type="date" id="startDate">
+
+                    <label for="daysCount" style="display: block; margin-bottom: 6px; font-size: 12px; margin-top: 12px;">生成天數</label>
+                    <select id="daysCount">
+                        <option value="7">7 天</option>
+                        <option value="14">14 天</option>
+                        <option value="30">30 天</option>
+                        <option value="90">90 天</option>
+                        <option value="365">365 天</option>
+                    </select>
                 </div>
-                
+
                 <div class="sidebar-section">
-                    <div class="sidebar-title">🤝 選擇夥伴</div>
+                    <div class="section-title">🎯 內容主軸</div>
                     <div class="checkbox-group">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_kenna" value="kenna" checked>
-                            <label for="p_kenna">肯納基金會</label>
+                            <input type="checkbox" id="axis1" checked>
+                            <label for="axis1">節慶送禮</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_coffee" value="coffee" checked>
-                            <label for="p_coffee">咖啡有的</label>
+                            <input type="checkbox" id="axis2" checked>
+                            <label for="axis2">惜食與友善農業</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_tongniao" value="tongniao" checked>
-                            <label for="p_tongniao">彤鳥社企</label>
+                            <input type="checkbox" id="axis3" checked>
+                            <label for="axis3">消費背後的社會影響力</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_green" value="green" checked>
-                            <label for="p_green">綠色冀泉</label>
+                            <input type="checkbox" id="axis4" checked>
+                            <label for="axis4">企業採購與ESG</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_rongguang" value="rongguang" checked>
-                            <label for="p_rongguang">容廣心</label>
+                            <input type="checkbox" id="axis5" checked>
+                            <label for="axis5">永續好物選品與開箱</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="p_taoyuan" value="taoyuan" checked>
-                            <label for="p_taoyuan">關懷弱勢</label>
+                            <input type="checkbox" id="axis6" checked>
+                            <label for="axis6">DEI共融與特殊需求</label>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="sidebar-section">
-                    <button class="btn btn-primary" onclick="generateCalendar()">
-                        📅 生成日曆
-                    </button>
-                    <button class="btn btn-secondary" onclick="exportCSV()">
-                        📊 CSV
-                    </button>
-                    <button class="btn btn-secondary" onclick="downloadJSON()">
-                        💾 JSON
-                    </button>
-                    <button class="btn btn-secondary" onclick="clearAll()">
-                        🔄 重設
-                    </button>
+                    <div class="section-title">🎬 影片形式</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="format1" checked>
+                            <label for="format1">真人口播</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="format2" checked>
+                            <label for="format2">字卡</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="format3" checked>
+                            <label for="format3">動畫</label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- 右側內容 -->
-            <div>
-                <div id="statusMessage"></div>
-                
-                <div class="tab-nav">
-                    <button class="tab-btn active" onclick="switchTab('calendar')">📅 內容日曆</button>
-                    <button class="tab-btn" onclick="switchTab('script')">📝 腳本＋Gemini</button>
-                    <button class="tab-btn" onclick="switchTab('schedule')">🗓 發布排程</button>
-                    <button class="tab-btn" onclick="switchTab('events')">🌐 本月時事</button>
-                    <button class="tab-btn" onclick="switchTab('draft')">📸 IG 草稿</button>
+
+                <div class="sidebar-section">
+                    <div class="section-title">🛍️ 夥伴品牌</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner1" checked>
+                            <label for="partner1">台灣肯納自閉症基金會</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner2" checked>
+                            <label for="partner2">咖啡有的社會設計</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner3" checked>
+                            <label for="partner3">彤鳥社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner4" checked>
+                            <label for="partner4">綠色冀泉社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner5" checked>
+                            <label for="partner5">容廣心社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner6" checked>
+                            <label for="partner6">桃園關懷弱勢慈善協會</label>
+                        </div>
+                    </div>
                 </div>
-                
-                <!-- 日曆標籤頁 -->
+
+                <div class="sidebar-section">
+                    <div class="button-group">
+                        <button class="btn-generate" onclick="generateContent()">✨ 生成內容</button>
+                        <button class="btn-secondary" onclick="exportCSV()">📊 匯出 CSV</button>
+                        <button class="btn-secondary" onclick="exportJSON()">📋 匯出 JSON</button>
+                    </div>
+                    <div class="success-message" id="successMsg">✓ 已複製到剪貼板</div>
+                </div>
+            </aside>
+
+            <!-- 主要內容區域 -->
+            <main class="content-area">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab(this, 'calendar')">📅 內容日曆</div>
+                    <div class="tab" onclick="switchTab(this, 'schedule')">🗓️ 發布排程</div>
+                    <div class="tab" onclick="switchTab(this, 'script')">📝 腳本＋Gemini</div>
+                    <div class="tab" onclick="switchTab(this, 'events')">🌐 本月時事</div>
+                    <div class="tab" onclick="switchTab(this, 'drafts')">📸 IG草稿</div>
+                </div>
+
+                <!-- 內容日曆 -->
                 <div id="calendar" class="tab-content active">
-                    <div class="calendar-grid" id="calendarGrid">
-                        <div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">
-                            點擊「生成日曆」開始...
-                        </div>
-                    </div>
-                    <div id="contentDetail"></div>
+                    <div id="calendarContent"></div>
                 </div>
-                
-                <!-- 腳本標籤頁 -->
-                <div id="script" class="tab-content">
-                    <div id="scriptContent" style="white-space: pre-wrap; font-family: 'Courier New'; font-size: 12px; line-height: 1.8; color: #333;">
-                        選擇日曆中的日期以查看詳細腳本...
-                    </div>
-                </div>
-                
-                <!-- 發布排程標籤頁 -->
+
+                <!-- 發布排程 -->
                 <div id="schedule" class="tab-content">
-                    <div id="scheduleContent">
-                        <div style="color: #999; padding: 20px; text-align: center;">
-                            發布排程表格會在這裡顯示
-                        </div>
-                    </div>
+                    <div id="scheduleContent"></div>
                 </div>
-                
-                <!-- 本月時事標籤頁 -->
+
+                <!-- 腳本＋Gemini -->
+                <div id="script" class="tab-content">
+                    <div id="scriptContent"></div>
+                </div>
+
+                <!-- 本月時事 -->
                 <div id="events" class="tab-content">
-                    <div id="eventsContent" class="event-list">
-                        <div style="color: #999;">生成日曆後顯示本月時事...</div>
-                    </div>
+                    <div id="eventsContent"></div>
                 </div>
-                
-                <!-- IG 草稿標籤頁 -->
-                <div id="draft" class="tab-content">
-                    <div id="draftContent" style="color: #999; padding: 20px; text-align: center;">
-                        IG 草稿會在這裡顯示
-                    </div>
+
+                <!-- IG草稿 -->
+                <div id="drafts" class="tab-content">
+                    <div id="draftsContent"></div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
-    
+
     <script>
-        // ===== 資料庫 =====
-        const partnerDB = {
-            kenna: { name: '台灣肯納自閉症基金會', emoji: '🧠', color: '#3498db' },
-            coffee: { name: '咖啡有的社會設計', emoji: '☕', color: '#8b4513' },
-            tongniao: { name: '彤鳥社會企業', emoji: '🐓', color: '#ff6b6b' },
-            green: { name: '綠色冀泉社會企業', emoji: '🌱', color: '#27ae60' },
-            rongguang: { name: '容廣心社會企業', emoji: '❤️', color: '#e74c3c' },
-            taoyuan: { name: '桃園市關懷弱勢慈善協會', emoji: '🤝', color: '#f39c12' }
+        // 合作夥伴資料庫
+        const partnerDatabase = {
+            '台灣肯納自閉症基金會': {
+                desc: '支持自閉症者職業訓練與就業',
+                products: ['手工餅乾', '手作工藝品'],
+                mission: '每份購買都能幫助肯納症青年找到自信與工作機會'
+            },
+            '咖啡有的社會設計': {
+                desc: '提供特殊需求者咖啡職業培訓',
+                products: ['精品咖啡', '咖啡豆'],
+                mission: '一杯咖啡背後是被陪伴與被看見的故事'
+            },
+            '彤鳥社會企業': {
+                desc: '友善社企手工品',
+                products: ['手工藝品', '設計小物'],
+                mission: '創意與溫暖的結合'
+            },
+            '綠色冀泉社會企業': {
+                desc: '環保與永續商品',
+                products: ['環保製品', '永續商品'],
+                mission: '每一次選擇都在投票給未來'
+            },
+            '容廣心社會企業': {
+                desc: '身心障礙者創作空間',
+                products: ['創意商品', '藝術作品'],
+                mission: '用創意改變生命故事'
+            },
+            '桃園關懷弱勢慈善協會': {
+                desc: '弱勢家庭扶助與就業支持',
+                products: ['手作點心', '烘焙食品'],
+                mission: '一份禮物是一份陪伴，一份希望'
+            }
         };
-        
-        const templates = [
-            '${emoji}${partner}透過友善消費守護永續未來。今天一起支持社會企業，讓改變發生。',
-            '${event}時節，在「人與地球優選市集」認識${partner}的故事。每次購買都是一份力量。',
-            '${partner}相信，商業可以改變世界。在「人與地球優選市集」支持他們，成為改變者。',
-            '友善消費不是選擇，而是態度。${partner}正在用行動詮釋永續。加入我們。',
-            '中央大學影響力中心邀請你，認識${partner}如何透過${value}創造社會影響。'
-        ];
-        
+
+        // 時事與節慶資料庫
         const monthlyEvents = {
-            1: ['新年願景', '永續目標'],
-            2: ['情人節', '元宵文化'],
-            3: ['婦女節', '植樹節'],
-            4: ['清明', '兒童節'],
-            5: ['母親節', '勞動節'],
-            6: ['父親節', '端午'],
-            7: ['暑期', '環保月'],
-            8: ['社企月', '秋日'],
-            9: ['中秋', '新學期'],
-            10: ['雙十節', '秋季'],
-            11: ['感恩節', '年末'],
-            12: ['聖誕', '新年']
+            1: ['新年送禮', '春節團購', '新年新希望'],
+            2: ['情人節禮盒', '春節年貨', '元宵節'],
+            3: ['婦女節', '春遊禮盒', '清明祭祖'],
+            4: ['兒童節', '復活節', '春季甜點'],
+            5: ['母親節', '端午粽子', '初夏禮盒'],
+            6: ['父親節準備', '畢業禮物', '端午季節'],
+            7: ['暑假禮物', '中元節', '夏日清涼'],
+            8: ['開學季', '中秋預購', '立秋時令'],
+            9: ['中秋禮盒', '教師節', '秋季甜點'],
+            10: ['秋季禮盒', '重陽禮物', '冬季準備'],
+            11: ['感恩節', '黑五預售', '冬至準備'],
+            12: ['聖誕禮物', '跨年倒數', '年終回饋']
         };
-        
-        let calendarData = [];
-        
+
+        // 內容主軸與腳本庫
+        const contentAxes = {
+            '節慶送禮': {
+                hooks: [
+                    '你送的，不只是一盒禮。',
+                    '每份禮物背後都有故事。',
+                    '送禮不只送心意，更送影響力。',
+                    '這個節慶，送一份能改變世界的禮。'
+                ],
+                ctas: [
+                    '留言「送禮」了解更多',
+                    '點擊連結看完整禮盒',
+                    '傳給朋友一起支持',
+                    '立即預訂限量禮盒'
+                ],
+                hashtags: ['#節慶送禮', '#永續好物', '#人與地球優選市集', '#公益禮盒', '#友善消費']
+            },
+            '惜食與友善農業': {
+                hooks: [
+                    '那些「格外」的水果，其實超好吃。',
+                    '醜蔬果變身美味好物，惜食也能有品味。',
+                    '友善農業不是口號，而是每一口的溫度。'
+                ],
+                ctas: [
+                    '留言「惜食」支持在地農業',
+                    '分享給朋友，一起開啟友善消費',
+                    '點選購物連結品嚐好滋味'
+                ],
+                hashtags: ['#惜食', '#友善農業', '#格外品', '#在地農業', '#永續消費']
+            },
+            '消費背後的社會影響力': {
+                hooks: [
+                    '你知道社會企業和一般公益有何不同嗎？',
+                    '每次消費都是一次投票。',
+                    '影響力商品不是為了做善事，是為了做好事。'
+                ],
+                ctas: [
+                    '留言分享你的永續消費故事',
+                    '點開看看這些社企如何改變世界',
+                    '加入友善消費行列'
+                ],
+                hashtags: ['#社會企業', '#消費影響力', '#永續消費', '#社會價值', '#ESG']
+            },
+            '企業採購與ESG': {
+                hooks: [
+                    '企業年節送禮想更有意義嗎？',
+                    'ESG不只是企業責任，更是企業品味。',
+                    '一份禮盒，達成三個目標。'
+                ],
+                ctas: [
+                    '企業採購洽詢請點擊',
+                    '分享給HR同事',
+                    '了解企業客製化方案'
+                ],
+                hashtags: ['#企業採購', '#ESG', '#社企禮盒', '#企業社責', '#永續發展']
+            },
+            '永續好物選品與開箱': {
+                hooks: [
+                    '一罐好滴雞精，從友善飼養開始。',
+                    '永續生活聽起來很難，其實從一個選擇開始就夠了。',
+                    '每一口背後都有被支持的故事。'
+                ],
+                ctas: [
+                    '點選看完整產品介紹',
+                    '留言分享你的最愛選品',
+                    '現在就購買支持永續'
+                ],
+                hashtags: ['#永續好物', '#開箱', '#友善畜產', '#在地好物', '#永續生活']
+            },
+            'DEI共融與特殊需求': {
+                hooks: [
+                    '喝一杯咖啡，也能支持特殊需求工作者。',
+                    '共融就業不是理想，而是日常。',
+                    '每一份購買都在改寫生命故事。'
+                ],
+                ctas: [
+                    '留言「共融」支持就業平權',
+                    '分享給朋友一起支持',
+                    '立即購買支持特殊需求社群'
+                ],
+                hashtags: ['#共融就業', '#社企咖啡', '#DEI', '#特殊需求', '#就業平權']
+            }
+        };
+
+        // AI推薦發布時間演算法
+        function getAIRecommendedTime(day, dayOfWeek) {
+            const times = {
+                0: ['09:00', '20:30'], // 星期日
+                1: ['10:30', '20:30'], // 星期一
+                2: ['10:30', '20:30'], // 星期二
+                3: ['10:30', '20:30'], // 星期三
+                4: ['10:30', '20:30'], // 星期四
+                5: ['10:30', '20:30'], // 星期五
+                6: ['09:00', '19:00']  // 星期六
+            };
+            const timeList = times[dayOfWeek];
+            // 根據日期和其他因素決定發布時間
+            return day % 2 === 0 ? timeList[1] : timeList[0];
+        }
+
+        // 隨機選擇函數（帶種子控制）
+        function seededRandom(seed) {
+            const x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        // 生成內容
+        function generateContent() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const daysCount = parseInt(document.getElementById('daysCount').value);
+            const contentType = document.getElementById('contentType').value;
+
+            // 收集選定的軸線
+            const selectedAxes = [];
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById(`axis${i}`).checked) {
+                    const labels = ['節慶送禮', '惜食與友善農業', '消費背後的社會影響力', '企業採購與ESG', '永續好物選品與開箱', 'DEI共融與特殊需求'];
+                    selectedAxes.push(labels[i-1]);
+                }
+            }
+
+            // 收集選定的格式
+            const selectedFormats = [];
+            if (document.getElementById('format1').checked) selectedFormats.push('真人口播');
+            if (document.getElementById('format2').checked) selectedFormats.push('字卡');
+            if (document.getElementById('format3').checked) selectedFormats.push('動畫');
+
+            // 收集選定的夥伴
+            const selectedPartners = [];
+            for (let i = 1; i <= 6; i++) {
+                if (document.getElementById(`partner${i}`).checked) {
+                    const labels = ['台灣肯納自閉症基金會', '咖啡有的社會設計', '彤鳥社會企業', '綠色冀泉社會企業', '容廣心社會企業', '桃園關懷弱勢慈善協會'];
+                    selectedPartners.push(labels[i-1]);
+                }
+            }
+
+            // 生成內容
+            const contents = [];
+            for (let day = 0; day < daysCount; day++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + day);
+                
+                const dateStr = currentDate.toLocaleDateString('zh-Hant-TW');
+                const month = currentDate.getMonth() + 1;
+                const dayOfWeek = currentDate.getDay();
+                
+                // AI推薦時間
+                const recommendedTime = getAIRecommendedTime(day, dayOfWeek);
+                
+                // 隨機選擇軸線
+                const seed = day * 7 + Math.floor(Math.random() * 100);
+                const axisIndex = Math.floor(seededRandom(seed) * selectedAxes.length);
+                const selectedAxis = selectedAxes[axisIndex];
+                
+                // 隨機選擇格式
+                const formatIndex = Math.floor(seededRandom(seed + 1) * selectedFormats.length);
+                const selectedFormat = selectedFormats[formatIndex];
+                
+                // 隨機選擇夥伴
+                const partnerIndex = Math.floor(seededRandom(seed + 2) * selectedPartners.length);
+                const selectedPartner = selectedPartners[partnerIndex];
+                
+                // 獲取該月的時事
+                const monthEvents = monthlyEvents[month] || [];
+                const eventIndex = Math.floor(seededRandom(seed + 3) * monthEvents.length);
+                const selectedEvent = monthEvents[eventIndex] || '永續選品';
+                
+                // 獲取該軸線的內容
+                const axis = contentAxes[selectedAxis];
+                const hookIndex = Math.floor(seededRandom(seed + 4) * axis.hooks.length);
+                const ctaIndex = Math.floor(seededRandom(seed + 5) * axis.ctas.length);
+                
+                const hook = axis.hooks[hookIndex];
+                const cta = axis.ctas[ctaIndex];
+                const hashtags = axis.hashtags;
+                
+                contents.push({
+                    date: currentDate,
+                    dateStr: dateStr,
+                    day: day + 1,
+                    time: recommendedTime,
+                    theme: selectedEvent,
+                    axis: selectedAxis,
+                    format: selectedFormat,
+                    partner: selectedPartner,
+                    partnerInfo: partnerDatabase[selectedPartner],
+                    hook: hook,
+                    cta: cta,
+                    hashtags: hashtags,
+                    month: month,
+                    dayOfWeek: dayOfWeek
+                });
+            }
+
+            // 渲染各標籤頁
+            renderCalendar(contents);
+            renderSchedule(contents);
+            renderScript(contents);
+            renderEvents(contents);
+            renderDrafts(contents);
+
+            // 自動切換到日曆標籤
+            document.querySelectorAll('.tab')[0].click();
+        }
+
+        // 渲染內容日曆
+        function renderCalendar(contents) {
+            let html = '<div class="content-grid">';
+            contents.forEach(item => {
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-date">Day ${item.day} · ${item.dateStr}</div>
+                                <div class="card-time">🕐 ${item.time}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="card-theme">${item.theme}</span>
+                            <span class="card-format">${item.format}</span>
+                            <div style="margin-top: 8px; font-size: 13px; color: #666;">
+                                <strong>夥伴：</strong> ${item.partner}
+                            </div>
+                            <div class="script-section">
+                                <span class="script-label">📌 黃金3秒Hook</span>
+                                <div class="script-text">"${item.hook}"</div>
+                                <span class="script-label">✅ 收尾CTA</span>
+                                <div class="script-text">"${item.cta}"</div>
+                                <span class="script-label">🔖 Hashtag</span>
+                                <div class="hashtags">
+                                    ${item.hashtags.map(tag => `<span class="hashtag">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('calendarContent').innerHTML = html;
+        }
+
+        // 渲染發布排程
+        function renderSchedule(contents) {
+            let html = '<table class="schedule-table"><thead><tr><th>日期</th><th>時間</th><th>主題</th><th>形式</th><th>軸線</th><th>夥伴</th></tr></thead><tbody>';
+            contents.forEach(item => {
+                html += `
+                    <tr>
+                        <td><strong>Day ${item.day}</strong> ${item.dateStr}</td>
+                        <td>🕐 ${item.time}</td>
+                        <td>${item.theme}</td>
+                        <td>${item.format}</td>
+                        <td>${item.axis}</td>
+                        <td>${item.partner}</td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            document.getElementById('scheduleContent').innerHTML = html;
+        }
+
+        // 渲染腳本＋Gemini
+        function renderScript(contents) {
+            let html = '<div class="content-grid">';
+            contents.forEach(item => {
+                const geminiPrompt = `
+請生成 9:16 直式 Instagram Reels 畫面，8 秒。主題：「${item.hook}」
+
+背景與風格：台灣質感生活風格，自然光、真實人物、溫暖有情感
+內容核心：${item.partner} 的 ${item.theme} 故事
+視覺焦點：${item.format === '真人口播' ? '真實人物與產品互動' : item.format === '字卡' ? '清晰文字搭配視覺素材' : '動畫呈現品牌故事'}
+
+技術要求：
+- 鏡頭推鏡或動態移動（保持動感）
+- 畫面中央下方預留空白供後製字幕
+- 不要出現任何文字、Logo、水印、價格或錯誤包裝
+- 自然材質、乾淨背景、真實台灣生活感
+
+收尾畫面需預留空白供加入 CTA：「${item.cta}」
+                `;
+
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-date">Day ${item.day} · ${item.dateStr}</div>
+                            <div class="card-time">🕐 ${item.time}</div>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <span class="card-theme">${item.theme}</span>
+                            <span class="card-format">${item.format}</span>
+                        </div>
+                        <div class="script-section" style="border-top: none; padding-top: 0;">
+                            <span class="script-label">📌 黃金3秒Hook</span>
+                            <div class="script-text">"${item.hook}"</div>
+                            <span class="script-label">✅ 收尾CTA</span>
+                            <div class="script-text">"${item.cta}"</div>
+                            <div class="gemini-prompt">
+                                <div class="gemini-header">🎬 Gemini 生成提示詞</div>
+                                <div>${geminiPrompt.trim().split('\n').join('<br>')}</div>
+                                <button class="btn-copy" onclick="copyToClipboard('${geminiPrompt.trim().replace(/'/g, '\\\'')}')">複製提示詞</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('scriptContent').innerHTML = html;
+        }
+
+        // 渲染本月時事
+        function renderEvents(contents) {
+            const monthsEvents = {};
+            contents.forEach(item => {
+                if (!monthsEvents[item.month]) {
+                    monthsEvents[item.month] = new Set();
+                }
+                monthsEvents[item.month].add(item.theme);
+            });
+
+            let html = '';
+            Object.keys(monthsEvents).sort((a, b) => a - b).forEach(month => {
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-date">${month}月 時事與節慶</div>
+                        </div>
+                        <div>
+                            ${Array.from(monthsEvents[month]).map(event => `<div style="padding: 8px; background: #f9f9f9; margin-bottom: 8px; border-radius: 4px; font-size: 14px;">📌 ${event}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('eventsContent').innerHTML = html || '<div class="empty-state"><p>暫無時事資訊</p></div>';
+        }
+
+        // 渲染IG草稿
+        function renderDrafts(contents) {
+            let html = '<div class="content-grid">';
+            contents.slice(0, 7).forEach(item => {
+                const igCaption = `${item.hook}\n\n支持 ${item.partner}\n讓每一份選擇都成為改變的力量\n\n${item.hashtags.join(' ')}`;
+                
+                html += `
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-date">Day ${item.day} · ${item.dateStr}</div>
+                                <div class="card-time">🕐 ${item.time}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="card-format">${item.format}</span>
+                            <div class="script-section">
+                                <span class="script-label">📸 IG文案</span>
+                                <div class="script-text" style="white-space: pre-wrap;">${igCaption}</div>
+                                <div class="copy-actions">
+                                    <button class="btn-copy" onclick="copyToClipboard('${igCaption.replace(/'/g, '\\\'')}')">複製貼文</button>
+                                    <button class="btn-copy" onclick="copyToClipboard('${item.hashtags.join(' ')}')">複製Hashtag</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            document.getElementById('draftsContent').innerHTML = html;
+        }
+
+        // 標籤頁切換
+        function switchTab(element, tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            element.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // 複製到剪貼板
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const msg = document.getElementById('successMsg');
+                msg.style.display = 'block';
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // 匯出CSV
+        function exportCSV() {
+            alert('CSV匯出功能敬請期待');
+        }
+
+        // 匯出JSON
+        function exportJSON() {
+            alert('JSON匯出功能敬請期待');
+        }
+
         // 初始化
-        function init() {
+        window.addEventListener('load', () => {
             const today = new Date();
             document.getElementById('startDate').valueAsDate = today;
-        }
-        
-        function generateCalendar() {
-            const contentType = document.getElementById('contentType').value;
-            const daysRange = parseInt(document.getElementById('daysRange').value);
-            const startDate = new Date(document.getElementById('startDate').value);
-            
-            const selectedPartners = Array.from(document.querySelectorAll('input[id^="p_"]:checked')).map(e => e.value);
-            
-            if (selectedPartners.length === 0) {
-                showStatus('❌ 請至少選擇一個夥伴', 'error');
-                return;
-            }
-            
-            showStatus('📅 正在生成日曆...', 'loading');
-            
-            setTimeout(() => {
-                calendarData = [];
-                
-                for (let day = 0; day < daysRange; day++) {
-                    const date = new Date(startDate);
-                    date.setDate(date.getDate() + day);
-                    const month = date.getMonth() + 1;
-                    const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
-                    
-                    const partnerKey = selectedPartners[day % selectedPartners.length];
-                    const partner = partnerDB[partnerKey];
-                    const template = templates[Math.floor(Math.random() * templates.length)];
-                    
-                    const content = template
-                        .replace('${emoji}', partner.emoji)
-                        .replace('${partner}', partner.name)
-                        .replace('${event}', monthEvent)
-                        .replace('${value}', '社會影響');
-                    
-                    calendarData.push({
-                        date: date.toISOString().split('T')[0],
-                        dateStr: `${date.getMonth() + 1}/${date.getDate()}`,
-                        partner: partner.name,
-                        partnerKey: partnerKey,
-                        emoji: partner.emoji,
-                        title: content.substring(0, 50),
-                        fullContent: content,
-                        event: monthEvent
-                    });
-                }
-                
-                displayCalendar();
-                updateMonthlyEvents();
-                showStatus(`✅ 已生成 ${calendarData.length} 天的內容！`, 'success');
-            }, 300);
-        }
-        
-        function displayCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = calendarData.map((item, idx) => `
-                <div class="day-card" onclick="selectDay(${idx})">
-                    <div class="day-label">Day ${idx + 1}</div>
-                    <div class="day-label">${item.dateStr}</div>
-                    <div class="day-title">${item.title}...</div>
-                    <div class="day-partner">${item.emoji} ${item.partner}</div>
-                </div>
-            `).join('');
-        }
-        
-        function selectDay(idx) {
-            const item = calendarData[idx];
-            const detail = document.getElementById('contentDetail');
-            detail.innerHTML = `
-                <div class="content-detail">
-                    <h3>【${item.dateStr}】${item.partner}</h3>
-                    <p>${item.fullContent}</p>
-                </div>
-            `;
-            
-            document.getElementById('scriptContent').textContent = `【${item.dateStr}】\n\n${item.fullContent}\n\n主題: ${item.event}`;
-        }
-        
-        function updateMonthlyEvents() {
-            const months = {};
-            calendarData.forEach(item => {
-                const [m] = item.date.split('-').slice(1);
-                if (!months[m]) months[m] = [];
-                if (!months[m].includes(item.event)) {
-                    months[m].push(item.event);
-                }
-            });
-            
-            const html = Object.entries(months).map(([m, events]) => 
-                `<div class="event-item"><strong>${m}月時事:</strong> ${events.join('、')}</div>`
-            ).join('');
-            
-            document.getElementById('eventsContent').innerHTML = html;
-        }
-        
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        function exportCSV() {
-            if (calendarData.length === 0) {
-                showStatus('❌ 請先生成日曆', 'error');
-                return;
-            }
-            
-            const csv = [
-                ['日期', '夥伴', '內容'].join(','),
-                ...calendarData.map(item => [
-                    item.dateStr,
-                    item.partner,
-                    `"${item.fullContent}"`
-                ].join(','))
-            ].join('\n');
-            
-            downloadFile(csv, `calendar-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
-        }
-        
-        function downloadJSON() {
-            if (calendarData.length === 0) {
-                showStatus('❌ 請先生成日曆', 'error');
-                return;
-            }
-            
-            const json = JSON.stringify(calendarData, null, 2);
-            downloadFile(json, `calendar-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
-        }
-        
-        function downloadFile(content, filename, type) {
-            const blob = new Blob([content], { type });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            showStatus(`✅ 已下載 ${filename}`, 'success');
-        }
-        
-        function showStatus(msg, type) {
-            const el = document.getElementById('statusMessage');
-            el.className = `status-message ${type}`;
-            el.textContent = msg;
-        }
-        
-        function clearAll() {
-            calendarData = [];
-            document.getElementById('calendarGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">點擊「生成日曆」開始...</div>';
-            document.getElementById('contentDetail').innerHTML = '';
-            document.getElementById('scriptContent').textContent = '選擇日曆中的日期以查看詳細腳本...';
-        }
-        
-        window.addEventListener('DOMContentLoaded', init);
+        });
     </script>
 </body>
 </html>
