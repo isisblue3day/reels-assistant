@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>人與地球優選市集 | Reels AI 內容助理 v4.1</title>
+    <title>人與地球優選市集 | Reels AI 內容助理 v4.2</title>
     <style>
         * {
             margin: 0;
@@ -123,9 +123,14 @@
             flex: 1;
         }
         
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .btn-secondary {
@@ -273,7 +278,7 @@
     <div class="container">
         <div class="header">
             <h1>🌍 人與地球優選市集</h1>
-            <p>Reels AI 內容助理 v4.1 — 365天自動化內容生成</p>
+            <p>Reels AI 內容助理 v4.2 — 365天自動化內容生成</p>
         </div>
         
         <div class="main-content">
@@ -282,8 +287,8 @@
                 <div class="panel-title">⚙️ 內容設定</div>
                 
                 <div class="api-config">
-                    <div class="api-config-title">📡 API 狀態</div>
-                    <div id="apiStatus" class="api-status">初始化中...</div>
+                    <div class="api-config-title">📡 系統狀態</div>
+                    <div id="apiStatus" class="api-status">✅ 本地生成模式就緒（無需 API Key）</div>
                 </div>
                 
                 <div class="form-group">
@@ -322,7 +327,7 @@
                 </div>
                 
                 <div class="button-group">
-                    <button class="btn-primary" onclick="generateContent()">
+                    <button class="btn-primary" id="generateBtn" onclick="generateContent()">
                         <span id="btnText">🚀 生成內容</span>
                     </button>
                     <button class="btn-secondary btn-small" onclick="clearAll()">重設</button>
@@ -365,59 +370,92 @@
                 name: '台灣肯納自閉症基金會',
                 story: '透過手作與就業機會，幫助自閉症青年展現專長、創造自信。',
                 products: ['手作糕點', '咖啡體驗工作坊'],
-                values: ['友善職場', '身心障礙支持']
+                values: ['友善職場', '身心障礙支持'],
+                shortName: '肯納'
             },
             {
                 id: 'coffee',
                 name: '咖啡有的社會設計',
                 story: '以精品手沖與情緒覺察結合，創造陪伴與療癒的時光。',
                 products: ['精品咖啡', '心靈工作坊'],
-                values: ['心理健康', '社會設計']
+                values: ['心理健康', '社會設計'],
+                shortName: '咖啡有的'
             },
             {
                 id: 'tongniao',
                 name: '彤鳥社會企業',
                 story: '以友善畜產方式，提供高品質滋補商品支持永續農業。',
                 products: ['滴雞精', '土雞商品'],
-                values: ['友善畜產', '永續農業']
+                values: ['友善畜產', '永續農業'],
+                shortName: '彤鳥'
             },
             {
                 id: 'green',
                 name: '綠色冀泉社會企業',
                 story: '從植樹到產品，致力於環境永續與社區發展的循環經濟模式。',
                 products: ['擴香原木', '植樹專案'],
-                values: ['環境永續', '循環經濟']
+                values: ['環境永續', '循環經濟'],
+                shortName: '綠色冀泉'
             },
             {
                 id: 'rongguang',
                 name: '容廣心社會企業',
                 story: '支持弱勢族群就業，透過手作商品創造社會共融的空間。',
                 products: ['手工禮盒', '烘焙商品'],
-                values: ['就業支持', '社會共融']
+                values: ['就業支持', '社會共融'],
+                shortName: '容廣心'
             },
             {
                 id: 'taoyuan',
                 name: '桃園市關懷弱勢慈善協會',
                 story: '長期關懷桃園弱勢家庭，透過溫暖的手作傳遞希望與陪伴。',
                 products: ['手作點心', '中秋禮盒'],
-                values: ['社區關懷', '弱勢支持']
+                values: ['社區關懷', '弱勢支持'],
+                shortName: '關懷弱勢'
             }
         ];
         
         // ===== 月份時事資料庫 =====
         const monthlyEvents = {
-            1: ['新年願景', '永續目標制定', '春節與傳統文化'],
+            1: ['新年願景', '永續目標制定', '春節準備'],
             2: ['情人節關係', '元宵文化', '社區陪伴'],
-            3: ['婦女節與性別平等', '植樹節', '春遊與戶外'],
-            4: ['清明與傳統', '兒童節與教育', '春季環保'],
-            5: ['母親節與家庭', '勞動節與工作', '永續發展目標周'],
-            6: ['父親節', '夏至與季節', '環境教育'],
-            7: ['暑期學習', '社區服務', '環保意識'],
-            8: ['921地震紀念', '環境永續', '青年創業'],
-            9: ['中秋與團圓', '新學期開始', '秋季收穫'],
-            10: ['雙十節與認同感', '國際消費者權益日', '秋季友善消費'],
-            11: ['感恩節與感謝', '社會企業月', '環保購物季'],
-            12: ['聖誕與給予', '年末反思', '新年準備']
+            3: ['婦女節與性別平等', '植樹節', '春季戶外'],
+            4: ['清明傳統', '兒童節教育', '春季環保'],
+            5: ['母親節與家庭', '勞動節', '永續發展'],
+            6: ['父親節', '端午文化', '環境教育'],
+            7: ['暑期學習', '社區服務', '環保月'],
+            8: ['社企月', '永續倡議', '青年創業'],
+            9: ['中秋團圓', '新學期', '秋季收穫'],
+            10: ['雙十節', '消費者月', '秋季購物'],
+            11: ['感恩節', '社企週', '年末回顧'],
+            12: ['聖誕溫暖', '年末反思', '新年準備']
+        };
+        
+        // ===== 內容模板庫（用於本地生成，不需要 API）=====
+        const contentTemplates = {
+            reels: [
+                '今天和${partner}一起分享友善消費的力量。每一次購買都是支持，都是改變。${event}時節，我們邀請您成為影響力的推手！',
+                '你知道嗎？${partner}透過${value}支持著桃園的${community}。加入「人與地球優選市集」，讓每次消費都能創造實質影響力。',
+                '${partner}的故事告訴我們，社會企業不只能營利，更能創造永續的未來。這${event}，支持友善消費就是支持改變。',
+                '中央大學影響力中心與${partner}攜手推動DEI多元共融。在「人與地球優選市集」，你的選擇就是投票。',
+                '${event}到來，是時候重新思考消費的意義。${partner}邀請你一起，用行動支持永續、友善與共融。'
+            ],
+            post: [
+                '【${partner}故事分享】\n\n${story}\n\n中央大學亞洲影響力中心與${partner}合作，透過「人與地球優選市集」線上平台，讓每一筆消費都能支持社會企業的永續發展。${event}時節，邀請你一起用友善消費創造影響力。',
+                '感謝${partner}的堅持，讓我們看見社會企業如何在${value}的路上持續前進。這個${event}，與我們一起支持友善選品，成為改變的力量。',
+                '${partner}透過${value}守護著我們的未來。在「人與地球優選市集」平台上，你可以直接支持他們的努力，讓每次消費都更有意義。',
+                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。加入我們，一起實踐友善消費的承諾。'
+            ],
+            story: [
+                '你有認識的社會企業或友善品牌嗎？在「人與地球優選市集」分享你的選擇吧！💚',
+                '這個${event}，你最想支持的是哪個友善品牌？投票表情符號給予支持！👇',
+                '${partner}推出了新的${product}！有人想試試看嗎？在留言區分享你的想法！✨',
+                '中央大學與${partner}合作推動友善消費。你也想加入嗎？按讚分享，一起創造影響力！'
+            ],
+            newsletter: [
+                '【影響力市集通訊】\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}透過平台上的友善選品，你的每次購買都能支持這份堅持。\n\n立即探索市集，發現更多改變世界的夥伴。\n\n中央大學亞洲影響力衡量與管理研究總中心',
+                '【市集推薦】${partner}新品上市！\n\n${story}\n\n在「人與地球優選市集」線上購物平台上，你可以找到來自各個社會企業與公益團體的友善選品。這${event}，支持永續、多元與共融。\n\n▶ 前往市集探索：[連結]'
+            ]
         };
         
         let selectedPillars = [];
@@ -428,17 +466,6 @@
         function init() {
             renderPillars();
             renderPartners();
-            checkAPI();
-        }
-        
-        // 檢查 API 狀態
-        async function checkAPI() {
-            try {
-                const statusEl = document.getElementById('apiStatus');
-                statusEl.textContent = '✅ 系統就緒（使用 Gemini 與 OpenAI 雙引擎）';
-            } catch (e) {
-                document.getElementById('apiStatus').textContent = '⚠️ API 初始化中...';
-            }
         }
         
         function renderPillars() {
@@ -511,6 +538,7 @@
             }
             
             showStatus('正在生成內容，請稍候...', 'loading');
+            document.getElementById('generateBtn').disabled = true;
             document.getElementById('btnText').innerHTML = '<span class="loading-spinner"></span>生成中...';
             
             try {
@@ -536,8 +564,8 @@
                     const partnerData = partners.find(p => p.id === selectedPartner);
                     const pillarData = pillars.find(p => p.id === selectedPillar);
                     
-                    const prompt = buildPrompt(contentType, partnerData, pillarData, monthEvent, customTheme);
-                    const content = await callAPI(prompt);
+                    // 本地生成內容（無需 API）
+                    const content = generateLocal(contentType, partnerData, pillarData, monthEvent, customTheme);
                     
                     generatedContent.push({
                         date: date.toISOString().split('T')[0],
@@ -548,8 +576,10 @@
                     });
                     
                     // 進度更新
-                    const progress = Math.round((day + 1) / daysRange * 100);
-                    showStatus(`生成進度: ${progress}% (${day + 1}/${daysRange})`, 'loading');
+                    if (day % Math.max(1, Math.floor(daysRange / 10)) === 0) {
+                        const progress = Math.round((day + 1) / daysRange * 100);
+                        showStatus(`生成進度: ${progress}% (${day + 1}/${daysRange})`, 'loading');
+                    }
                 }
                 
                 displayOutput();
@@ -558,87 +588,34 @@
                 showStatus(`❌ 生成失敗: ${error.message}`, 'error');
                 console.error(error);
             } finally {
+                document.getElementById('generateBtn').disabled = false;
                 document.getElementById('btnText').textContent = '🚀 生成內容';
             }
         }
         
-        function buildPrompt(type, partner, pillar, event, customTheme) {
-            const basePrompt = `你是一位社會企業內容行銷專家，要為「人與地球優選市集」生成內容。
-
-夥伴故事: ${partner.name}
-品牌價值: ${partner.story}
-內容主軸: ${pillar.name}
-時事背景: ${event}
-${customTheme ? `自訂主題: ${customTheme}` : ''}
-
-要求:
-1. 內容要自然、有溫度，不要有AI痕跡
-2. 避免使用破折號、過多圓括號等AI特徵
-3. 具體提到夥伴的實際產品或服務
-4. 字數: ${type === 'reels' ? '80-120字' : type === 'post' ? '150-200字' : '100-150字'}
-5. 用第一人稱或我們的角度，展現中心的行動力
-6. 結尾可加上適切的emoji（最多1-2個）
-
-請直接輸出內容，不要加前綴或說明。`;
+        // 本地生成內容（不需要 API）
+        function generateLocal(type, partner, pillar, event, customTheme) {
+            const templates = contentTemplates[type] || contentTemplates.reels;
+            const template = templates[Math.floor(Math.random() * templates.length)];
             
-            return basePrompt;
-        }
-        
-        async function callAPI(prompt) {
-            try {
-                // 使用 Gemini API
-                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6I6IVLu2Y2AQYiC-9TRIlz4IHvAnm0EEM3QKmT_kPoPRQ', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
-                    })
-                });
-                
-                if (!response.ok) throw new Error('Gemini API 失敗，嘗試 OpenAI...');
-                
-                const data = await response.json();
-                return data.candidates[0].content.parts[0].text.trim();
-            } catch (e) {
-                // 容錯：改用 OpenAI
-                try {
-                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer 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'
-                        },
-                        body: JSON.stringify({
-                            model: 'gpt-4o-mini',
-                            messages: [{ role: 'user', content: prompt }],
-                            temperature: 0.7,
-                            max_tokens: 300
-                        })
-                    });
-                    
-                    if (!response.ok) throw new Error('API 呼叫失敗');
-                    
-                    const data = await response.json();
-                    return data.choices[0].message.content.trim();
-                } catch (err) {
-                    // 最後容錯：用範本
-                    return generateTemplate(prompt);
-                }
+            let content = template
+                .replace(/\$\{partner\}/g, partner.shortName || partner.name)
+                .replace(/\$\{story\}/g, partner.story)
+                .replace(/\$\{value\}/g, partner.values[0])
+                .replace(/\$\{product\}/g, partner.products[0])
+                .replace(/\$\{event\}/g, event)
+                .replace(/\$\{community\}/g, '社群');
+            
+            if (customTheme) {
+                content += `\n\n💡 ${customTheme}`;
             }
-        }
-        
-        function generateTemplate(prompt) {
-            const templates = [
-                '今天和 ${partner} 一起分享友善消費的力量，每一個購買都是支持，都是改變。',
-                '${event} 時節，我們邀請您與 ${partner} 一起，用行動創造影響力。',
-                '感謝 ${partner} 的努力，證明社會企業不只能營利，更能創造永續的未來。'
-            ];
-            return templates[Math.floor(Math.random() * templates.length)];
+            
+            return content;
         }
         
         function displayOutput() {
             const output = generatedContent.map(item => 
-                `【${item.date}】${item.type.toUpperCase()}\n夥伴: ${item.partner}\n主軸: ${item.pillar}\n\n${item.content}\n${'-'.repeat(60)}\n`
+                `【${item.date}】${item.type.toUpperCase()}\n夥伴: ${item.partner}\n主軸: ${item.pillar}\n\n${item.content}\n${'─'.repeat(60)}\n`
             ).join('\n');
             
             const box = document.getElementById('outputBox');
