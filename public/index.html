@@ -1,808 +1,622 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>人與地球優選市集 | Reels AI 內容助理 v4.5</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-      padding: 20px;
-      color: #333;
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 20px;
-    }
-    
-    /* 左側邊欄 */
-    .sidebar {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      height: fit-content;
-      position: sticky;
-      top: 20px;
-    }
-    
-    .sidebar h2 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 16px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 500;
-      color: #4a5568;
-      margin-bottom: 6px;
-    }
-    
-    input[type="date"],
-    input[type="text"],
-    input[type="email"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 13px;
-      font-family: inherit;
-    }
-    
-    input[type="date"]:focus,
-    input[type="text"]:focus,
-    select:focus,
-    textarea:focus {
-      outline: none;
-      border-color: #48bb78;
-      box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
-    }
-    
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-    
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    
-    .btn-primary {
-      background: #48bb78;
-      color: white;
-      margin-bottom: 10px;
-    }
-    
-    .btn-primary:hover {
-      background: #38a169;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-    }
-    
-    .btn-secondary {
-      background: #edf2f7;
-      color: #2d3748;
-    }
-    
-    .btn-secondary:hover {
-      background: #e2e8f0;
-    }
-    
-    .btn-danger {
-      background: #f56565;
-      color: white;
-    }
-    
-    .btn-danger:hover {
-      background: #e53e3e;
-    }
-    
-    .divider {
-      height: 1px;
-      background: #e2e8f0;
-      margin: 20px 0;
-    }
-    
-    /* 主要內容區 */
-    .main {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-    
-    .header {
-      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-      color: white;
-      padding: 32px;
-      text-align: center;
-    }
-    
-    .header h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-    
-    .header p {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-    
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #e2e8f0;
-      background: #f7fafc;
-    }
-    
-    .tab-btn {
-      flex: 1;
-      padding: 16px;
-      border: none;
-      background: transparent;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      color: #718096;
-      border-bottom: 3px solid transparent;
-      transition: all 0.3s ease;
-    }
-    
-    .tab-btn.active {
-      color: #48bb78;
-      border-bottom-color: #48bb78;
-    }
-    
-    .tab-content {
-      display: none;
-      padding: 32px;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    /* 日曆視圖 */
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    
-    .post-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 16px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    
-    .post-card:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      border-color: #48bb78;
-    }
-    
-    .post-card.selected {
-      background: #f0fff4;
-      border-color: #48bb78;
-    }
-    
-    .post-day {
-      font-size: 12px;
-      font-weight: 600;
-      color: #48bb78;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-    
-    .post-date {
-      font-size: 14px;
-      color: #4a5568;
-      margin-bottom: 8px;
-    }
-    
-    .post-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 8px;
-      line-height: 1.4;
-    }
-    
-    .post-hook {
-      font-size: 12px;
-      color: #718096;
-      font-style: italic;
-      margin-bottom: 8px;
-    }
-    
-    .post-time {
-      display: inline-block;
-      font-size: 11px;
-      background: #edf2f7;
-      color: #4a5568;
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-    
-    /* 詳細檢視 */
-    .detail-view {
-      max-width: 800px;
-    }
-    
-    .detail-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .detail-nav {
-      display: flex;
-      gap: 8px;
-    }
-    
-    .detail-nav button {
-      padding: 8px 16px;
-      font-size: 12px;
-      width: auto;
-    }
-    
-    .script-section {
-      margin-bottom: 24px;
-    }
-    
-    .script-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: #2d3748;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      display: block;
-    }
-    
-    .script-text {
-      background: #f7fafc;
-      border-left: 4px solid #48bb78;
-      padding: 16px;
-      border-radius: 4px;
-      font-size: 14px;
-      line-height: 1.6;
-      color: #2d3748;
-      position: relative;
-    }
-    
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 6px 12px;
-      font-size: 11px;
-      background: #48bb78;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    
-    .copy-btn:hover {
-      background: #38a169;
-    }
-    
-    .copy-btn.copied {
-      background: #38a169;
-    }
-    
-    /* 響應式設計 */
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-      
-      .sidebar {
-        position: relative;
-        top: 0;
-      }
-      
-      .header h1 {
-        font-size: 20px;
-      }
-      
-      .calendar-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-    
-    /* 加載動畫 */
-    .loading {
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #e2e8f0;
-      border-top-color: #48bb78;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    .alert {
-      padding: 12px 16px;
-      border-radius: 6px;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-    
-    .alert-error {
-      background: #fff5f5;
-      color: #c53030;
-      border-left: 4px solid #f56565;
-    }
-    
-    .alert-success {
-      background: #f0fff4;
-      color: #276749;
-      border-left: 4px solid #48bb78;
-    }
-    
-    .alert-warning {
-      background: #fffaf0;
-      color: #7c2d12;
-      border-left: 4px solid #ed8936;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人與地球優選市集 | Reels AI 內容助理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #34495e;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2c3e50;
+            background: #f9f9f9;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+        }
+        
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 12px;
+            color: #555;
+            margin: 0;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: #34495e;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background: #2c3e50;
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+        
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 11px;
+            flex: none;
+        }
+        
+        .output-area {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            min-height: 200px;
+        }
+        
+        .output-area.empty {
+            color: #999;
+            font-style: italic;
+            font-family: inherit;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-message.loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-top-color: #2c3e50;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <!-- 左側邊欄 -->
-    <aside class="sidebar">
-      <h2>⚙️ 設定面板</h2>
-      
-      <div class="form-group">
-        <label>首發日期 *</label>
-        <input type="date" id="startDate" required>
-      </div>
-      
-      <div class="form-group">
-        <label>品牌帳號名稱</label>
-        <input type="text" id="accountName" placeholder="@your_brand" value="人與地球優選市集">
-      </div>
-      
-      <div class="form-group">
-        <label>預設 CTA 關鍵字</label>
-        <input type="text" id="defaultCTA" placeholder="現在就購買" value="現在就購買">
-      </div>
-      
-      <div class="form-group">
-        <label>品牌調性</label>
-        <textarea id="brandVoice" placeholder="例：溫暖、專業、友善的台灣在地品牌風格">溫暖、有溫度、支持在地、共融友善</textarea>
-      </div>
-      
-      <div class="form-group">
-        <label>目標受眾</label>
-        <textarea id="targetAudience" placeholder="例：25-45歲關注永續的消費者">25-45 歲重視永續與社會責任的消費者、支持社企的年輕專業人士</textarea>
-      </div>
-      
-      <div class="form-group">
-        <label>上月數據回饋（可選）</label>
-        <textarea id="previousMetrics" placeholder="例：觸及率上升 15%，留言數增加 25%"></textarea>
-      </div>
-      
-      <button class="btn-primary" id="generate">📋 使用內建模板</button>
-      <button class="btn-primary" id="liveGenerate" style="background: #4299e1;">🤖 AI 時事規劃</button>
-      
-      <div class="divider"></div>
-      
-      <button class="btn-secondary" id="exportCSV">📥 匯出 CSV</button>
-      <button class="btn-secondary" id="exportJSON">📥 匯出 JSON</button>
-      <button class="btn-danger" id="clearAll" style="margin-top: 10px;">🗑️ 清除全部</button>
-    </aside>
-    
-    <!-- 主要內容區 -->
-    <main class="main">
-      <div class="header">
-        <h1>🌍 人與地球優選市集</h1>
-        <p>Reels AI 內容助理 v4.5 | 安全後端 + 智能多樣化</p>
-      </div>
-      
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="calendar">📅 日曆檢視</button>
-        <button class="tab-btn" data-tab="detail">📝 詳細檢視</button>
-        <button class="tab-btn" data-tab="preview">👁️ 預覽模式</button>
-      </div>
-      
-      <!-- Tab 1: 日曆檢視 -->
-      <div id="calendar" class="tab-content active">
-        <div id="calendarAlert"></div>
-        <div id="calendarGrid" class="calendar-grid"></div>
-      </div>
-      
-      <!-- Tab 2: 詳細檢視 -->
-      <div id="detail" class="tab-content">
-        <div class="detail-view">
-          <div class="detail-header">
-            <div>
-              <h3 id="detailTitle" style="font-size: 18px; margin-bottom: 4px;"></h3>
-              <p id="detailDate" style="font-size: 13px; color: #718096;"></p>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 人與地球優選市集</h1>
+            <p>Reels AI 內容助理 — 365天自動化內容生成</p>
+        </div>
+        
+        <div class="content">
+            <!-- 左側：設定 -->
+            <div class="section">
+                <div class="section-title">📋 內容設定</div>
+                
+                <div class="form-group">
+                    <label>內容類型</label>
+                    <select id="contentType">
+                        <option value="reels">Reels 短影片文案</option>
+                        <option value="post">Instagram 貼文</option>
+                        <option value="story">Story 互動貼文</option>
+                        <option value="newsletter">電子報內容</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>內容主軸</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_impact" value="impact">
+                            <label for="pillar_impact">社會影響</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_sustainability" value="sustainability">
+                            <label for="pillar_sustainability">環境永續</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_dei" value="dei">
+                            <label for="pillar_dei">多元共融</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_shopping" value="shopping">
+                            <label for="pillar_shopping">友善消費</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_partner" value="partner">
+                            <label for="pillar_partner">夥伴故事</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="pillar_event" value="event">
+                            <label for="pillar_event">活動推廣</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>夥伴選擇</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_kenna" value="kenna">
+                            <label for="partner_kenna">台灣肯納自閉症基金會</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_coffee" value="coffee">
+                            <label for="partner_coffee">咖啡有的社會設計</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_tongniao" value="tongniao">
+                            <label for="partner_tongniao">彤鳥社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_green" value="green">
+                            <label for="partner_green">綠色冀泉社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_rongguang" value="rongguang">
+                            <label for="partner_rongguang">容廣心社會企業</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="partner_taoyuan" value="taoyuan">
+                            <label for="partner_taoyuan">桃園市關懷弱勢慈善協會</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>開始日期</label>
+                    <input type="date" id="startDate">
+                </div>
+                
+                <div class="form-group">
+                    <label>生成天數</label>
+                    <select id="daysRange">
+                        <option value="7">7 天</option>
+                        <option value="14">14 天</option>
+                        <option value="30">30 天</option>
+                        <option value="90">90 天</option>
+                        <option value="365">365 天（全年）</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>自訂主題（選填）</label>
+                    <textarea id="customTheme" placeholder="輸入特定主題或活動名稱..."></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">
+                        生成內容
+                    </button>
+                    <button class="btn btn-secondary btn-small" onclick="clearAll()">重設</button>
+                </div>
             </div>
-            <div class="detail-nav">
-              <button class="btn-secondary" id="prevDetail" style="width: 80px;">← 上一篇</button>
-              <button class="btn-secondary" id="nextDetail" style="width: 80px;">下一篇 →</button>
+            
+            <!-- 右側：輸出 -->
+            <div class="section">
+                <div class="section-title">📝 生成結果</div>
+                
+                <div id="statusMessage"></div>
+                
+                <div id="outputBox" class="output-area empty">
+選擇設定後按「生成內容」開始...
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-secondary btn-small" onclick="copyOutput()">複製</button>
+                    <button class="btn btn-secondary btn-small" onclick="exportCSV()">CSV</button>
+                    <button class="btn btn-secondary btn-small" onclick="downloadJSON()">JSON</button>
+                </div>
             </div>
-          </div>
-          
-          <div id="detailContent"></div>
         </div>
-      </div>
-      
-      <!-- Tab 3: 預覽模式 -->
-      <div id="preview" class="tab-content">
-        <div style="text-align: center; padding: 40px;">
-          <p style="font-size: 16px; color: #718096; margin-bottom: 20px;">選擇一篇貼文以預覽完整內容</p>
-          <div id="previewContent"></div>
-        </div>
-      </div>
-    </main>
-  </div>
-  
-  <script>
-    // 🎯 應用程式狀態
-    const state = {
-      posts: [],
-      currentDetailIndex: 0,
-      currentPreviewIndex: 0
-    };
+    </div>
     
-    // 📅 初始化日期選擇
-    const startDateInput = document.getElementById('startDate');
-    const today = new Date();
-    today.setDate(today.getDate() + 1);
-    startDateInput.valueAsDate = today;
-    
-    // 📋 Tab 切換
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tabName = btn.dataset.tab;
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabName).classList.add('active');
-        btn.classList.add('active');
+    <script>
+        // ===== 資料庫 =====
+        const partnerDatabase = {
+            kenna: {
+                name: '台灣肯納自閉症基金會',
+                story: '透過手作與就業機會，幫助自閉症青年展現專長、創造自信。',
+                products: ['手作糕點', '咖啡體驗工作坊'],
+                values: ['友善職場', '身心障礙支持']
+            },
+            coffee: {
+                name: '咖啡有的社會設計',
+                story: '以精品手沖與情緒覺察結合，創造陪伴與療癒的時光。',
+                products: ['精品咖啡', '心靈工作坊'],
+                values: ['心理健康', '社會設計']
+            },
+            tongniao: {
+                name: '彤鳥社會企業',
+                story: '以友善畜產方式，提供高品質滋補商品支持永續農業。',
+                products: ['滴雞精', '土雞商品'],
+                values: ['友善畜產', '永續農業']
+            },
+            green: {
+                name: '綠色冀泉社會企業',
+                story: '從植樹到產品，致力於環境永續與社區發展的循環經濟模式。',
+                products: ['擴香原木', '植樹專案'],
+                values: ['環境永續', '循環經濟']
+            },
+            rongguang: {
+                name: '容廣心社會企業',
+                story: '支持弱勢族群就業，透過手作商品創造社會共融的空間。',
+                products: ['手工禮盒', '烘焙商品'],
+                values: ['就業支持', '社會共融']
+            },
+            taoyuan: {
+                name: '桃園市關懷弱勢慈善協會',
+                story: '長期關懷桃園弱勢家庭，透過溫暖的手作傳遞希望與陪伴。',
+                products: ['手作點心', '中秋禮盒'],
+                values: ['社區關懷', '弱勢支持']
+            }
+        };
         
-        if (tabName === 'detail') renderDetailView();
-        if (tabName === 'preview') renderPreviewView();
-      });
-    });
-    
-    // 🤖 使用內建模板
-    document.getElementById('generate').addEventListener('click', async () => {
-      const startDate = document.getElementById('startDate').value;
-      const accountName = document.getElementById('accountName').value;
-      const defaultCTA = document.getElementById('defaultCTA').value;
-      
-      if (!startDate) return alert('請選擇首發日期');
-      
-      const btn = event.target;
-      btn.disabled = true;
-      btn.innerHTML = '<span class="loading"></span> 生成中...';
-      
-      try {
-        const response = await fetch('/.netlify/functions/generate', {
-          method: 'POST',
-          body: JSON.stringify({ startDate, defaultCTA, accountName })
-        });
+        const monthlyEvents = {
+            1: ['新年願景', '永續目標制定', '春節準備'],
+            2: ['情人節關係', '元宵文化', '社區陪伴'],
+            3: ['婦女節與性別平等', '植樹節', '春季戶外'],
+            4: ['清明傳統', '兒童節教育', '春季環保'],
+            5: ['母親節與家庭', '勞動節', '永續發展'],
+            6: ['父親節', '端午文化', '環境教育'],
+            7: ['暑期學習', '社區服務', '環保月'],
+            8: ['社企月', '永續倡議', '青年創業'],
+            9: ['中秋團圓', '新學期', '秋季收穫'],
+            10: ['雙十節', '消費者月', '秋季購物'],
+            11: ['感恩節', '社企週', '年末回顧'],
+            12: ['聖誕溫暖', '年末反思', '新年準備']
+        };
         
-        const data = await response.json();
-        state.posts = data.posts;
-        renderCalendarView();
-        showAlert('✅ 內建模板生成完成！', 'success');
-      } catch (error) {
-        showAlert(`❌ 生成失敗：${error.message}`, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '📋 使用內建模板';
-      }
-    });
-    
-    // 🤖 AI 時事規劃
-    document.getElementById('liveGenerate').addEventListener('click', async () => {
-      const startDate = document.getElementById('startDate').value;
-      const brandVoice = document.getElementById('brandVoice').value;
-      const targetAudience = document.getElementById('targetAudience').value;
-      const previousMetrics = document.getElementById('previousMetrics').value;
-      const accountName = document.getElementById('accountName').value;
-      const defaultCTA = document.getElementById('defaultCTA').value;
-      
-      if (!startDate) return alert('請選擇首發日期');
-      
-      const btn = event.target;
-      btn.disabled = true;
-      btn.innerHTML = '<span class="loading"></span> AI 規劃中...';
-      
-      try {
-        const response = await fetch('/.netlify/functions/ai-generate', {
-          method: 'POST',
-          body: JSON.stringify({
-            startDate,
-            brandVoice,
-            targetAudience,
-            previousMetrics,
-            accountName,
-            defaultCTA
-          })
-        });
+        const templates = {
+            reels: [
+                '中央大學影響力中心與${partner}合作，這${event}，讓每一次的友善消費都能創造實質影響。在「人與地球優選市集」，你的選擇就是改變的開始。',
+                '${partner}透過${value}默默守護著我們的未來。${event}到來，是時候用行動支持他們。加入「人與地球優選市集」，成為改變的推手。',
+                '你知道嗎？每一筆友善消費都有故事。${partner}的故事，正在「人與地球優選市集」等你發現。這${event}，一起支持永續。',
+                '社會企業不只能營利，更能創造永續的未來。${partner}用行動詮釋著這份承諾。在「人與地球優選市集」支持他們，讓改變發生。',
+                '${event}時節，是重新思考消費意義的時刻。與${partner}一起，用友善選品支持永續、多元與共融的世界。',
+                '每次購買都是投票。在「人與地球優選市集」支持${partner}，就是為永續、友善與共融投下一票。'
+            ],
+            post: [
+                '【${partner}的故事】\n\n${story}\n\n中央大學亞洲影響力中心與${partner}透過「人與地球優選市集」線上平台，致力於讓每一筆消費都能支持社會企業的永續發展。${event}到來，邀請你一起用友善消費創造影響力。',
+                '感謝${partner}在${value}路上的堅持與努力。${event}時節，我們邀請你加入「人與地球優選市集」，一起支持友善選品，成為改變的力量。',
+                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。在「人與地球優選市集」認識他們，一起實踐友善消費的承諾。'
+            ],
+            story: [
+                '你認識哪個社會企業或友善品牌呢？在「人與地球優選市集」分享你的故事吧！👇',
+                '${event}到來，你最想支持的友善品牌是？在留言區告訴我們！💚',
+                '${partner}推出新品了！有人對${product}感興趣嗎？留言分享你的想法！✨'
+            ],
+            newsletter: [
+                '【影響力市集通訊】${event}特輯\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}\n\n透過平台上的友善選品，你的每次購買都能支持這份堅持。立即探索市集，發現更多改變世界的夥伴。',
+                '【市集推薦】${partner}${product}新品\n\n${story}\n\n在「人與地球優選市集」線上購物平台，你可以找到來自各個社會企業與公益團體的友善選品。'
+            ]
+        };
         
-        const data = await response.json();
-        state.posts = data.posts;
-        renderCalendarView();
-        showAlert('✅ AI 時事規劃完成！', 'success');
-      } catch (error) {
-        showAlert(`❌ AI 生成失敗：${error.message}，請檢查 API Key 設定`, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '🤖 AI 時事規劃';
-      }
-    });
-    
-    // 📅 渲染日曆檢視
-    function renderCalendarView() {
-      const grid = document.getElementById('calendarGrid');
-      grid.innerHTML = '';
-      
-      state.posts.forEach((post, idx) => {
-        const card = document.createElement('div');
-        card.className = 'post-card';
-        card.innerHTML = `
-          <div class="post-day">${post.day}</div>
-          <div class="post-date">${post.display}</div>
-          <div class="post-title">${post.title}</div>
-          <div class="post-hook">"${post.hook}"</div>
-          <div class="post-time">⏰ ${post.time}</div>
-        `;
+        let generatedContent = [];
         
-        card.addEventListener('click', () => {
-          state.currentDetailIndex = idx;
-          state.currentPreviewIndex = idx;
-          renderDetailView();
-        });
-        
-        grid.appendChild(card);
-      });
-    }
-    
-    // 📝 渲染詳細檢視
-    function renderDetailView() {
-      if (state.posts.length === 0) return;
-      
-      const post = state.posts[state.currentDetailIndex];
-      document.getElementById('detailTitle').textContent = post.title;
-      document.getElementById('detailDate').textContent = `${post.day} • ${post.date} • ${post.time}`;
-      
-      let content = `
-        <div class="script-section">
-          <span class="script-label">🎣 Hook（3秒開場）</span>
-          <div class="script-text">
-            ${post.hook}
-            <button class="copy-btn" onclick="copyText('${post.hook}')">複製</button>
-          </div>
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">📝 口播重點</span>
-          ${post.points.map((p, i) => `
-            <div class="script-text" style="margin-bottom: 8px;">
-              <strong>重點 ${i + 1}：</strong> ${p}
-              <button class="copy-btn" onclick="copyText('${p}')">複製</button>
-            </div>
-          `).join('')}
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">📢 行動呼籲</span>
-          <div class="script-text">
-            ${post.cta}
-            <button class="copy-btn" onclick="copyText('${post.cta}')">複製</button>
-          </div>
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">📖 IG 貼文說明</span>
-          <div class="script-text">
-            ${post.igCaption}
-            <button class="copy-btn" onclick="copyText('${post.igCaption}')">複製</button>
-          </div>
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">🎬 建議格式</span>
-          <div class="script-text">${post.format}</div>
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">🔖 主題標籤</span>
-          <div class="script-text">${post.hashtags.join(' ')}</div>
-        </div>
-        
-        <div class="script-section">
-          <span class="script-label">🤖 AI 圖像生成指令</span>
-          ${post.geminiPrompts.map((prompt, i) => `
-            <div class="script-text" style="margin-bottom: 8px;">
-              <strong>片段 ${i + 1}：</strong> ${prompt}
-              <button class="copy-btn" onclick="copyText('${prompt.replace(/'/g, "\\'")}')">複製</button>
-            </div>
-          `).join('')}
-        </div>
-        
-        <div class="script-section" style="background: #fffaf0; border-left-color: #ed8936; padding: 12px; border-radius: 4px;">
-          <span class="script-label">⚠️ 素材權益提醒</span>
-          <p style="font-size: 12px; color: #7c2d12;">使用 AI 生成圖像時，請確保所有內容符合著作權法規。若涉及真實人物或品牌標誌，請取得授權。</p>
-        </div>
-      `;
-      
-      document.getElementById('detailContent').innerHTML = content;
-      
-      // 導航按鈕
-      document.getElementById('prevDetail').onclick = () => {
-        if (state.currentDetailIndex > 0) {
-          state.currentDetailIndex--;
-          renderDetailView();
+        // 初始化
+        function init() {
+            setDefaultDate();
         }
-      };
-      
-      document.getElementById('nextDetail').onclick = () => {
-        if (state.currentDetailIndex < state.posts.length - 1) {
-          state.currentDetailIndex++;
-          renderDetailView();
+        
+        function setDefaultDate() {
+            const today = new Date();
+            document.getElementById('startDate').valueAsDate = today;
         }
-      };
-    }
-    
-    // 👁️ 渲染預覽檢視
-    function renderPreviewView() {
-      const previewArea = document.getElementById('previewContent');
-      
-      if (state.posts.length === 0) {
-        previewArea.innerHTML = '<p style="color: #718096;">尚無內容預覽</p>';
-        return;
-      }
-      
-      const post = state.posts[state.currentPreviewIndex];
-      previewArea.innerHTML = `
-        <div style="max-width: 360px; margin: 0 auto; background: #f7fafc; padding: 20px; border-radius: 12px;">
-          <div style="aspect-ratio: 9/16; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; color: white; text-align: center;">
-            <div>
-              <h2 style="font-size: 20px; margin-bottom: 12px;">${post.hook}</h2>
-              <p style="font-size: 13px; opacity: 0.9;">即將揭曉...</p>
-            </div>
-            <div>
-              <p style="font-size: 12px; opacity: 0.8;">${post.points[0]}</p>
-              <p style="font-size: 12px; margin-top: 8px; opacity: 0.8;">${post.points[1]}</p>
-            </div>
-            <div>
-              <p style="font-size: 14px; font-weight: 600;">${post.cta}</p>
-            </div>
-          </div>
-          
-          <div style="margin-top: 16px; font-size: 12px; color: #718096;">
-            <strong>📝 貼文說明：</strong>
-            <p style="margin-top: 8px; line-height: 1.6;">${post.igCaption}</p>
-          </div>
-        </div>
-      `;
-    }
-    
-    // 💾 匯出 CSV
-    document.getElementById('exportCSV').addEventListener('click', () => {
-      if (state.posts.length === 0) return alert('請先生成內容');
-      
-      const headers = ['Day', 'Date', 'Time', 'Festival', 'Category', 'Title', 'Hook', 'Points', 'CTA', 'Format', 'IG Caption', 'Hashtags'];
-      const rows = state.posts.map(post => [
-        post.day,
-        post.date,
-        post.time,
-        post.festival || '',
-        post.category,
-        post.title,
-        post.hook,
-        post.points.join(' | '),
-        post.cta,
-        post.format,
-        post.igCaption,
-        post.hashtags.join(' ')
-      ]);
-      
-      let csv = '\ufeff' + headers.join(',') + '\n';
-      rows.forEach(row => {
-        csv += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
-      });
-      
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `30天內容日曆-${document.getElementById('startDate').value}.csv`;
-      link.click();
-      
-      showAlert('✅ CSV 已匯出', 'success');
-    });
-    
-    // 💾 匯出 JSON
-    document.getElementById('exportJSON').addEventListener('click', () => {
-      if (state.posts.length === 0) return alert('請先生成內容');
-      
-      const json = JSON.stringify(state.posts, null, 2);
-      const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `30天內容日曆-${document.getElementById('startDate').value}.json`;
-      link.click();
-      
-      showAlert('✅ JSON 已匯出', 'success');
-    });
-    
-    // 🗑️ 清除全部
-    document.getElementById('clearAll').addEventListener('click', () => {
-      if (confirm('確定要清除所有內容嗎？')) {
-        state.posts = [];
-        document.getElementById('calendarGrid').innerHTML = '';
-        document.getElementById('detailContent').innerHTML = '';
-        document.getElementById('previewContent').innerHTML = '';
-        showAlert('✅ 已清除所有內容', 'success');
-      }
-    });
-    
-    // 🔧 工具函式
-    function copyText(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        const btn = event.target;
-        btn.textContent = '✅ 已複製';
-        setTimeout(() => btn.textContent = '複製', 1500);
-      });
-    }
-    
-    function showAlert(message, type) {
-      const alert = document.createElement('div');
-      alert.className = `alert alert-${type}`;
-      alert.textContent = message;
-      const alertArea = document.getElementById('calendarAlert');
-      alertArea.innerHTML = '';
-      alertArea.appendChild(alert);
-      setTimeout(() => alert.remove(), 3000);
-    }
-  </script>
+        
+        function getSelectedPillars() {
+            return Array.from(document.querySelectorAll('input[id^="pillar_"]:checked')).map(e => e.value);
+        }
+        
+        function getSelectedPartners() {
+            return Array.from(document.querySelectorAll('input[id^="partner_"]:checked')).map(e => e.value);
+        }
+        
+        function generateContent() {
+            const contentType = document.getElementById('contentType').value;
+            const daysRange = parseInt(document.getElementById('daysRange').value);
+            const customTheme = document.getElementById('customTheme').value;
+            const startDate = new Date(document.getElementById('startDate').value);
+            
+            const selectedPillars = getSelectedPillars();
+            const selectedPartners = getSelectedPartners();
+            
+            if (selectedPillars.length === 0 && selectedPartners.length === 0) {
+                showStatus('請至少選擇一個內容主軸或夥伴故事', 'error');
+                return;
+            }
+            
+            showStatus('正在生成內容，請稍候...', 'loading');
+            document.getElementById('generateBtn').disabled = true;
+            
+            try {
+                generatedContent = [];
+                const templateList = templates[contentType] || templates.reels;
+                
+                for (let day = 0; day < daysRange; day++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + day);
+                    const month = date.getMonth() + 1;
+                    const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
+                    
+                    // 循環選擇夥伴
+                    const partnerKey = selectedPartners.length > 0 
+                        ? selectedPartners[day % selectedPartners.length]
+                        : Object.keys(partnerDatabase)[day % Object.keys(partnerDatabase).length];
+                    
+                    const partner = partnerDatabase[partnerKey];
+                    const template = templateList[Math.floor(Math.random() * templateList.length)];
+                    
+                    let content = template
+                        .replace(/\$\{partner\}/g, partner.name)
+                        .replace(/\$\{story\}/g, partner.story)
+                        .replace(/\$\{value\}/g, partner.values[Math.floor(Math.random() * partner.values.length)])
+                        .replace(/\$\{product\}/g, partner.products[Math.floor(Math.random() * partner.products.length)])
+                        .replace(/\$\{event\}/g, monthEvent);
+                    
+                    if (customTheme) {
+                        content += `\n\n💡 ${customTheme}`;
+                    }
+                    
+                    generatedContent.push({
+                        date: date.toISOString().split('T')[0],
+                        type: contentType,
+                        partner: partner.name,
+                        content: content
+                    });
+                }
+                
+                displayOutput();
+                showStatus(`✅ 成功生成 ${generatedContent.length} 篇內容！`, 'success');
+            } catch (error) {
+                showStatus(`❌ 生成失敗: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+            }
+        }
+        
+        function displayOutput() {
+            const output = generatedContent.map(item => 
+                `【${item.date}】${item.type.toUpperCase()}\n夥伴: ${item.partner}\n\n${item.content}\n\n${'─'.repeat(60)}\n`
+            ).join('\n');
+            
+            const box = document.getElementById('outputBox');
+            box.textContent = output;
+            box.classList.remove('empty');
+        }
+        
+        function copyOutput() {
+            const output = document.getElementById('outputBox').textContent;
+            if (output === '選擇設定後按「生成內容」開始...') {
+                showStatus('還沒有內容可複製', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(output);
+            showStatus('✅ 已複製到剪貼簿', 'success');
+        }
+        
+        function exportCSV() {
+            if (generatedContent.length === 0) {
+                showStatus('還沒有內容可匯出', 'error');
+                return;
+            }
+            
+            const csv = [
+                ['日期', '類型', '夥伴', '內容'].join(','),
+                ...generatedContent.map(item => [
+                    item.date,
+                    item.type,
+                    item.partner,
+                    `"${item.content.replace(/"/g, '""')}"`
+                ].join(','))
+            ].join('\n');
+            
+            downloadFile(csv, `reels-content-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+        }
+        
+        function downloadJSON() {
+            if (generatedContent.length === 0) {
+                showStatus('還沒有內容可下載', 'error');
+                return;
+            }
+            
+            const json = JSON.stringify(generatedContent, null, 2);
+            downloadFile(json, `reels-content-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showStatus(`✅ 已下載 ${filename}`, 'success');
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.className = `status-message ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        function clearAll() {
+            document.querySelectorAll('input[type="checkbox"]').forEach(e => e.checked = false);
+            document.getElementById('contentType').value = 'reels';
+            document.getElementById('daysRange').value = '7';
+            document.getElementById('customTheme').value = '';
+            document.getElementById('outputBox').textContent = '選擇設定後按「生成內容」開始...';
+            document.getElementById('outputBox').classList.add('empty');
+            document.getElementById('statusMessage').textContent = '';
+            setDefaultDate();
+            generatedContent = [];
+        }
+        
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>
