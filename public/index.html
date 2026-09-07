@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人與地球優選市集 | Reels AI 內容助理 v4.5</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 20px;
+    }
+    
+    /* 左側邊欄 */
+    .sidebar {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      height: fit-content;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .sidebar h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+    
+    input[type="date"],
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+    
+    input[type="date"]:focus,
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #48bb78;
+      box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn-primary {
+      background: #48bb78;
+      color: white;
+      margin-bottom: 10px;
+    }
+    
+    .btn-primary:hover {
+      background: #38a169;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #edf2f7;
+      color: #2d3748;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    
+    .btn-danger {
+      background: #f56565;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: #e53e3e;
+    }
+    
+    .divider {
+      height: 1px;
+      background: #e2e8f0;
+      margin: 20px 0;
+    }
+    
+    /* 主要內容區 */
+    .main {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      color: white;
+      padding: 32px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f7fafc;
+    }
+    
+    .tab-btn {
+      flex: 1;
+      padding: 16px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #718096;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .tab-btn.active {
+      color: #48bb78;
+      border-bottom-color: #48bb78;
+    }
+    
+    .tab-content {
+      display: none;
+      padding: 32px;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    /* 日曆視圖 */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .post-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .post-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #48bb78;
+    }
+    
+    .post-card.selected {
+      background: #f0fff4;
+      border-color: #48bb78;
+    }
+    
+    .post-day {
+      font-size: 12px;
+      font-weight: 600;
+      color: #48bb78;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    
+    .post-date {
+      font-size: 14px;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+    
+    .post-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .post-hook {
+      font-size: 12px;
+      color: #718096;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    
+    .post-time {
+      display: inline-block;
+      font-size: 11px;
+      background: #edf2f7;
+      color: #4a5568;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    
+    /* 詳細檢視 */
+    .detail-view {
+      max-width: 800px;
+    }
+    
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .detail-nav {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .detail-nav button {
+      padding: 8px 16px;
+      font-size: 12px;
+      width: auto;
+    }
+    
+    .script-section {
+      margin-bottom: 24px;
+    }
+    
+    .script-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2d3748;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      display: block;
+    }
+    
+    .script-text {
+      background: #f7fafc;
+      border-left: 4px solid #48bb78;
+      padding: 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #2d3748;
+      position: relative;
+    }
+    
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px 12px;
+      font-size: 11px;
+      background: #48bb78;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .copy-btn:hover {
+      background: #38a169;
+    }
+    
+    .copy-btn.copied {
+      background: #38a169;
+    }
+    
+    /* 響應式設計 */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        position: relative;
+        top: 0;
+      }
+      
+      .header h1 {
+        font-size: 20px;
+      }
+      
+      .calendar-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    /* 加載動畫 */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e2e8f0;
+      border-top-color: #48bb78;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    
+    .alert-error {
+      background: #fff5f5;
+      color: #c53030;
+      border-left: 4px solid #f56565;
+    }
+    
+    .alert-success {
+      background: #f0fff4;
+      color: #276749;
+      border-left: 4px solid #48bb78;
+    }
+    
+    .alert-warning {
+      background: #fffaf0;
+      color: #7c2d12;
+      border-left: 4px solid #ed8936;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 左側邊欄 -->
+    <aside class="sidebar">
+      <h2>⚙️ 設定面板</h2>
+      
+      <div class="form-group">
+        <label>首發日期 *</label>
+        <input type="date" id="startDate" required>
+      </div>
+      
+      <div class="form-group">
+        <label>品牌帳號名稱</label>
+        <input type="text" id="accountName" placeholder="@your_brand" value="人與地球優選市集">
+      </div>
+      
+      <div class="form-group">
+        <label>預設 CTA 關鍵字</label>
+        <input type="text" id="defaultCTA" placeholder="現在就購買" value="現在就購買">
+      </div>
+      
+      <div class="form-group">
+        <label>品牌調性</label>
+        <textarea id="brandVoice" placeholder="例：溫暖、專業、友善的台灣在地品牌風格">溫暖、有溫度、支持在地、共融友善</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>目標受眾</label>
+        <textarea id="targetAudience" placeholder="例：25-45歲關注永續的消費者">25-45 歲重視永續與社會責任的消費者、支持社企的年輕專業人士</textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>上月數據回饋（可選）</label>
+        <textarea id="previousMetrics" placeholder="例：觸及率上升 15%，留言數增加 25%"></textarea>
+      </div>
+      
+      <button class="btn-primary" id="generate">📋 使用內建模板</button>
+      <button class="btn-primary" id="liveGenerate" style="background: #4299e1;">🤖 AI 時事規劃</button>
+      
+      <div class="divider"></div>
+      
+      <button class="btn-secondary" id="exportCSV">📥 匯出 CSV</button>
+      <button class="btn-secondary" id="exportJSON">📥 匯出 JSON</button>
+      <button class="btn-danger" id="clearAll" style="margin-top: 10px;">🗑️ 清除全部</button>
+    </aside>
+    
+    <!-- 主要內容區 -->
+    <main class="main">
+      <div class="header">
+        <h1>🌍 人與地球優選市集</h1>
+        <p>Reels AI 內容助理 v4.5 | 安全後端 + 智能多樣化</p>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="calendar">📅 日曆檢視</button>
+        <button class="tab-btn" data-tab="detail">📝 詳細檢視</button>
+        <button class="tab-btn" data-tab="preview">👁️ 預覽模式</button>
+      </div>
+      
+      <!-- Tab 1: 日曆檢視 -->
+      <div id="calendar" class="tab-content active">
+        <div id="calendarAlert"></div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+      </div>
+      
+      <!-- Tab 2: 詳細檢視 -->
+      <div id="detail" class="tab-content">
+        <div class="detail-view">
+          <div class="detail-header">
+            <div>
+              <h3 id="detailTitle" style="font-size: 18px; margin-bottom: 4px;"></h3>
+              <p id="detailDate" style="font-size: 13px; color: #718096;"></p>
+            </div>
+            <div class="detail-nav">
+              <button class="btn-secondary" id="prevDetail" style="width: 80px;">← 上一篇</button>
+              <button class="btn-secondary" id="nextDetail" style="width: 80px;">下一篇 →</button>
+            </div>
+          </div>
+          
+          <div id="detailContent"></div>
+        </div>
+      </div>
+      
+      <!-- Tab 3: 預覽模式 -->
+      <div id="preview" class="tab-content">
+        <div style="text-align: center; padding: 40px;">
+          <p style="font-size: 16px; color: #718096; margin-bottom: 20px;">選擇一篇貼文以預覽完整內容</p>
+          <div id="previewContent"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script>
+    // 🎯 應用程式狀態
+    const state = {
+      posts: [],
+      currentDetailIndex: 0,
+      currentPreviewIndex: 0
+    };
+    
+    // 📅 初始化日期選擇
+    const startDateInput = document.getElementById('startDate');
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    startDateInput.valueAsDate = today;
+    
+    // 📋 Tab 切換
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabName = btn.dataset.tab;
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        btn.classList.add('active');
+        
+        if (tabName === 'detail') renderDetailView();
+        if (tabName === 'preview') renderPreviewView();
+      });
+    });
+    
+    // 🤖 使用內建模板
+    document.getElementById('generate').addEventListener('click', async () => {
+      const startDate = document.getElementById('startDate').value;
+      const accountName = document.getElementById('accountName').value;
+      const defaultCTA = document.getElementById('defaultCTA').value;
+      
+      if (!startDate) return alert('請選擇首發日期');
+      
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> 生成中...';
+      
+      try {
+        const response = await fetch('/.netlify/functions/generate', {
+          method: 'POST',
+          body: JSON.stringify({ startDate, defaultCTA, accountName })
+        });
+        
+        const data = await response.json();
+        state.posts = data.posts;
+        renderCalendarView();
+        showAlert('✅ 內建模板生成完成！', 'success');
+      } catch (error) {
+        showAlert(`❌ 生成失敗：${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '📋 使用內建模板';
+      }
+    });
+    
+    // 🤖 AI 時事規劃
+    document.getElementById('liveGenerate').addEventListener('click', async () => {
+      const startDate = document.getElementById('startDate').value;
+      const brandVoice = document.getElementById('brandVoice').value;
+      const targetAudience = document.getElementById('targetAudience').value;
+      const previousMetrics = document.getElementById('previousMetrics').value;
+      const accountName = document.getElementById('accountName').value;
+      const defaultCTA = document.getElementById('defaultCTA').value;
+      
+      if (!startDate) return alert('請選擇首發日期');
+      
+      const btn = event.target;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading"></span> AI 規劃中...';
+      
+      try {
+        const response = await fetch('/.netlify/functions/ai-generate', {
+          method: 'POST',
+          body: JSON.stringify({
+            startDate,
+            brandVoice,
+            targetAudience,
+            previousMetrics,
+            accountName,
+            defaultCTA
+          })
+        });
+        
+        const data = await response.json();
+        state.posts = data.posts;
+        renderCalendarView();
+        showAlert('✅ AI 時事規劃完成！', 'success');
+      } catch (error) {
+        showAlert(`❌ AI 生成失敗：${error.message}，請檢查 API Key 設定`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🤖 AI 時事規劃';
+      }
+    });
+    
+    // 📅 渲染日曆檢視
+    function renderCalendarView() {
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+      
+      state.posts.forEach((post, idx) => {
+        const card = document.createElement('div');
+        card.className = 'post-card';
+        card.innerHTML = `
+          <div class="post-day">${post.day}</div>
+          <div class="post-date">${post.display}</div>
+          <div class="post-title">${post.title}</div>
+          <div class="post-hook">"${post.hook}"</div>
+          <div class="post-time">⏰ ${post.time}</div>
+        `;
+        
+        card.addEventListener('click', () => {
+          state.currentDetailIndex = idx;
+          state.currentPreviewIndex = idx;
+          renderDetailView();
+        });
+        
+        grid.appendChild(card);
+      });
+    }
+    
+    // 📝 渲染詳細檢視
+    function renderDetailView() {
+      if (state.posts.length === 0) return;
+      
+      const post = state.posts[state.currentDetailIndex];
+      document.getElementById('detailTitle').textContent = post.title;
+      document.getElementById('detailDate').textContent = `${post.day} • ${post.date} • ${post.time}`;
+      
+      let content = `
+        <div class="script-section">
+          <span class="script-label">🎣 Hook（3秒開場）</span>
+          <div class="script-text">
+            ${post.hook}
+            <button class="copy-btn" onclick="copyText('${post.hook}')">複製</button>
+          </div>
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">📝 口播重點</span>
+          ${post.points.map((p, i) => `
+            <div class="script-text" style="margin-bottom: 8px;">
+              <strong>重點 ${i + 1}：</strong> ${p}
+              <button class="copy-btn" onclick="copyText('${p}')">複製</button>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">📢 行動呼籲</span>
+          <div class="script-text">
+            ${post.cta}
+            <button class="copy-btn" onclick="copyText('${post.cta}')">複製</button>
+          </div>
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">📖 IG 貼文說明</span>
+          <div class="script-text">
+            ${post.igCaption}
+            <button class="copy-btn" onclick="copyText('${post.igCaption}')">複製</button>
+          </div>
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">🎬 建議格式</span>
+          <div class="script-text">${post.format}</div>
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">🔖 主題標籤</span>
+          <div class="script-text">${post.hashtags.join(' ')}</div>
+        </div>
+        
+        <div class="script-section">
+          <span class="script-label">🤖 AI 圖像生成指令</span>
+          ${post.geminiPrompts.map((prompt, i) => `
+            <div class="script-text" style="margin-bottom: 8px;">
+              <strong>片段 ${i + 1}：</strong> ${prompt}
+              <button class="copy-btn" onclick="copyText('${prompt.replace(/'/g, "\\'")}')">複製</button>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div class="script-section" style="background: #fffaf0; border-left-color: #ed8936; padding: 12px; border-radius: 4px;">
+          <span class="script-label">⚠️ 素材權益提醒</span>
+          <p style="font-size: 12px; color: #7c2d12;">使用 AI 生成圖像時，請確保所有內容符合著作權法規。若涉及真實人物或品牌標誌，請取得授權。</p>
+        </div>
+      `;
+      
+      document.getElementById('detailContent').innerHTML = content;
+      
+      // 導航按鈕
+      document.getElementById('prevDetail').onclick = () => {
+        if (state.currentDetailIndex > 0) {
+          state.currentDetailIndex--;
+          renderDetailView();
+        }
+      };
+      
+      document.getElementById('nextDetail').onclick = () => {
+        if (state.currentDetailIndex < state.posts.length - 1) {
+          state.currentDetailIndex++;
+          renderDetailView();
+        }
+      };
+    }
+    
+    // 👁️ 渲染預覽檢視
+    function renderPreviewView() {
+      const previewArea = document.getElementById('previewContent');
+      
+      if (state.posts.length === 0) {
+        previewArea.innerHTML = '<p style="color: #718096;">尚無內容預覽</p>';
+        return;
+      }
+      
+      const post = state.posts[state.currentPreviewIndex];
+      previewArea.innerHTML = `
+        <div style="max-width: 360px; margin: 0 auto; background: #f7fafc; padding: 20px; border-radius: 12px;">
+          <div style="aspect-ratio: 9/16; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; color: white; text-align: center;">
+            <div>
+              <h2 style="font-size: 20px; margin-bottom: 12px;">${post.hook}</h2>
+              <p style="font-size: 13px; opacity: 0.9;">即將揭曉...</p>
+            </div>
+            <div>
+              <p style="font-size: 12px; opacity: 0.8;">${post.points[0]}</p>
+              <p style="font-size: 12px; margin-top: 8px; opacity: 0.8;">${post.points[1]}</p>
+            </div>
+            <div>
+              <p style="font-size: 14px; font-weight: 600;">${post.cta}</p>
+            </div>
+          </div>
+          
+          <div style="margin-top: 16px; font-size: 12px; color: #718096;">
+            <strong>📝 貼文說明：</strong>
+            <p style="margin-top: 8px; line-height: 1.6;">${post.igCaption}</p>
+          </div>
+        </div>
+      `;
+    }
+    
+    // 💾 匯出 CSV
+    document.getElementById('exportCSV').addEventListener('click', () => {
+      if (state.posts.length === 0) return alert('請先生成內容');
+      
+      const headers = ['Day', 'Date', 'Time', 'Festival', 'Category', 'Title', 'Hook', 'Points', 'CTA', 'Format', 'IG Caption', 'Hashtags'];
+      const rows = state.posts.map(post => [
+        post.day,
+        post.date,
+        post.time,
+        post.festival || '',
+        post.category,
+        post.title,
+        post.hook,
+        post.points.join(' | '),
+        post.cta,
+        post.format,
+        post.igCaption,
+        post.hashtags.join(' ')
+      ]);
+      
+      let csv = '\ufeff' + headers.join(',') + '\n';
+      rows.forEach(row => {
+        csv += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `30天內容日曆-${document.getElementById('startDate').value}.csv`;
+      link.click();
+      
+      showAlert('✅ CSV 已匯出', 'success');
+    });
+    
+    // 💾 匯出 JSON
+    document.getElementById('exportJSON').addEventListener('click', () => {
+      if (state.posts.length === 0) return alert('請先生成內容');
+      
+      const json = JSON.stringify(state.posts, null, 2);
+      const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `30天內容日曆-${document.getElementById('startDate').value}.json`;
+      link.click();
+      
+      showAlert('✅ JSON 已匯出', 'success');
+    });
+    
+    // 🗑️ 清除全部
+    document.getElementById('clearAll').addEventListener('click', () => {
+      if (confirm('確定要清除所有內容嗎？')) {
+        state.posts = [];
+        document.getElementById('calendarGrid').innerHTML = '';
+        document.getElementById('detailContent').innerHTML = '';
+        document.getElementById('previewContent').innerHTML = '';
+        showAlert('✅ 已清除所有內容', 'success');
+      }
+    });
+    
+    // 🔧 工具函式
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        btn.textContent = '✅ 已複製';
+        setTimeout(() => btn.textContent = '複製', 1500);
+      });
+    }
+    
+    function showAlert(message, type) {
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type}`;
+      alert.textContent = message;
+      const alertArea = document.getElementById('calendarAlert');
+      alertArea.innerHTML = '';
+      alertArea.appendChild(alert);
+      setTimeout(() => alert.remove(), 3000);
+    }
+  </script>
+</body>
+</html>
