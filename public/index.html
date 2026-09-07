@@ -105,7 +105,6 @@
         .form-group textarea {
             resize: vertical;
             min-height: 60px;
-            font-family: 'Microsoft JhengHei', sans-serif;
         }
         
         .form-group input:focus,
@@ -167,7 +166,6 @@
         
         .btn-primary:hover:not(:disabled) {
             background: #27ae60;
-            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
         }
         
         .btn-primary:disabled {
@@ -176,20 +174,11 @@
         }
         
         .btn-secondary {
-            background: #3498db;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #2980b9;
-        }
-        
-        .btn-tertiary {
             background: #ecf0f1;
             color: #333;
         }
         
-        .btn-tertiary:hover {
+        .btn-secondary:hover {
             background: #bdc3c7;
         }
         
@@ -197,38 +186,6 @@
             padding: 8px 12px;
             font-size: 11px;
             flex: none;
-        }
-        
-        .tab-group {
-            display: flex;
-            gap: 0;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #ddd;
-        }
-        
-        .tab {
-            padding: 10px 15px;
-            background: white;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            color: #2ecc71;
-            border-bottom-color: #2ecc71;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
         }
         
         .output-area {
@@ -261,9 +218,6 @@
             border-radius: 4px;
             font-size: 12px;
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         
         .status-message.success {
@@ -289,19 +243,14 @@
             width: 14px;
             height: 14px;
             border: 2px solid rgba(0,0,0,0.1);
-            border-top-color: currentColor;
+            border-top-color: #2ecc71;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
+            margin-right: 6px;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-        
-        .content-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
         }
         
         .section-title {
@@ -310,6 +259,7 @@
             color: #2ecc71;
             padding-bottom: 8px;
             border-bottom: 2px solid #2ecc71;
+            margin-bottom: 15px;
         }
         
         @media (max-width: 1024px) {
@@ -319,23 +269,10 @@
             
             .sidebar {
                 width: 100%;
-                border-right: none;
-                border-bottom: 1px solid #ddd;
             }
             
             .content {
                 grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .sidebar {
-                padding: 15px;
-            }
-            
-            .content {
-                padding: 15px;
             }
         }
     </style>
@@ -452,13 +389,13 @@
                 <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">
                     生成內容
                 </button>
-                <button class="btn btn-tertiary btn-small" onclick="clearAll()">重設</button>
+                <button class="btn btn-secondary btn-small" onclick="clearAll()">重設</button>
             </div>
             
             <div class="button-group">
-                <button class="btn btn-tertiary btn-small" onclick="copyOutput()">📋 複製</button>
-                <button class="btn btn-tertiary btn-small" onclick="exportCSV()">CSV</button>
-                <button class="btn btn-tertiary btn-small" onclick="downloadJSON()">JSON</button>
+                <button class="btn btn-secondary btn-small" onclick="copyOutput()">複製</button>
+                <button class="btn btn-secondary btn-small" onclick="exportCSV()">CSV</button>
+                <button class="btn btn-secondary btn-small" onclick="downloadJSON()">JSON</button>
             </div>
         </div>
         
@@ -470,7 +407,7 @@
             </div>
             
             <div class="content">
-                <div class="content-section">
+                <div>
                     <div class="section-title">📝 生成結果</div>
                     <div id="statusMessage"></div>
                     <div id="outputBox" class="output-area empty">
@@ -482,61 +419,62 @@
     </div>
     
     <script>
-        // ===== 資料庫 =====
+        // ===== 擴充資料庫 =====
         const partnerDatabase = {
             kenna: {
                 name: '台灣肯納自閉症基金會',
                 story: '透過手作與就業機會，幫助自閉症青年展現專長、創造自信。',
-                products: ['手作糕點', '咖啡體驗工作坊'],
-                values: ['友善職場', '身心障礙支持']
+                products: ['手作糕點', '咖啡體驗工作坊', '手工餅乾'],
+                values: ['友善職場', '身心障礙支持', '包容教育']
             },
             coffee: {
                 name: '咖啡有的社會設計',
                 story: '以精品手沖與情緒覺察結合，創造陪伴與療癒的時光。',
-                products: ['精品咖啡', '心靈工作坊'],
-                values: ['心理健康', '社會設計']
+                products: ['精品咖啡', '心靈工作坊', '療癒飲品'],
+                values: ['心理健康', '社會設計', '情感連結']
             },
             tongniao: {
                 name: '彤鳥社會企業',
                 story: '以友善畜產方式，提供高品質滋補商品支持永續農業。',
-                products: ['滴雞精', '土雞商品'],
-                values: ['友善畜產', '永續農業']
+                products: ['滴雞精', '土雞商品', '友善蛋品'],
+                values: ['友善畜產', '永續農業', '健康飲食']
             },
             green: {
                 name: '綠色冀泉社會企業',
                 story: '從植樹到產品，致力於環境永續與社區發展的循環經濟模式。',
-                products: ['擴香原木', '植樹專案'],
-                values: ['環境永續', '循環經濟']
+                products: ['擴香原木', '植樹專案', '環保商品'],
+                values: ['環境永續', '循環經濟', '社區發展']
             },
             rongguang: {
                 name: '容廣心社會企業',
                 story: '支持弱勢族群就業，透過手作商品創造社會共融的空間。',
-                products: ['手工禮盒', '烘焙商品'],
-                values: ['就業支持', '社會共融']
+                products: ['手工禮盒', '烘焙商品', '文創商品'],
+                values: ['就業支持', '社會共融', '手作溫度']
             },
             taoyuan: {
                 name: '桃園市關懷弱勢慈善協會',
                 story: '長期關懷桃園弱勢家庭，透過溫暖的手作傳遞希望與陪伴。',
-                products: ['手作點心', '中秋禮盒'],
-                values: ['社區關懷', '弱勢支持']
+                products: ['手作點心', '中秋禮盒', '節慶禮品'],
+                values: ['社區關懷', '弱勢支持', '溫暖陪伴']
             }
         };
         
         const monthlyEvents = {
-            1: ['新年願景', '永續目標制定', '春節準備'],
-            2: ['情人節關係', '元宵文化', '社區陪伴'],
-            3: ['婦女節與性別平等', '植樹節', '春季戶外'],
-            4: ['清明傳統', '兒童節教育', '春季環保'],
-            5: ['母親節與家庭', '勞動節', '永續發展'],
-            6: ['父親節', '端午文化', '環境教育'],
-            7: ['暑期學習', '社區服務', '環保月'],
-            8: ['社企月', '永續倡議', '青年創業'],
-            9: ['中秋團圓', '新學期', '秋季收穫'],
-            10: ['雙十節', '消費者月', '秋季購物'],
-            11: ['感恩節', '社企週', '年末回顧'],
-            12: ['聖誕溫暖', '年末反思', '新年準備']
+            1: ['新年願景', '永續目標制定', '春節準備', '新局新象'],
+            2: ['情人節關係', '元宵文化', '社區陪伴', '女力倡議'],
+            3: ['婦女節與性別平等', '植樹節', '春季戶外', '環保意識'],
+            4: ['清明傳統', '兒童節教育', '春季環保', '青年創新'],
+            5: ['母親節與家庭', '勞動節', '永續發展', '社會關懷'],
+            6: ['父親節', '端午文化', '環境教育', '夏日消費'],
+            7: ['暑期學習', '社區服務', '環保月', '青年賦權'],
+            8: ['社企月', '永續倡議', '青年創業', '秋日轉變'],
+            9: ['中秋團圓', '新學期', '秋季收穫', '共融時節'],
+            10: ['雙十節', '消費者月', '秋季購物', '國慶展望'],
+            11: ['感恩節', '社企週', '年末回顧', '給予季節'],
+            12: ['聖誕溫暖', '年末反思', '新年準備', '愛心捐贈']
         };
         
+        // ===== 超豐富的內容模板庫 =====
         const templates = {
             reels: [
                 '中央大學影響力中心與${partner}合作，這${event}，讓每一次的友善消費都能創造實質影響。在「人與地球優選市集」，你的選擇就是改變的開始。',
@@ -544,21 +482,41 @@
                 '你知道嗎？每一筆友善消費都有故事。${partner}的故事，正在「人與地球優選市集」等你發現。這${event}，一起支持永續。',
                 '社會企業不只能營利，更能創造永續的未來。${partner}用行動詮釋著這份承諾。在「人與地球優選市集」支持他們，讓改變發生。',
                 '${event}時節，是重新思考消費意義的時刻。與${partner}一起，用友善選品支持永續、多元與共融的世界。',
-                '每次購買都是投票。在「人與地球優選市集」支持${partner}，就是為永續、友善與共融投下一票。'
+                '每次購買都是投票。在「人與地球優選市集」支持${partner}，就是為永續、友善與共融投下一票。',
+                '${partner}的${product}，不只是商品，更是一份承諾。${event}，支持友善消費，一起改變世界。',
+                '中央大學影響力中心邀請你，在「人與地球優選市集」認識${partner}。${event}，發現更好的選擇。',
+                '想像一個世界，每筆消費都能支持${value}。${partner}正在把想像變成現實。加入我們，這${event}就開始。',
+                '${partner}相信，商業的本質就是創造改變。在「人與地球優選市集」，你的支持就是他們前進的力量。'
             ],
             post: [
                 '【${partner}的故事】\n\n${story}\n\n中央大學亞洲影響力中心與${partner}透過「人與地球優選市集」線上平台，致力於讓每一筆消費都能支持社會企業的永續發展。${event}到來，邀請你一起用友善消費創造影響力。',
                 '感謝${partner}在${value}路上的堅持與努力。${event}時節，我們邀請你加入「人與地球優選市集」，一起支持友善選品，成為改變的力量。',
-                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。在「人與地球優選市集」認識他們，一起實踐友善消費的承諾。'
+                '多元共融、環境永續、社會影響力──這些不只是標語，${partner}正在用行動詮釋它們。在「人與地球優選市集」認識他們，一起實踐友善消費的承諾。',
+                '中央大學影響力中心與${partner}合作，透過「人與地球優選市集」，讓${value}不再是理想，而是日常實踐。${event}，你也可以成為改變者。',
+                '你有想過每一次購買的影響嗎？在「人與地球優選市集」，${partner}的${product}不只是商品，更是一份承諾。${event}，支持友善消費。',
+                '社會企業的力量在於改變。看${partner}如何透過${value}守護著我們的未來。在「人與地球優選市集」，與他們一起創造更好的世界。',
+                '${event}了，你想怎麼過？不如在「人與地球優選市集」支持${partner}，讓每次購買都成為一份關懷。',
+                '${partner}的故事告訴我們，永續不是遙遠的夢想，而是每天都能做到的選擇。在「人與地球優選市集」發現這份可能。',
+                '在「人與地球優選市集」，${partner}與你相約。${event}時節，一起用消費力支持${value}。',
+                '中央大學邀請你來「人與地球優選市集」，認識${partner}如何用${product}改變世界。'
             ],
             story: [
                 '你認識哪個社會企業或友善品牌呢？在「人與地球優選市集」分享你的故事吧！👇',
                 '${event}到來，你最想支持的友善品牌是？在留言區告訴我們！💚',
-                '${partner}推出新品了！有人對${product}感興趣嗎？留言分享你的想法！✨'
+                '${partner}推出新品了！有人對${product}感興趣嗎？留言分享你的想法！✨',
+                '在「人與地球優選市集」購物，就是支持永續。你最喜歡哪個社企品牌？分享一下吧！',
+                '中央大學與${partner}推動友善消費。你準備好加入了嗎？按讚分享，讓更多人認識社會企業的力量！',
+                '${event}月份，你想支持哪個夥伴的商品？投票在留言區！👇',
+                '你有多久沒有停下來思考消費的意義？在「人與地球優選市集」，每個選擇都很重要。',
+                '${partner}的故事激勵了你嗎？在「人與地球優選市集」支持他們，把感動變成行動。',
+                '友善消費不是一種選擇，而是一種生活態度。你同意嗎？在留言區分享你的想法！'
             ],
             newsletter: [
-                '【影響力市集通訊】${event}特輯\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}\n\n透過平台上的友善選品，你的每次購買都能支持這份堅持。立即探索市集，發現更多改變世界的夥伴。',
-                '【市集推薦】${partner}${product}新品\n\n${story}\n\n在「人與地球優選市集」線上購物平台，你可以找到來自各個社會企業與公益團體的友善選品。'
+                '【影響力市集通訊】${event}特輯\n\n親愛的朋友，\n\n這個${event}，「人與地球優選市集」帶來${partner}的故事。${story}\n\n透過平台上的友善選品，你的每次購買都能支持這份堅持。立即探索市集，發現更多改變世界的夥伴。\n\n中央大學亞洲影響力衡量與管理研究總中心',
+                '【市集推薦】${partner}${product}新品\n\n${story}\n\n在「人與地球優選市集」線上購物平台，你可以找到來自各個社會企業與公益團體的友善選品。每次購買都是支持永續、多元與共融的行動。\n\n這${event}，我們推薦你認識${partner}的故事，用消費力支持改變。',
+                '【影響力洞察】友善消費的力量\n\n你有想過嗎？每一筆消費背後都藏著故事。${partner}透過${value}守護著我們的未來，而你的支持能讓這份力量持續擴大。\n\n在「人與地球優選市集」，探索更多社會企業的故事，一起創造永續的世界。',
+                '【${event}專題】與${partner}一起\n\n中央大學影響力中心邀請你，在這個${event}，加入「人與地球優選市集」。透過支持${partner}，你就是在為${value}投票。\n\n每一筆消費都很重要。你的選擇，能改變世界。',
+                '【新品快訊】${partner}推出${product}\n\n${story}\n\n限時優惠現正進行中！在「人與地球優選市集」，每一筆消費都能支持社會企業的永續發展。${event}就是開始改變的時刻。'
             ]
         };
         
@@ -574,10 +532,6 @@
             document.getElementById('startDate').valueAsDate = today;
         }
         
-        function getSelectedPillars() {
-            return Array.from(document.querySelectorAll('input[id^="pillar_"]:checked')).map(e => e.value);
-        }
-        
         function getSelectedPartners() {
             return Array.from(document.querySelectorAll('input[id^="partner_"]:checked')).map(e => e.value);
         }
@@ -588,21 +542,21 @@
             const customTheme = document.getElementById('customTheme').value;
             const startDate = new Date(document.getElementById('startDate').value);
             
-            const selectedPillars = getSelectedPillars();
             const selectedPartners = getSelectedPartners();
             
-            if (selectedPillars.length === 0 && selectedPartners.length === 0) {
-                showStatus('❌ 請至少選擇一個內容主軸或夥伴故事', 'error');
+            if (selectedPartners.length === 0) {
+                showStatus('❌ 請至少選擇一個夥伴故事', 'error');
                 return;
             }
             
-            showStatus('⏳ 正在生成內容，請稍候...', 'loading');
+            showStatus('<span class="loading-spinner"></span>正在生成內容，請稍候...', 'loading');
             document.getElementById('generateBtn').disabled = true;
             
             setTimeout(() => {
                 try {
                     generatedContent = [];
                     const templateList = templates[contentType] || templates.reels;
+                    const templateCount = templateList.length;
                     
                     for (let day = 0; day < daysRange; day++) {
                         const date = new Date(startDate);
@@ -610,19 +564,22 @@
                         const month = date.getMonth() + 1;
                         const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
                         
-                        // 循環選擇夥伴
-                        const partnerKey = selectedPartners.length > 0 
-                            ? selectedPartners[day % selectedPartners.length]
-                            : Object.keys(partnerDatabase)[day % Object.keys(partnerDatabase).length];
-                        
+                        // 循環選擇夥伴（確保多樣性）
+                        const partnerKey = selectedPartners[day % selectedPartners.length];
                         const partner = partnerDatabase[partnerKey];
-                        const template = templateList[Math.floor(Math.random() * templateList.length)];
+                        
+                        // 使用不同的隨機種子確保變化
+                        const templateIndex = (day * 7 + Math.random() * 100) % templateCount;
+                        const template = templateList[Math.floor(templateIndex)];
+                        
+                        const randomProduct = partner.products[Math.floor(Math.random() * partner.products.length)];
+                        const randomValue = partner.values[Math.floor(Math.random() * partner.values.length)];
                         
                         let content = template
                             .replace(/\$\{partner\}/g, partner.name)
                             .replace(/\$\{story\}/g, partner.story)
-                            .replace(/\$\{value\}/g, partner.values[Math.floor(Math.random() * partner.values.length)])
-                            .replace(/\$\{product\}/g, partner.products[Math.floor(Math.random() * partner.products.length)])
+                            .replace(/\$\{value\}/g, randomValue)
+                            .replace(/\$\{product\}/g, randomProduct)
                             .replace(/\$\{event\}/g, monthEvent);
                         
                         if (customTheme) {
@@ -644,7 +601,7 @@
                 } finally {
                     document.getElementById('generateBtn').disabled = false;
                 }
-            }, 300);
+            }, 200);
         }
         
         function displayOutput() {
@@ -725,7 +682,6 @@
             document.getElementById('statusMessage').textContent = '';
             setDefaultDate();
             generatedContent = [];
-            showStatus('✅ 已重設所有設定', 'success');
         }
         
         window.addEventListener('DOMContentLoaded', init);
