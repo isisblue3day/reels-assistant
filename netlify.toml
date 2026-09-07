@@ -1,0 +1,17 @@
+[build]
+  command = "echo 'Static site'"
+  publish = "public"
+  functions = "netlify/functions"
+
+[dev]
+  framework = "#static"
+  functions = "netlify/functions"
+  port = 8888
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production]
+  environment = { NODE_VERSION = "18.16.0" }
