@@ -13,70 +13,83 @@
         
         body {
             font-family: 'Microsoft JhengHei', 'Segoe UI', sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
+            background: #e8e8e8;
+            padding: 0;
         }
         
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            overflow-y: auto;
+        }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
             color: white;
-            padding: 30px 20px;
+            padding: 25px 30px;
             text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 20px;
             font-weight: 700;
+            margin-bottom: 5px;
         }
         
         .header p {
             font-size: 12px;
-            opacity: 0.8;
+            opacity: 0.9;
         }
         
         .content {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 20px;
-            padding: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+            flex: 1;
+            overflow: auto;
         }
         
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .sidebar-section {
+            margin-bottom: 25px;
         }
         
-        .section-title {
-            font-size: 14px;
+        .sidebar-title {
+            font-size: 13px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #333;
+            margin-bottom: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #34495e;
+            border-bottom: 2px solid #2ecc71;
         }
         
         .form-group {
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
         
         .form-group label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: #555;
+            color: #666;
         }
         
         .form-group input,
@@ -92,31 +105,34 @@
         .form-group textarea {
             resize: vertical;
             min-height: 60px;
+            font-family: 'Microsoft JhengHei', sans-serif;
         }
         
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #2c3e50;
-            background: #f9f9f9;
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.1);
         }
         
         .checkbox-group {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: 8px;
         }
         
         .checkbox-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
         }
         
         .checkbox-item input[type="checkbox"] {
             cursor: pointer;
+            margin-top: 2px;
+            width: 14px;
+            height: 14px;
         }
         
         .checkbox-item label {
@@ -124,16 +140,17 @@
             font-size: 12px;
             color: #555;
             margin: 0;
+            flex: 1;
         }
         
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
         
         .btn {
-            padding: 10px 16px;
+            padding: 10px 14px;
             border: none;
             border-radius: 4px;
             font-weight: 600;
@@ -144,12 +161,13 @@
         }
         
         .btn-primary {
-            background: #34495e;
+            background: #2ecc71;
             color: white;
         }
         
         .btn-primary:hover:not(:disabled) {
-            background: #2c3e50;
+            background: #27ae60;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.3);
         }
         
         .btn-primary:disabled {
@@ -158,11 +176,20 @@
         }
         
         .btn-secondary {
-            background: #ecf0f1;
-            color: #2c3e50;
+            background: #3498db;
+            color: white;
         }
         
         .btn-secondary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-tertiary {
+            background: #ecf0f1;
+            color: #333;
+        }
+        
+        .btn-tertiary:hover {
             background: #bdc3c7;
         }
         
@@ -172,33 +199,71 @@
             flex: none;
         }
         
+        .tab-group {
+            display: flex;
+            gap: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            color: #2ecc71;
+            border-bottom-color: #2ecc71;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .output-area {
-            background: #f9f9f9;
+            background: white;
             border: 1px solid #ddd;
             border-radius: 4px;
-            padding: 15px;
-            max-height: 500px;
+            padding: 20px;
+            max-height: 600px;
             overflow-y: auto;
             font-size: 12px;
-            line-height: 1.6;
+            line-height: 1.8;
             white-space: pre-wrap;
             word-break: break-word;
             font-family: 'Courier New', monospace;
             color: #333;
-            min-height: 200px;
         }
         
         .output-area.empty {
             color: #999;
             font-style: italic;
             font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
         }
         
         .status-message {
-            padding: 10px;
+            padding: 12px 15px;
             border-radius: 4px;
             font-size: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .status-message.success {
@@ -221,41 +286,69 @@
         
         .loading-spinner {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border: 2px solid rgba(0,0,0,0.1);
-            border-top-color: #2c3e50;
+            border-top-color: currentColor;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
-            margin-right: 6px;
-            vertical-align: middle;
         }
         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
         
-        @media (max-width: 768px) {
+        .content-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2ecc71;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #2ecc71;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            
             .content {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                padding: 15px;
+            }
+            
+            .content {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🌍 人與地球優選市集</h1>
-            <p>Reels AI 內容助理 — 365天自動化內容生成</p>
-        </div>
-        
-        <div class="content">
-            <!-- 左側：設定 -->
-            <div class="section">
-                <div class="section-title">📋 內容設定</div>
+        <!-- 左側：設定面板 -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">📋 設定選項</div>
                 
                 <div class="form-group">
-                    <label>內容類型</label>
+                    <label>內容類型 *</label>
                     <select id="contentType">
                         <option value="reels">Reels 短影片文案</option>
                         <option value="post">Instagram 貼文</option>
@@ -293,44 +386,49 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">🤝 夥伴選擇</div>
                 
-                <div class="form-group">
-                    <label>夥伴選擇</label>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_kenna" value="kenna">
-                            <label for="partner_kenna">台灣肯納自閉症基金會</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_coffee" value="coffee">
-                            <label for="partner_coffee">咖啡有的社會設計</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_tongniao" value="tongniao">
-                            <label for="partner_tongniao">彤鳥社會企業</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_green" value="green">
-                            <label for="partner_green">綠色冀泉社會企業</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_rongguang" value="rongguang">
-                            <label for="partner_rongguang">容廣心社會企業</label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="partner_taoyuan" value="taoyuan">
-                            <label for="partner_taoyuan">桃園市關懷弱勢慈善協會</label>
-                        </div>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_kenna" value="kenna">
+                        <label for="partner_kenna">肯納基金會</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_coffee" value="coffee">
+                        <label for="partner_coffee">咖啡有的</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_tongniao" value="tongniao">
+                        <label for="partner_tongniao">彤鳥社企</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_green" value="green">
+                        <label for="partner_green">綠色冀泉</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_rongguang" value="rongguang">
+                        <label for="partner_rongguang">容廣心社企</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="partner_taoyuan" value="taoyuan">
+                        <label for="partner_taoyuan">關懷弱勢</label>
                     </div>
                 </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">📅 時間設定</div>
                 
                 <div class="form-group">
-                    <label>開始日期</label>
+                    <label>開始日期 *</label>
                     <input type="date" id="startDate">
                 </div>
                 
                 <div class="form-group">
-                    <label>生成天數</label>
+                    <label>生成天數 *</label>
                     <select id="daysRange">
                         <option value="7">7 天</option>
                         <option value="14">14 天</option>
@@ -339,34 +437,45 @@
                         <option value="365">365 天（全年）</option>
                     </select>
                 </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">✏️ 自訂內容</div>
                 
                 <div class="form-group">
-                    <label>自訂主題（選填）</label>
+                    <label>主題或活動名稱</label>
                     <textarea id="customTheme" placeholder="輸入特定主題或活動名稱..."></textarea>
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">
-                        生成內容
-                    </button>
-                    <button class="btn btn-secondary btn-small" onclick="clearAll()">重設</button>
                 </div>
             </div>
             
-            <!-- 右側：輸出 -->
-            <div class="section">
-                <div class="section-title">📝 生成結果</div>
-                
-                <div id="statusMessage"></div>
-                
-                <div id="outputBox" class="output-area empty">
+            <div class="button-group">
+                <button class="btn btn-primary" id="generateBtn" onclick="generateContent()">
+                    生成內容
+                </button>
+                <button class="btn btn-tertiary btn-small" onclick="clearAll()">重設</button>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-tertiary btn-small" onclick="copyOutput()">📋 複製</button>
+                <button class="btn btn-tertiary btn-small" onclick="exportCSV()">CSV</button>
+                <button class="btn btn-tertiary btn-small" onclick="downloadJSON()">JSON</button>
+            </div>
+        </div>
+        
+        <!-- 右側：主要內容區 -->
+        <div class="main">
+            <div class="header">
+                <h1>🌍 人與地球優選市集</h1>
+                <p>Reels AI 內容助理 — 365天自動化內容生成</p>
+            </div>
+            
+            <div class="content">
+                <div class="content-section">
+                    <div class="section-title">📝 生成結果</div>
+                    <div id="statusMessage"></div>
+                    <div id="outputBox" class="output-area empty">
 選擇設定後按「生成內容」開始...
-                </div>
-                
-                <div class="button-group">
-                    <button class="btn btn-secondary btn-small" onclick="copyOutput()">複製</button>
-                    <button class="btn btn-secondary btn-small" onclick="exportCSV()">CSV</button>
-                    <button class="btn btn-secondary btn-small" onclick="downloadJSON()">JSON</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -483,57 +592,59 @@
             const selectedPartners = getSelectedPartners();
             
             if (selectedPillars.length === 0 && selectedPartners.length === 0) {
-                showStatus('請至少選擇一個內容主軸或夥伴故事', 'error');
+                showStatus('❌ 請至少選擇一個內容主軸或夥伴故事', 'error');
                 return;
             }
             
-            showStatus('正在生成內容，請稍候...', 'loading');
+            showStatus('⏳ 正在生成內容，請稍候...', 'loading');
             document.getElementById('generateBtn').disabled = true;
             
-            try {
-                generatedContent = [];
-                const templateList = templates[contentType] || templates.reels;
-                
-                for (let day = 0; day < daysRange; day++) {
-                    const date = new Date(startDate);
-                    date.setDate(date.getDate() + day);
-                    const month = date.getMonth() + 1;
-                    const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
+            setTimeout(() => {
+                try {
+                    generatedContent = [];
+                    const templateList = templates[contentType] || templates.reels;
                     
-                    // 循環選擇夥伴
-                    const partnerKey = selectedPartners.length > 0 
-                        ? selectedPartners[day % selectedPartners.length]
-                        : Object.keys(partnerDatabase)[day % Object.keys(partnerDatabase).length];
-                    
-                    const partner = partnerDatabase[partnerKey];
-                    const template = templateList[Math.floor(Math.random() * templateList.length)];
-                    
-                    let content = template
-                        .replace(/\$\{partner\}/g, partner.name)
-                        .replace(/\$\{story\}/g, partner.story)
-                        .replace(/\$\{value\}/g, partner.values[Math.floor(Math.random() * partner.values.length)])
-                        .replace(/\$\{product\}/g, partner.products[Math.floor(Math.random() * partner.products.length)])
-                        .replace(/\$\{event\}/g, monthEvent);
-                    
-                    if (customTheme) {
-                        content += `\n\n💡 ${customTheme}`;
+                    for (let day = 0; day < daysRange; day++) {
+                        const date = new Date(startDate);
+                        date.setDate(date.getDate() + day);
+                        const month = date.getMonth() + 1;
+                        const monthEvent = monthlyEvents[month][Math.floor(Math.random() * monthlyEvents[month].length)];
+                        
+                        // 循環選擇夥伴
+                        const partnerKey = selectedPartners.length > 0 
+                            ? selectedPartners[day % selectedPartners.length]
+                            : Object.keys(partnerDatabase)[day % Object.keys(partnerDatabase).length];
+                        
+                        const partner = partnerDatabase[partnerKey];
+                        const template = templateList[Math.floor(Math.random() * templateList.length)];
+                        
+                        let content = template
+                            .replace(/\$\{partner\}/g, partner.name)
+                            .replace(/\$\{story\}/g, partner.story)
+                            .replace(/\$\{value\}/g, partner.values[Math.floor(Math.random() * partner.values.length)])
+                            .replace(/\$\{product\}/g, partner.products[Math.floor(Math.random() * partner.products.length)])
+                            .replace(/\$\{event\}/g, monthEvent);
+                        
+                        if (customTheme) {
+                            content += `\n\n💡 ${customTheme}`;
+                        }
+                        
+                        generatedContent.push({
+                            date: date.toISOString().split('T')[0],
+                            type: contentType,
+                            partner: partner.name,
+                            content: content
+                        });
                     }
                     
-                    generatedContent.push({
-                        date: date.toISOString().split('T')[0],
-                        type: contentType,
-                        partner: partner.name,
-                        content: content
-                    });
+                    displayOutput();
+                    showStatus(`✅ 成功生成 ${generatedContent.length} 篇內容！`, 'success');
+                } catch (error) {
+                    showStatus(`❌ 生成失敗: ${error.message}`, 'error');
+                } finally {
+                    document.getElementById('generateBtn').disabled = false;
                 }
-                
-                displayOutput();
-                showStatus(`✅ 成功生成 ${generatedContent.length} 篇內容！`, 'success');
-            } catch (error) {
-                showStatus(`❌ 生成失敗: ${error.message}`, 'error');
-            } finally {
-                document.getElementById('generateBtn').disabled = false;
-            }
+            }, 300);
         }
         
         function displayOutput() {
@@ -549,7 +660,7 @@
         function copyOutput() {
             const output = document.getElementById('outputBox').textContent;
             if (output === '選擇設定後按「生成內容」開始...') {
-                showStatus('還沒有內容可複製', 'error');
+                showStatus('❌ 還沒有內容可複製', 'error');
                 return;
             }
             navigator.clipboard.writeText(output);
@@ -558,7 +669,7 @@
         
         function exportCSV() {
             if (generatedContent.length === 0) {
-                showStatus('還沒有內容可匯出', 'error');
+                showStatus('❌ 還沒有內容可匯出', 'error');
                 return;
             }
             
@@ -577,7 +688,7 @@
         
         function downloadJSON() {
             if (generatedContent.length === 0) {
-                showStatus('還沒有內容可下載', 'error');
+                showStatus('❌ 還沒有內容可下載', 'error');
                 return;
             }
             
@@ -601,7 +712,7 @@
         function showStatus(message, type) {
             const statusEl = document.getElementById('statusMessage');
             statusEl.className = `status-message ${type}`;
-            statusEl.textContent = message;
+            statusEl.innerHTML = message;
         }
         
         function clearAll() {
@@ -614,6 +725,7 @@
             document.getElementById('statusMessage').textContent = '';
             setDefaultDate();
             generatedContent = [];
+            showStatus('✅ 已重設所有設定', 'success');
         }
         
         window.addEventListener('DOMContentLoaded', init);
